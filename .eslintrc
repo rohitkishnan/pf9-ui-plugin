@@ -1,0 +1,28 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true,
+    "mocha": true,
+    "jest": true,
+    "jquery": true
+  },
+  "parserOptions": {
+    "parser": "babel-eslint",
+  },
+  "plugins": [
+    "import",
+    "react"
+  ],
+  "extends": ["standard", "standard-react"],
+
+  "rules": {
+    "comma-dangle":0,
+    "jsx-quotes": 0,
+    "react/prop-types": 0,
+  },
+
+  "settings": {
+    "import/parser": "babel-eslint"
+  }
+}
