@@ -34,6 +34,7 @@ module.exports = {
   entry: {
     app: appEntry,
   },
+  devtool: 'inline-source-map',
   output: {
     filename: '[name]-bundle.js',
     publicPath: '/',

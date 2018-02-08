@@ -1,31 +1,23 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { AppContainer } from 'react-hot-loader'
-import { createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
-import thunk from 'redux-thunk'
 import App from './App'
+import store from './store'
 
-const initialState = {}
+import plugins from './plugins'
+import pluginManager from './core/pluginManager'
+import PluginProvider from './core/PluginProvider'
 
-const reducer = (state = initialState, action) => {
-  const { type, payload } = action // eslint-disable-line no-unused-vars
-  switch (type) {
-    default:
-      return state
-  }
-}
-
-const store = createStore(
-  reducer,
-  applyMiddleware(thunk)
-)
+plugins.forEach(plugin => plugin.registerPlugin(pluginManager))
 
 const render = Component => {
   ReactDOM.render(
     <Provider store={store}>
       <AppContainer>
-        <Component />
+        <PluginProvider pluginManager={pluginManager}>
+          <Component />
+        </PluginProvider>
       </AppContainer>
     </Provider>,
     document.getElementById('root')
