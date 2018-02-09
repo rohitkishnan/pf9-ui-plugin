@@ -27,7 +27,7 @@ export const getUser = userId => v3.getReq(`/users/${userId}`)
 export const getTenants = () => admin.getReq('/PF9-KSADM/all_tenants_all_users')
 export const getScopedProjects = () => v3.getReq('/auth/projects')
 
-export function createTenant (project, success, error) {
+export function createTenant (project) {
   const body = {
     project: {
       enabled: project.enabled,
@@ -37,10 +37,10 @@ export function createTenant (project, success, error) {
       is_domain: false
     }
   }
-  return v3.postReq('/projects', body).then(success, error)
+  return v3.postReq('/projects', body)
 }
 
-export function updateTenant (project, success, error) {
+export function updateTenant (project) {
   const body = {
     project: {
       enabled: project.enabled,
@@ -50,24 +50,24 @@ export function updateTenant (project, success, error) {
       is_domain: false
     }
   }
-  return v3.patchReq(`/projects/${project.id}`, body).then(success, error)
+  return v3.patchReq(`/projects/${project.id}`, body)
 }
 
-export const deleteTenant = (id, success, error) => v3.deleteReq(`/projects/${id}`).then(success, error)
-export const getRoles = (success, error) => v3.getReq('/roles').then(success, error)
+export const deleteTenant = (id) => v3.deleteReq(`/projects/${id}`)
+export const getRoles = (success, error) => v3.getReq('/roles')
 export const getUsersFor = tenantId => admin.getReq(`/tenants/${tenantId}/users`)
-export const removeUser = (userId, success, error) => v3.deleteReq(`/users/${userId}`).then(success, error)
+export const removeUser = (userId) => v3.deleteReq(`/users/${userId}`)
 
-export function getUserRoles (tenantId, userId, success, error) {
+export function getUserRoles (tenantId, userId) {
   const url = constructUrlQuery(
     `/role_assignments?user.id=${userId}`,
     `scope.project.id=${tenantId}`,
     `effective&include_names`
   )
-  return v3.getReq(url).then(success, error)
+  return v3.getReq(url)
 }
 
-export function addUser (user, success, error) {
+export function addUser (user) {
   const body = {
     user: {
       name: user.name,
@@ -77,10 +77,10 @@ export function addUser (user, success, error) {
     }
   }
   body.user.displayname = user.displayName || null
-  return v3.postReq('/users', body).then(success, error)
+  return v3.postReq('/users', body)
 }
 
-export function updateUser (user, success, error) {
+export function updateUser (user) {
   const body = {
     user: {
       name: user.name,
@@ -91,17 +91,17 @@ export function updateUser (user, success, error) {
   if (user.password) {
     body.user.password = user.password
   }
-  return v3.patchReq(`/users/${user.id}`, body).then(success, error)
+  return v3.patchReq(`/users/${user.id}`, body)
 }
 
-export function addUserRole (tenantId, userId, roleId, success, error) {
+export function addUserRole (tenantId, userId, roleId) {
   const url = `/projects/${tenantId}/users/${userId}/roles/${roleId}`
-  return v3.putReq(url).then(success, error)
+  return v3.putReq(url)
 }
 
-export function removeUserRole (tenantId, userId, roleId, success, error) {
+export function removeUserRole (tenantId, userId, roleId) {
   const url = `/projects/${tenantId}/users/${userId}/roles/${roleId}`
-  return v3.deleteReq(url).then(success, error)
+  return v3.deleteReq(url)
 }
 
 export function updateGlanceEndpoint (endpointId, endpointUrl) {
@@ -164,19 +164,19 @@ export function getScopedToken (tenantId, unscopedToken) {
   return bareHttp.postReq('/auth/tokens?nocatalog', body)
 }
 
-export function getScopedTokenWithCatalog (tenantId, unscopedToken, success, error) {
+export function getScopedTokenWithCatalog (tenantId, unscopedToken) {
   const body = constructTokenBody('token')(tenantId, unscopedToken)
-  return bareHttp.postReq('/auth/tokens', body).then(success, error)
+  return bareHttp.postReq('/auth/tokens', body)
 }
 
-export function getScopedTokenSso (tenantId, unscopedToken, success, error) {
+export function getScopedTokenSso (tenantId, unscopedToken) {
   const body = constructTokenBody('saml2')(tenantId, unscopedToken)
-  return bareHttp.postReq('/auth/tokens?nocatalog', body).then(success, error)
+  return bareHttp.postReq('/auth/tokens?nocatalog', body)
 }
 
-export function getScopedTokenWithCatalogSso (tenantId, unscopedToken, success, error) {
+export function getScopedTokenWithCatalogSso (tenantId, unscopedToken) {
   const body = constructTokenBody('saml2')(tenantId, unscopedToken)
-  return bareHttp.postReq('/auth/tokens', body).then(success, error)
+  return bareHttp.postReq('/auth/tokens', body)
 }
 
 export const getServiceCatalog = () => v3.getReq('/auth/catalog')
@@ -192,20 +192,20 @@ export function getEndpoints (refresh) {
   return endpointsPromise
 }
 
-export const isMfaEnabled = (userId, success, error) => admin.getReq(`/PF9-KSADM/users/${userId}/mfa`).then(success, error)
+export const isMfaEnabled = (userId) => admin.getReq(`/PF9-KSADM/users/${userId}/mfa`)
 
-export function enableMfa (userId, secret, success, error) {
+export function enableMfa (userId, secret) {
   const body = {
     mfa: { enabled: true, secret: secret }
   }
-  return admin.putReq(`/PF9-KSADM/users/${userId}/mfa`, body).then(success, error)
+  return admin.putReq(`/PF9-KSADM/users/${userId}/mfa`, body)
 }
 
-export function disableMfa (userId, success, error) {
+export function disableMfa (userId) {
   const body = {
     mfa: { enabled: false }
   }
-  return admin.putReq(`/PF9-KSADM/users/${userId}/mfa`, body).then(success, error)
+  return admin.putReq(`/PF9-KSADM/users/${userId}/mfa`, body)
 }
 
 export const getIdentityProviders = () => v3.getReq('/OS-FEDERATION/identity_providers')
