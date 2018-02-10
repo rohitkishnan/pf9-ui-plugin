@@ -1,3 +1,5 @@
+import { getTokens } from './util/tokens'
+
 /*
  * req should look like this:
  *
@@ -31,9 +33,6 @@ export const memoize = (key, fn) => {
   return memoized[key]
 }
 
-// TODO: this needs to be filled out later
-const Token = {}
-
 const defaultErrorHandler = err => alert(err)
 const defaultOptions = { responseType: 'json' }
 
@@ -49,7 +48,8 @@ export const noAuth = (req, options = defaultOptions) => {
 
 export const authOpenstackHttp = (req, options = defaultOptions) => {
   let headers = req.headers || {}
-  headers['X-Auth-Token'] = Token.tokens && Token.tokens.currentToken
+  const tokens = getTokens()
+  headers['X-Auth-Token'] = tokens.currentToken
 
   // To make sure if options is defined, but does not supply all the parameters,
   // options will still contain the other default parameters.
@@ -116,3 +116,7 @@ export const makeApi = (http, baseUrl = '') => ({
     })
   }
 })
+
+export const toaster = {
+  error: message => { alert(message) },
+}

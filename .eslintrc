@@ -17,12 +17,14 @@
   "extends": ["standard", "standard-react"],
 
   "rules": {
-    "comma-dangle":0,
+    "comma-dangle": 0,
     "jsx-quotes": 0,
     "react/prop-types": 0,
   },
 
   "settings": {
     "import/parser": "babel-eslint"
+  },
+  "globals": {
   }
 }
