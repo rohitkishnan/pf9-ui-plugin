@@ -12,9 +12,11 @@ import { toaster } from '../util'
 
 // redux flux actions
 const setUserTenants = tenants => ({ type: 'SET_USER_TENANTS', payload: tenants })
-const setCurrentSession = payload => ({ type: 'SET_CURRENT_SESSION', payload })
 const setUnscopedToken = token => ({ type: 'SET_UNSCOPED_TOKEN', payload: token })
 const setUsername = username => ({ type: 'SET_USERNAME', payload: username })
+const setCurrentSession = ({ tenant, user, scopedToken, roles }) => {
+  return { type: 'SET_CURRENT_SESSION', payload: { tenant, user, scopedToken, roles } }
+}
 
 // Figure out which tenant to make the current tenant
 const getPreferredTenant = (tenants, lastTenant) =>

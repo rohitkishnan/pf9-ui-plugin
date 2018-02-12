@@ -1,4 +1,6 @@
 import React from 'react'
+import LoginPage from './components/LoginPage'
+import TenantsPage from './components/TenantsPage'
 
 const Dashboard = () => (
   <div>
@@ -15,16 +17,34 @@ class OpenStack extends React.Component {
 }
 
 OpenStack.registerPlugin = pluginManager => {
-  pluginManager.registerPage({
-    name: 'Dashboard',
-    link: { url: '/', exactMatch: true },
-    component: Dashboard
-  })
+  pluginManager.registerRoutes(
+    {
+      name: 'Dashboard',
+      link: { path: '/', exact: true },
+      component: Dashboard
+    },
+    {
+      name: 'Login',
+      link: { path: '/login' },
+      component: LoginPage
+    },
+    {
+      name: 'Tenants',
+      link: { path: '/tenants' },
+      component: TenantsPage
+    },
+  )
 
-  pluginManager.registerNavItem({
-    name: 'Dashboard',
-    link: { url: '/', exactMatch: true }
-  })
+  pluginManager.registerNavItems(
+    {
+      name: 'Dashboard',
+      link: { path: '/' }
+    },
+    {
+      name: 'Tenants',
+      link: { path: '/tenants' }
+    },
+  )
 }
 
 export default OpenStack

@@ -7,6 +7,7 @@
     "jest": true,
     "jquery": true
   },
+  "parser": "babel-eslint",
   "parserOptions": {
     "parser": "babel-eslint",
   },

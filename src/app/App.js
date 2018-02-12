@@ -1,6 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { BrowserRouter as Router } from 'react-router-dom'
+import {
+  BrowserRouter as Router,
+  Link,
+  Route,
+  Switch,
+} from 'react-router-dom'
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles'
 
 import './app.css'
@@ -20,16 +25,21 @@ class App extends React.Component {
         <MuiThemeProvider theme={theme}>
           <div id="main-container">
             <div id="nav-menu">
-              TODO: Nav Menu
               <ul>
-                {pluginManager.getNavItems().map(navItem => <li key={navItem.name}>{navItem.name}</li>)}
+                {pluginManager.getNavItems().map(navItem => <li key={navItem.name}><Link to={navItem.link.path}>{navItem.name}</Link></li>)}
               </ul>
             </div>
             <div id="main-sidebar">
               TODO: Sidebar
             </div>
             <div id="main-content">
-              TODO: Content
+              <Switch>
+                {pluginManager.getPages().map(page => {
+                  const { component, link } = page
+                  const Component = component
+                  return <Route key={page.name} path={link.path} exact={link.exact || false} component={Component} />
+                })}
+              </Switch>
             </div>
             <div id="main-footer">
               TODO: Footer

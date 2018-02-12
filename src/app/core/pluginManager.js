@@ -11,12 +11,22 @@ const pluginManager = {
     data.navItems = []
   },
 
-  registerPage (page) {
-    data.pages.push(page)
+  registerRoute (Component) {
+    data.pages.push(Component)
+  },
+
+  registerRoutes (...components) {
+    components.forEach(component => data.pages.push(component))
   },
 
   registerNavItem (item) {
     data.navItems.push(item)
+  },
+
+  registerNavItems (...items) {
+    items.forEach(item => {
+      data.navItems.push(item)
+    })
   },
 
   getPages () {
