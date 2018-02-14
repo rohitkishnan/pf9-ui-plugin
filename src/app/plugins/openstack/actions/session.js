@@ -60,6 +60,7 @@ export const signIn = (username, password, mfa) => async dispatch => {
   if (mfa) {
     password = password + mfa
   }
+  console.log(`Attempting sign in with ${username} / ${password}`)
   const response = await getUnscopedToken(username, password)
   const unscopedToken = response.headers.get('x-subject-token')
 

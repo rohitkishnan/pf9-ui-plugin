@@ -1,23 +1,30 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
 #main-container {
   display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-auto-rows: minmax(100px, auto);
   grid-template-areas:
-    "head head head",
-    "side main main",
-    "foot foot foot"
+    "hd hd hd hd   hd   hd   hd   hd   hd"
+    "sd sd sd main main main main main main"
+    "ft ft ft ft   ft   ft   ft   ft   ft";
 }
 
 #nav-menu {
-  grid-area: "head";
+  grid-area: hd;
 }
 
-#main-content: {
-  grid-area: "main";
+#main-content {
+  grid-area: main;
 }
 
-#main-footer: {
-  grid-area: "foot";
+#main-footer {
+  grid-area: ft;
 }
 
-#main-sidebar: {
-  grid-area: "side";
+#sidebar {
+  grid-area: sd;
 }
