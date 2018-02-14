@@ -34,10 +34,10 @@ class App extends React.Component {
             </div>
             <div id="main-content">
               <Switch>
-                {pluginManager.getPages().map(page => {
-                  const { component, link } = page
+                {pluginManager.getRoutes().map(route => {
+                  const { component, link } = route
                   const Component = component
-                  return <Route key={page.name} path={link.path} exact={link.exact || false} component={Component} />
+                  return <Route key={route.name} path={link.path} exact={link.exact || false} component={Component} />
                 })}
               </Switch>
             </div>

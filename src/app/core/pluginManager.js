@@ -1,26 +1,18 @@
 let data = {
   pluginList: [],
-  pages: [],
+  routes: [],
   navItems: [],
 }
 
 const pluginManager = {
-  clearPlugins () {
+  clearAll () {
     data.pluginList = []
-    data.pages = []
+    data.routes = []
     data.navItems = []
   },
 
-  registerRoute (Component) {
-    data.pages.push(Component)
-  },
-
   registerRoutes (...components) {
-    components.forEach(component => data.pages.push(component))
-  },
-
-  registerNavItem (item) {
-    data.navItems.push(item)
+    components.forEach(component => data.routes.push(component))
   },
 
   registerNavItems (...items) {
@@ -29,8 +21,8 @@ const pluginManager = {
     })
   },
 
-  getPages () {
-    return data.pages
+  getRoutes () {
+    return data.routes
   },
 
   getNavItems () {
