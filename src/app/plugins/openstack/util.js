@@ -1,4 +1,5 @@
 import { getTokens } from './util/tokens'
+require('isomorphic-fetch')
 
 /*
  * req should look like this:

@@ -1,4 +1,4 @@
-import {
+import Keystone, {
   getRegions,
   getScopedProjects,
   getScopedToken,
@@ -57,12 +57,18 @@ const initiateNewSession = (unscopedToken, username) => async (dispatch, getStat
 }
 
 export const signIn = (username, password, mfa) => async dispatch => {
-  if (mfa) {
-    password = password + mfa
-  }
-  console.log(`Attempting sign in with ${username} / ${password}`)
-  const response = await getUnscopedToken(username, password)
-  const unscopedToken = response.headers.get('x-subject-token')
-
-  return dispatch(initiateNewSession(unscopedToken, username))
 }
+
+const Session = (keystone = Keystone) => ({
+  signIn: (username, password, mfa) => async (dispatch) => {
+    if (mfa) {
+      password = password + mfa
+    }
+    const response = await keystone.getUnscopedToken(username, password)
+    const unscopedToken = response.headers.get('x-subject-token')
+
+    return dispatch(initiateNewSession(unscopedToken, username))
+  }
+})
+
+export default Session
