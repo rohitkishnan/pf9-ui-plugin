@@ -1,4 +1,3 @@
-import { getTokens } from './util/tokens'
 require('isomorphic-fetch')
 
 /*
@@ -47,10 +46,9 @@ export const noAuth = (req, options = defaultOptions) => {
   return requestsByType[options.responseType]({ ...req, headers }).catch(defaultErrorHandler)
 }
 
-export const authOpenstackHttp = (req, options = defaultOptions) => {
+export const authOpenstackHttp = unscopedToken => (req, options = defaultOptions) => {
   let headers = req.headers || {}
-  const tokens = getTokens()
-  headers['X-Auth-Token'] = tokens.currentToken
+  headers['X-Auth-Token'] = unscopedToken
 
   // To make sure if options is defined, but does not supply all the parameters,
   // options will still contain the other default parameters.

@@ -6,7 +6,7 @@ import {
 } from '../util'
 
 const bareHttp = makeApi(bareJson, '/keystone/v3')
-const v3 = makeApi(authOpenstackHttp, '/keystone/v3') // baseUrl
+const v3 = unscopedToken => makeApi(authOpenstackHttp(unscopedToken), '/keystone/v3') // baseUrl
 const admin = makeApi(authOpenstackHttp, '/keystone_admin/v2.0') // adminUrl
 
 const constructUrlQuery = (...parts) => parts.join('&')
@@ -25,7 +25,7 @@ let endpointsPromise
 export const getUsers = () => v3.getReq('/users')
 export const getUser = userId => v3.getReq(`/users/${userId}`)
 export const getTenants = () => admin.getReq('/PF9-KSADM/all_tenants_all_users')
-export const getScopedProjects = () => v3.getReq('/auth/projects')
+export const getScopedProjects = (unscopedToken) => v3(unscopedToken).getReq('/auth/projects')
 
 export function createTenant (project) {
   const body = {
@@ -139,7 +139,7 @@ export const removeGroupRole = (tenantId, groupId, roleId) =>
 
 export const deleteGroup = groupId => v3.deleteReq(`/groups/${groupId}`)
 
-export function getUnscopedToken (username, password) {
+export async function getUnscopedToken (username, password) {
   const body = {
     auth: {
       identity: {
@@ -154,7 +154,8 @@ export function getUnscopedToken (username, password) {
       }
     }
   }
-  return bareHttp.postReq('/auth/tokens?nocatalog', body)
+  const response = await bareHttp.postReq('/auth/tokens?nocatalog', body)
+  return response.headers.get('x-subject-token')
 }
 
 export const getUnscopedTokenSso = () => v3.getReq('/OS-FEDERATION/identity_providers/IDP1/protocols/saml2/auth')
