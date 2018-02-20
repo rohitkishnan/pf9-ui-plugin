@@ -34,7 +34,6 @@ const initiateNewSession = (unscopedToken, username) => async (dispatch, getStat
   }
   dispatch(setUserTenants(userTenants))
 
-
   // TODO: Do we need to do this at login time?  Can we push it to a component further down?
   const regions = await getRegions()
   const lastRegion = getStorage(`last-region-accessed-${username}`)
@@ -53,27 +52,33 @@ const initiateNewSession = (unscopedToken, username) => async (dispatch, getStat
 }
 
 const Session = (keystone = Keystone, dependencyOverrides = {}) => {
+  let context = {
+    setUnscopedToken,
+    setUsername,
+  }
+
   const authenticate = async ({ username, password, mfa }) => {
     if (mfa) {
       password = password + mfa
     }
     return keystone.getUnscopedToken({ username, password })
   }
+  context.authenticate = authenticate
 
   const signIn = ({
     username,
     password,
     mfa,
-    _authenticate = authenticate,
-    _setUnscopedToken = setUnscopedToken,
-    _setUsername = setUsername,
+    ctx = context,
   }) => async dispatch => {
-    const unscopedToken = await authenticate({ username, password, mfa })
-    const tenants = await getTenants(unscopedToken)
-    //
+    const unscopedToken = await ctx.authenticate({ username, password, mfa })
+    ctx.setUnscopedToken(unscopedToken)
+    ctx.setUsername(username)
+    // const tenants = await ctx.getTenants(unscopedToken)
+
     // Choose a tenant
-    const lastTenant = getLastTenant(username)
-    const tenant = getPreferredTenant(userTenants, lastTenant)
+    // const lastTenant = getLastTenant(username)
+    // const tenant = getPreferredTenant(userTenants, lastTenant)
 
     /*
     const regions = await getRegions(unscopedToken)
@@ -82,10 +87,16 @@ const Session = (keystone = Keystone, dependencyOverrides = {}) => {
     return dispatch(_setUsername(username))
     */
   }
+  context.signIn = signIn
+
+  const mockContext = mocks => {
+    context = { ...context, ...mocks }
+  }
 
   return {
     signIn,
     authenticate,
+    mockContext,
   }
 }
 

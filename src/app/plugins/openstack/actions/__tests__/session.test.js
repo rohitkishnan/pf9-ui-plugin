@@ -32,17 +32,20 @@ describe('signIn', () => {
     expect(mockKeystone.getUnscopedToken.mock.calls[0]).toEqual([{ username: 'test@platform9.com', password: 'secret' }])
   })
 
-  it('kicks off the rest of the initiation procress', async () => {
+  it.only('kicks off the rest of the initiation procress', async () => {
     const mockKeystone = {
       getUnscopedToken: jest.fn().mockResolvedValue('secretToken')
     }
 
     const session = Session(mockKeystone)
-    const _setUnscopedToken = jest.fn()
-    const _setUsername = jest.fn()
+    const mockSession = {
+      setUnscopedToken: jest.fn(),
+      setUsername: jest.fn()
+    }
+    session.mockContext(mockSession)
 
-    await session.signIn({ username: 'test@platform9.com', password: 'secret', _setUnscopedToken, _setUsername })(mockDispatch)
-    expect(_setUnscopedToken.mock.calls[0][0]).toEqual('secretToken')
-    expect(_setUsername.mock.calls[0][0]).toEqual('test@platform9.com')
+    await session.signIn({ username: 'test@platform9.com', password: 'secret' })(mockDispatch)
+    expect(mockSession.setUnscopedToken.mock.calls[0][0]).toEqual('secretToken')
+    expect(mockSession.setUsername.mock.calls[0][0]).toEqual('test@platform9.com')
   })
 })
