@@ -51,19 +51,13 @@ const initiateNewSession = (unscopedToken, username) => async (dispatch, getStat
   dispatch(setCurrentSession({ tenant, user, scopedToken, roles }))
 }
 
-const Session = (keystone = Keystone, dependencyOverrides = {}) => {
-  let context = {
-    setUnscopedToken,
-    setUsername,
-  }
-
+const Session = (keystone = Keystone, mocks = {}) => {
   const authenticate = async ({ username, password, mfa }) => {
     if (mfa) {
       password = password + mfa
     }
     return keystone.getUnscopedToken({ username, password })
   }
-  context.authenticate = authenticate
 
   const signIn = ({
     username,
@@ -87,16 +81,19 @@ const Session = (keystone = Keystone, dependencyOverrides = {}) => {
     return dispatch(_setUsername(username))
     */
   }
-  context.signIn = signIn
 
-  const mockContext = mocks => {
-    context = { ...context, ...mocks }
+  // This 'context' stores methods that we might want to override in tests
+  let context = {
+    setUnscopedToken,
+    setUsername,
+    authenticate,
+    signIn,
+    ...mocks,
   }
 
   return {
     signIn,
     authenticate,
-    mockContext,
   }
 }
 
