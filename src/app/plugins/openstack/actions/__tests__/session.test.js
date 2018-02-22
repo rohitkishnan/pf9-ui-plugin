@@ -1,4 +1,7 @@
-import Session, { getPreferredTenant } from '../session'
+import Session, {
+  getPreferredRegion,
+  getPreferredTenant,
+} from '../session'
 import { lastCall, mockDispatch } from '../../util/testUtils'
 
 const mockedTenants = [
@@ -9,6 +12,9 @@ const mockedTenants = [
 ]
 
 const mockedRegions = [
+  { id: 'Main-Region' },
+  { id: 'Another-Region' },
+  { id: 'Yet-Another-Region' },
 ]
 
 describe('getPreferredTenant', () => {
@@ -26,26 +32,45 @@ describe('getPreferredTenant', () => {
 })
 
 describe('getPreferredRegion', () => {
-  it('TODO')
+  it('should get the preferred region if it exists', () => {
+    const lastRegion = mockedRegions.find(x => x.id === 'Yet-Another-Region')
+    expect(getPreferredRegion(mockedRegions, lastRegion)).toEqual(lastRegion)
+  })
+
+  it('should get the first available region if the preferred one does not exist', () => {
+    const lastRegion = { id: 'Does-Not-Exist' }
+    const firstRegion = mockedRegions[0]
+    expect(getPreferredRegion(mockedRegions, lastRegion)).toEqual(firstRegion)
+  })
 })
 
 describe('signIn', () => {
   let mockKeystone
   let mockSession
   const selectedTenant = mockedTenants.find(x => x.name === 'another')
+  const selectedRegion = mockedRegions.find(x => x.id === 'Yet-Another-Region')
+  const mockedScopedToken = {
+    scopedToken: 'secretScopedToken',
+    token: {
+      roles: [
+        { id: 'abc123', name: 'admin' },
+      ],
+      user: { id: '123', name: 'test@platform9.com' },
+    }
+  }
 
   beforeEach(() => {
     mockKeystone = {
       getUnscopedToken: jest.fn().mockResolvedValue('secretToken'),
       getScopedProjects: jest.fn().mockResolvedValue(mockedTenants),
-      getScopedToken: jest.fn().mockResolvedValue('secretScopedToken'),
+      getScopedToken: jest.fn().mockResolvedValue(mockedScopedToken),
       getRegions: jest.fn().mockResolvedValue(mockedRegions)
     }
     mockSession = {
       setUnscopedToken: jest.fn(),
       setUsername: jest.fn(),
       getLastTenant: jest.fn().mockReturnValue('another'),
-      getLastRegion: jest.fn().mockReturnValue('main'),
+      getLastRegion: jest.fn().mockReturnValue(selectedRegion),
       getPreferredTenant: jest.fn().mockReturnValue(selectedTenant),
       setCurrentSession: jest.fn(),
       setTenants: jest.fn(),
@@ -78,7 +103,11 @@ describe('signIn', () => {
   it('gets the scopedToken for the chosen tenant', async () => {
     await performSignIn()
     expect(mockKeystone.getScopedToken).toHaveBeenCalled()
-    expect(lastCall(mockSession.setCurrentSession)[0]).toMatchObject({ scopedToken: 'secretScopedToken' })
+    expect(lastCall(mockSession.setCurrentSession)[0]).toMatchObject({
+      scopedToken: 'secretScopedToken',
+      user: mockedScopedToken.token.user,
+      roles: mockedScopedToken.token.roles,
+    })
   })
 
   it('sets the session and tenants', async () => {
@@ -90,5 +119,6 @@ describe('signIn', () => {
   it('chooses a default region', async () => {
     await performSignIn()
     expect(mockKeystone.getRegions).toHaveBeenCalled()
+    expect(lastCall(mockSession.setCurrentSession)[0]).toMatchObject({ region: selectedRegion })
   })
 })

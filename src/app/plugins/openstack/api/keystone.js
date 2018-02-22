@@ -160,9 +160,14 @@ export async function getUnscopedToken (username, password) {
 
 export const getUnscopedTokenSso = () => v3.getReq('/OS-FEDERATION/identity_providers/IDP1/protocols/saml2/auth')
 
-export function getScopedToken (tenantId, unscopedToken) {
+export async function getScopedToken (tenantId, unscopedToken) {
   const body = constructTokenBody('token')(tenantId, unscopedToken)
-  return bareHttp.postReq('/auth/tokens?nocatalog', body)
+  const response = await bareHttp.postReq('/auth/tokens?nocatalog', body)
+  const scopedToken = response.headers.get('x-subject-token')
+  return {
+    scopedToken,
+    token: response.token // token = { user, roles }
+  }
 }
 
 export function getScopedTokenWithCatalog (tenantId, unscopedToken) {
