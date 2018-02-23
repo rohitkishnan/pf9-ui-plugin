@@ -73,6 +73,7 @@ describe('signIn', () => {
       getLastRegion: jest.fn().mockReturnValue(selectedRegion),
       getPreferredTenant: jest.fn().mockReturnValue(selectedTenant),
       setCurrentSession: jest.fn(),
+      setStorage: jest.fn(),
       setTenants: jest.fn(),
     }
   })
@@ -120,5 +121,11 @@ describe('signIn', () => {
     await performSignIn()
     expect(mockKeystone.getRegions).toHaveBeenCalled()
     expect(lastCall(mockSession.setCurrentSession)[0]).toMatchObject({ region: selectedRegion })
+  })
+
+  it('stores the chosen tenant and region', async () => {
+    await performSignIn()
+    expect(mockSession.setStorage).toHaveBeenCalledWith(`last-tenant-accessed-test@platform9.com`, selectedTenant.name)
+    expect(mockSession.setStorage).toHaveBeenCalledWith(`last-region-accessed-test@platform9.com`, selectedRegion)
   })
 })

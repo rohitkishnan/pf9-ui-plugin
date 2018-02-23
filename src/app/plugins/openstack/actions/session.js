@@ -32,8 +32,13 @@ const Session = (keystone = Keystone, mocks = {}) => {
   }
 
   const getTenants = unscopedToken => keystone.getScopedProjects()
-  const getLastTenant = username => getStorage(`last-tenant-accessed-${username}`) || 'service'
-  const getLastRegion = username => getStorage(`last-region-accessed-${username}`)
+  const tenantStorageKey = username => `last-tenant-accessed-${username}`
+  const getLastTenant = username => getStorage(tenantStorageKey) || 'service'
+  const setLastTenant = (username, tenant) => ctx.setStorage(tenantStorageKey(username), tenant)
+
+  const regionStorageKey = username => `last-region-accessed-${username}`
+  const getLastRegion = username => getStorage(regionStorageKey(username))
+  const setLastRegion = (username, tenant) => ctx.setStorage(regionStorageKey(username), tenant)
 
   const signIn = ({ username, password, mfa }) => async dispatch => {
     // Authenticate the user
@@ -47,15 +52,17 @@ const Session = (keystone = Keystone, mocks = {}) => {
 
     // Figure out and set the default tenant based on previous usage.
     const tenants = await keystone.getScopedProjects(unscopedToken)
-    const lastTenant = ctx.getLastTenant()
+    const lastTenant = ctx.getLastTenant(username)
     const tenant = ctx.getPreferredTenant(tenants, lastTenant)
+    setLastTenant(username, tenant.name)
     const response = await keystone.getScopedToken(tenant.id, unscopedToken)
     const { token: { user, roles }, scopedToken } = response
 
     // TODO: Do we need to do this at login time?  Can we push it to a component further down?
     const regions = await keystone.getRegions(unscopedToken)
-    const lastRegion = ctx.getLastRegion(`last-region-accessed-${username}`)
+    const lastRegion = ctx.getLastRegion(username)
     const region = ctx.getPreferredRegion(regions, lastRegion)
+    setLastRegion(username, region)
 
     dispatch(ctx.setCurrentSession({
       region,
@@ -78,6 +85,7 @@ const Session = (keystone = Keystone, mocks = {}) => {
     getTenants,
     keystone: Keystone,
     setCurrentSession,
+    setStorage,
     setTenants,
     setUnscopedToken,
     setUsername,
