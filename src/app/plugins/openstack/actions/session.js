@@ -1,13 +1,15 @@
-import Keystone from '../api/keystone'
+import * as Keystone from '../api/keystone'
+import * as registry from '../../../util/registry'
 
 import { getStorage, setStorage } from '../../../core/common/pf9-storage'
 
 // redux flux actions
 const setTenants = tenants => ({ type: 'SET_TENANTS', payload: tenants })
-const setUnscopedToken = token => ({ type: 'SET_UNSCOPED_TOKEN', payload: token })
-const setUsername = username => ({ type: 'SET_USERNAME', payload: username })
+const setToken = token => { registry.setItem('token', token) }
+const setUnscopedToken = token => { registry.setItem('unscopedToken', token) }
+const setUsername = username => { registry.setItem('username', username) }
 
-const setCurrentSession = ({ tenant, user, scopedToken, roles }) => {
+export const setCurrentSession = ({ tenant, user, scopedToken, roles }) => {
   return { type: 'SET_CURRENT_SESSION', payload: { tenant, user, scopedToken, roles } }
 }
 
@@ -28,7 +30,7 @@ const Session = (keystone = Keystone, mocks = {}) => {
     if (mfa) {
       password = password + mfa
     }
-    return keystone.getUnscopedToken({ username, password })
+    return keystone.getUnscopedToken(username, password)
   }
 
   const getTenants = unscopedToken => keystone.getScopedProjects()
@@ -48,10 +50,11 @@ const Session = (keystone = Keystone, mocks = {}) => {
     }
 
     ctx.setUnscopedToken(unscopedToken)
+    ctx.setToken(unscopedToken)
     ctx.setUsername(username)
 
     // Figure out and set the default tenant based on previous usage.
-    const tenants = await keystone.getScopedProjects(unscopedToken)
+    const tenants = await keystone.getScopedProjects()
     const lastTenant = ctx.getLastTenant(username)
     const tenant = ctx.getPreferredTenant(tenants, lastTenant)
     setLastTenant(username, tenant.name)
@@ -87,6 +90,7 @@ const Session = (keystone = Keystone, mocks = {}) => {
     setCurrentSession,
     setStorage,
     setTenants,
+    setToken,
     setUnscopedToken,
     setUsername,
     signIn,

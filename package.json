@@ -9,6 +9,7 @@
     "material-ui": "^1.0.0-beta.32",
     "material-ui-icons": "^1.0.0-beta.17",
     "prop-types": "^15.6.0",
+    "puppeteer": "^1.1.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.6",
@@ -59,10 +60,10 @@
     "build": "./node_modules/.bin/webpack",
     "test": "npm run lint && npm run test:unit",
     "lint": "./node_modules/.bin/eslint src",
-    "test:unit": "jest --coverage src/",
-    "test:unit:watch": "jest --watch --coverage src/",
-    "test:integration": "jest integration-tests",
-    "test:e2e": "mocha e2e-tests"
+    "test:unit": "jest --coverage src",
+    "test:unit:watch": "jest --watch --coverage --testPathIgnorePatterns e2e-tests",
+    "test:integration": "jest integration-tests/",
+    "test:e2e": "jest -i e2e-tests/"
   },
   "keywords": [
     "Platform9",

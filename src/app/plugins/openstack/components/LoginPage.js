@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Button from 'material-ui/Button'
-import { signIn } from '../actions/session'
+import Session from '../actions/session'
 
 function mapStateToProps (state, ownProps) {
   return {}
@@ -21,7 +21,8 @@ class LoginPage extends React.Component {
   performLogin = () => {
     const { username, password } = this.state
     const { dispatch } = this.props
-    dispatch(signIn(username, password))
+    const session = Session()
+    dispatch(session.signIn({ username, password }))
   }
 
   render () {

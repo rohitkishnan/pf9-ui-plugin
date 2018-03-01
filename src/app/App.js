@@ -7,8 +7,11 @@ import {
   Switch,
 } from 'react-router-dom'
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles'
-
 import './app.css'
+import { setupFromConfig } from './util/registry'
+import config from '../../config'
+
+setupFromConfig(config)
 
 class App extends React.Component {
   render () {

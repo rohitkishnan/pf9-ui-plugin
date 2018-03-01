@@ -1,12 +1,7 @@
 import React from 'react'
 import LoginPage from './components/LoginPage'
 import TenantsPage from './components/TenantsPage'
-
-const Dashboard = () => (
-  <div>
-    <h1>Dashboard</h1>
-  </div>
-)
+import DashboardPage from './components/DashboardPage'
 
 class OpenStack extends React.Component {
   render () {
@@ -21,7 +16,7 @@ OpenStack.registerPlugin = pluginManager => {
     {
       name: 'Dashboard',
       link: { path: '/', exact: true },
-      component: Dashboard
+      component: DashboardPage
     },
     {
       name: 'Login',

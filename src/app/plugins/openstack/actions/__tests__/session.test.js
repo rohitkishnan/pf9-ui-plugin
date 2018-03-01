@@ -1,6 +1,7 @@
 import Session, {
   getPreferredRegion,
   getPreferredTenant,
+  setCurrentSession,
 } from '../session'
 import { lastCall, mockDispatch } from '../../util/testUtils'
 
@@ -85,7 +86,7 @@ describe('signIn', () => {
 
   it('gets an unscoped token', async () => {
     await performSignIn()
-    expect(mockKeystone.getUnscopedToken).lastCalledWith({ username: 'test@platform9.com', password: 'secret' })
+    expect(mockKeystone.getUnscopedToken).lastCalledWith('test@platform9.com', 'secret')
   })
 
   it('it sets some session variables', async () => {
@@ -127,5 +128,43 @@ describe('signIn', () => {
     await performSignIn()
     expect(mockSession.setStorage).toHaveBeenCalledWith(`last-tenant-accessed-test@platform9.com`, selectedTenant.name)
     expect(mockSession.setStorage).toHaveBeenCalledWith(`last-region-accessed-test@platform9.com`, selectedRegion)
+  })
+
+  it('does not continue if there are bad credentials', async () => {
+    const mockKeystoneWithBadCredentials = {
+      ...mockKeystone,
+      getUnscopedToken: () => Promise.resolve(null)
+    }
+    const mockSession2 = {
+      ...mockSession,
+      setUnscopedToken: jest.fn(),
+    }
+    const session = Session(mockKeystoneWithBadCredentials, mockSession2)
+    await session.signIn({ username: 'test@platform9.com', password: 'secret' })(mockDispatch)
+    expect(mockSession2.setUnscopedToken).not.toHaveBeenCalled()
+  })
+
+  it('logs in with MFA credentials', async () => {
+    const mockKeystone2 = {
+      ...mockKeystone,
+      getUnscopedToken: jest.fn(),
+    }
+    const session = Session(mockKeystone2, mockSession)
+    await session.signIn({ username: 'test@platform9.com', password: 'secret', mfa: 'mfa' })(mockDispatch)
+    expect(mockKeystone2.getUnscopedToken).toHaveBeenCalledWith('test@platform9.com', 'secretmfa')
+  })
+})
+
+describe('setCurrentSession', () => {
+  it('generates the setcurrentSession flux action', () => {
+    const action = setCurrentSession({})
+    expect(action.type).toEqual('SET_CURRENT_SESSION')
+  })
+})
+
+describe('Session', () => {
+  it('returns a session object with functions bound to mocks if needs be', () => {
+    const session = Session()
+    expect(session.authenticate).toBeDefined()
   })
 })

@@ -1,9 +1,40 @@
+import http from '../../../util/http'
+// import registry from '../../../util/registry'
+
+const v3Base = '/keystone/v3'
+const authHttp = http.authenticated.openstack
+
+export async function getUnscopedToken (username, password) {
+  const body = {
+    auth: {
+      identity: {
+        methods: ['password'],
+        password: {
+          user: {
+            name: username,
+            domain: { id: 'default' },
+            password: password
+          }
+        }
+      }
+    }
+  }
+  const response = await http.json.post(`${v3Base}/auth/tokens?nocatalog`, body)
+  return response.headers.get('X-Subject-Token')
+}
+
+export const getScopedProjects = () => authHttp.get('/auth/projects')
+
+/*
 import {
   authOpenstackHttp,
   bareJson,
   makeApi,
   memoize,
 } from '../util'
+
+const v3Base = '/keystone/v3'
+const authHttp = http.authenticated.openstack
 
 const bareHttp = makeApi(bareJson, '/keystone/v3')
 const v3 = unscopedToken => makeApi(authOpenstackHttp(unscopedToken), '/keystone/v3') // baseUrl
@@ -25,7 +56,6 @@ let endpointsPromise
 export const getUsers = () => v3.getReq('/users')
 export const getUser = userId => v3.getReq(`/users/${userId}`)
 export const getTenants = () => admin.getReq('/PF9-KSADM/all_tenants_all_users')
-export const getScopedProjects = (unscopedToken) => v3(unscopedToken).getReq('/auth/projects')
 
 export function createTenant (project) {
   const body = {
@@ -139,25 +169,6 @@ export const removeGroupRole = (tenantId, groupId, roleId) =>
 
 export const deleteGroup = groupId => v3.deleteReq(`/groups/${groupId}`)
 
-export async function getUnscopedToken (username, password) {
-  const body = {
-    auth: {
-      identity: {
-        methods: ['password'],
-        password: {
-          user: {
-            name: username,
-            domain: { id: 'default' },
-            password: password
-          }
-        }
-      }
-    }
-  }
-  const response = await bareHttp.postReq('/auth/tokens?nocatalog', body)
-  return response.headers.get('x-subject-token')
-}
-
 export const getUnscopedTokenSso = () => v3.getReq('/OS-FEDERATION/identity_providers/IDP1/protocols/saml2/auth')
 
 export async function getScopedToken (tenantId, unscopedToken) {
@@ -233,3 +244,4 @@ export const deleteIdpProtocol = identityProviderId =>
   v3.deleteReq(`/OS-FEDERATION/identity_providers/${identityProviderId}/protocols/saml2`)
 
 export const getServiceProviders = () => v3.getReq('/OS-FEDERATION/service_providers')
+*/

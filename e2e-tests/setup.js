@@ -1,7 +1,9 @@
+const config = require('../config')
 const webdriver = require('selenium-webdriver')
 
 const driver = new webdriver.Builder()
   .forBrowser('chrome')
   .build()
 
-driver.navigate().to('https://pf9.platform9.net')
+const { host } = config
+driver.navigate().to(host)

@@ -11,7 +11,6 @@ const requiresAuthentication = WrappedComponent => {
     @connect(mapState)
     class AuthenticatedComponent extends React.Component {
       componentDidMount () {
-        console.log('AuthenticatedComponent componentDidMount')
         const { session, history } = this.props
         if (!(session && session.user)) {
           history.push('/login')

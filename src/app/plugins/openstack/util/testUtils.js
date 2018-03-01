@@ -1,10 +1,11 @@
-import { identity } from './fp'
+import { identity } from '../../../util/fp'
 
-export function mockResponse (params) {
+export function mockResponse (params = {}) {
   const { headers = {}, ...rest } = params
   const headersObj = { get: key => headers[key] }
+  const json = () => Promise.resolve(rest)
   return Promise.resolve({
-    ...rest,
+    json,
     headers: headersObj,
   })
 }
