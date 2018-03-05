@@ -11,12 +11,6 @@ import PluginProvider from './core/PluginProvider'
 
 plugins.forEach(plugin => plugin.registerPlugin(pluginManager))
 
-
-
-
-
-// All these extra newlines should break the lint part of tests.
-
 const render = Component => {
   ReactDOM.render(
     <Provider store={store}>
