@@ -1,6 +1,6 @@
-const LOCAL_STORAGE_NAMESPACE = 'pf9'
+export const LOCAL_STORAGE_NAMESPACE = 'pf9'
 
-const getInstance = () => {
+export const getInstance = () => {
   const json = localStorage.getItem(LOCAL_STORAGE_NAMESPACE) || '{}'
   return JSON.parse(json)
 }

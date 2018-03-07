@@ -35,6 +35,9 @@ describe('registry', () => {
       password: 'secret',
     }
     registry.setupFromConfig(config)
+    const instance = registry.getInstance()
+    expect(instance.username).toEqual(config.username)
+    expect(instance.password).toEqual(config.password)
     expect(registry.getInstance()).toEqual(config)
   })
 })

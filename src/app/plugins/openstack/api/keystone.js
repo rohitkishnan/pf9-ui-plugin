@@ -1,8 +1,25 @@
 import http from '../../../util/http'
-// import registry from '../../../util/registry'
+
+export const constructTokenBody = method => (tenantId, unscopedToken) => ({
+  auth: {
+    identity: {
+      methods: [method],
+      [method]: { id: unscopedToken },
+    },
+    scope: { project: { id: tenantId } }
+  }
+})
 
 const v3Base = '/keystone/v3'
 const authHttp = http.authenticated.openstack
+
+export const constructPasswordMethod = (username, password) => ({
+  user: {
+    name: username,
+    domain: { id: 'default' },
+    password
+  }
+})
 
 export async function getUnscopedToken (username, password) {
   const body = {
@@ -10,11 +27,7 @@ export async function getUnscopedToken (username, password) {
       identity: {
         methods: ['password'],
         password: {
-          user: {
-            name: username,
-            domain: { id: 'default' },
-            password: password
-          }
+          ...constructPasswordMethod(username, password)
         }
       }
     }
@@ -23,7 +36,19 @@ export async function getUnscopedToken (username, password) {
   return response.headers.get('X-Subject-Token')
 }
 
-export const getScopedProjects = () => authHttp.get('/auth/projects')
+export const getScopedProjects = () => authHttp.get(`${v3Base}/auth/projects`).then(body => body.projects)
+
+/*
+export const getScopedToken = tenantId => {
+  const body = constructTokenBody('token')(tenantId, unscopedToken)
+  const response = await bareHttp.postReq('/auth/tokens?nocatalog', body)
+  const scopedToken = response.headers.get('x-subject-token')
+  return {
+    scopedToken,
+    token: response.token // token = { user, roles }
+  }
+}
+*/
 
 /*
 import {
@@ -41,15 +66,6 @@ const v3 = unscopedToken => makeApi(authOpenstackHttp(unscopedToken), '/keystone
 const admin = makeApi(authOpenstackHttp, '/keystone_admin/v2.0') // adminUrl
 
 const constructUrlQuery = (...parts) => parts.join('&')
-const constructTokenBody = method => (tenantId, unscopedToken) => ({
-  auth: {
-    identity: {
-      methods: [method],
-      [method]: { id: unscopedToken },
-    },
-    scope: { project: { id: tenantId } }
-  }
-})
 
 let endpointsPromise
 

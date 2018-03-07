@@ -35,6 +35,7 @@ const Session = (keystone = Keystone, mocks = {}) => {
 
   const getTenants = unscopedToken => keystone.getScopedProjects()
   const tenantStorageKey = username => `last-tenant-accessed-${username}`
+  /* istanbul ignore next */
   const getLastTenant = username => getStorage(tenantStorageKey) || 'service'
   const setLastTenant = (username, tenant) => ctx.setStorage(tenantStorageKey(username), tenant)
 

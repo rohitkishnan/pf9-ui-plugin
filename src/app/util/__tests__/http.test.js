@@ -37,7 +37,7 @@ describe('http', () => {
   describe('authenticated', () => {
     describe('get', () => {
       it('should have the x-auth-token set in the request header', async () => {
-        const mockedFetch = jest.fn()
+        const mockedFetch = jest.fn().mockResolvedValue({ json: () => Promise.resolve(null) })
         global.fetch = mockedFetch
         registry.setItem('token', 'secretToken')
         await http.authenticated.openstack.get('http://somewhere.com')

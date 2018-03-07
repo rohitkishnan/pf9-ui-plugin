@@ -7,6 +7,8 @@ const urlWithHost = url => {
   return `${host}${url}`
 }
 
+const authTokenHeader = () => ({ 'X-Auth-Token': registry.getInstance().token })
+
 const http = {
   bare: {},
 
@@ -26,14 +28,13 @@ const http = {
   authenticated: {
     openstack: {
       get (url) {
-        const { token } = registry.getInstance()
         const params = {
           method: 'GET',
           headers: {
-            'X-Auth-Token': token,
+            ...authTokenHeader()
           }
         }
-        return fetch(urlWithHost(url), params)
+        return fetch(urlWithHost(url), params).then(x => x.json())
       }
     }
   }

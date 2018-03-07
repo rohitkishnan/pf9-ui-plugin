@@ -6,6 +6,7 @@ const registry = require('../../src/app/util/registry')
 const keystone = require('../../src/app/plugins/openstack/api/keystone')
 const {
   getUnscopedToken,
+  getScopedProjects,
 } = keystone
 
 describe('keystone', () => {
@@ -13,25 +14,11 @@ describe('keystone', () => {
     registry.setupFromConfig(config)
   })
 
-  describe('setup config variables', () => {
-    it('should have the host set', () => {
-      expect(registry.getItem('host')).toBeDefined()
-    })
-
-    it('should have the username set', () => {
-      expect(registry.getItem('username')).toBeDefined()
-    })
-
-    it('should have the password set', () => {
-      expect(registry.getItem('password')).toBeDefined()
-    })
-  })
-
   describe('getUnscopedToken', () => {
     it('it returns the correct token', async () => {
       const { username, password } = registry.getInstance()
       const token = await getUnscopedToken(username, password)
-      expect(token).toBeDefined()
+      expect(token.length).toBeGreaterThan(5)
     })
 
     it('it returns null when there is an invalid login', async () => {
@@ -39,6 +26,21 @@ describe('keystone', () => {
       const password = 'bad-password'
       const token = await getUnscopedToken(username, password)
       expect(token).toBeNull()
+    })
+  })
+
+  describe('when authenticated', () => {
+    beforeAll(async () => {
+      const { username, password } = registry.getInstance()
+      const token = await getUnscopedToken(username, password)
+      registry.setItem('token', token)
+    })
+
+    describe('getScopedProjects', () => {
+      it('gets a list of tenants', async () => {
+        const tenants = await getScopedProjects()
+        expect(tenants.length).toBeGreaterThan(0)
+      })
     })
   })
 })

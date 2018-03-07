@@ -3,6 +3,7 @@ import {
   clearAll,
   getStorage,
   setStorage,
+  LOCAL_STORAGE_NAMESPACE,
 } from '../pf9-storage'
 
 let originalLocalStorage = global.localStorage
@@ -29,6 +30,8 @@ describe('pf9Storage', () => {
   it('setStorage', () => {
     setStorage('test', 'value')
     expect(getStorage('test')).toEqual('value')
+    const json = localStorage.getItem(LOCAL_STORAGE_NAMESPACE)
+    expect(JSON.parse(json).test).toEqual('value')
   })
 
   it('getStorage', () => {
