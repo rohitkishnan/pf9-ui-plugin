@@ -106,16 +106,40 @@ describe('keystone api', () => {
     })
   })
 
-  // Not implemented yet
-  describe.skip('getScopedToken', () => {
-    it('uses the existing unscopedToken to get a token scoped to a tenant', async () => {
+  describe('getScopedToken', () => {
+    let mockedFetch
+    const mockScopedTokenResponseBody = {
+      auth: {
+        identity: {
+          methods: ['token'],
+          token: { id: 'secretScopedToken' }
+        },
+        scope: {
+          project: { id: 'abc123' }
+        }
+      }
+    }
+
+    beforeEach(() => {
       registry.setItem('token', 'secretUnscopedToken')
-      const mockedFetch = jest.fn(() => mockResponse())
+      const mockedResponse = mockResponse({
+        ...mockScopedTokenResponseBody,
+        headers: { 'x-subject-token': 'secretScopedToken' }
+      })
+      mockedFetch = jest.fn(() => mockedResponse)
       global.fetch = mockedFetch
+    })
+
+    it('uses the existing unscopedToken to get a token scoped to a tenant', async () => {
       await getScopedToken('serviceTenantId')
+      const params = mockedFetch.mock.calls[0][1]
+      const requestBody = JSON.parse(params.body)
+      expect(requestBody.auth.identity.token.id).toEqual('secretUnscopedToken')
     })
 
     it('returns a different X-Subject-Token that is scoped to a tenant', async () => {
+      const response = await getScopedToken('serviceTenantId')
+      expect(response).toEqual({ scopedToken: 'secretScopedToken' })
     })
   })
 })

@@ -1,4 +1,5 @@
 import http from '../../../util/http'
+import * as registry from '../../../util/registry'
 
 export const constructTokenBody = method => (tenantId, unscopedToken) => ({
   auth: {
@@ -38,17 +39,19 @@ export async function getUnscopedToken (username, password) {
 
 export const getScopedProjects = () => authHttp.get(`${v3Base}/auth/projects`).then(body => body.projects)
 
-/*
-export const getScopedToken = tenantId => {
+export const getToken = () => registry.getItem('token')
+
+export const getScopedToken = async tenantId => {
+  const unscopedToken = getToken()
   const body = constructTokenBody('token')(tenantId, unscopedToken)
-  const response = await bareHttp.postReq('/auth/tokens?nocatalog', body)
+  const response = await http.json.post(`${v3Base}/auth/tokens?nocatalog`, body, { 'x-auth-token': unscopedToken })
+  const responseBody = await response.json()
   const scopedToken = response.headers.get('x-subject-token')
   return {
     scopedToken,
-    token: response.token // token = { user, roles }
+    token: responseBody.token // token = { user, roles }
   }
 }
-*/
 
 /*
 import {

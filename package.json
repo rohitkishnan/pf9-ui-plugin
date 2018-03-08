@@ -61,7 +61,7 @@
     "test": "npm run lint && npm run test:unit",
     "lint": "./node_modules/.bin/eslint src",
     "test:unit": "jest --coverage src",
-    "test:unit:watch": "jest --watch --coverage --testPathIgnorePatterns e2e-tests",
+    "test:unit:watch": "jest --watch --coverage src",
     "test:integration": "jest integration-tests/",
     "test:e2e": "jest -i e2e-tests/"
   },

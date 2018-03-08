@@ -18,6 +18,7 @@ describe('http', () => {
           method: 'POST',
           body: JSON.stringify(body),
           headers: {
+            'Accept': 'application/json',
             'Content-Type': 'application/json'
           }
         }
@@ -48,6 +49,31 @@ describe('http', () => {
           }
         }
         expect(mockedFetch).toHaveBeenCalledWith('http://somewhere.com', expectedBody)
+      })
+    })
+
+    describe('post', () => {
+      it('should use JSON in the request', async () => {
+        const body = { foo: 'bar' }
+        const mockedFetch = jest.fn().mockResolvedValue({ json: () => Promise.resolve(body) })
+        global.fetch = mockedFetch
+        await http.authenticated.openstack.post('http://somewhere.com', body)
+        const expectedResponse = {
+          method: 'POST',
+          body: JSON.stringify(body),
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-Auth-Token': 'secretToken',
+          }
+        }
+        expect(mockedFetch).toHaveBeenCalledWith('http://somewhere.com', expectedResponse)
+      })
+
+      it('should return the JSON body directly', async () => {
+        fetch.mockResponseOnce(JSON.stringify({ foo: 'bar' }))
+        const response = await http.authenticated.openstack.post('http://somewhere.com', { foo: 'ignore-me' })
+        expect(response).toEqual({ foo: 'bar' })
       })
     })
   })
