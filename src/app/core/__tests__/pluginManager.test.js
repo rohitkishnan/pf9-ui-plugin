@@ -46,4 +46,16 @@ describe('pluginManager', () => {
     expect(pluginManager.getNavItems().length).toEqual(0)
     expect(pluginManager.getRoutes().length).toEqual(0)
   })
+
+  test('getOptions', () => {
+    pluginManager.clearAll()
+    pluginManager.setOption('customPluginValue', 'foo')
+    expect(pluginManager.getOptions()).toMatchObject({ customPluginValue: 'foo' })
+  })
+
+  test('getOption', () => {
+    pluginManager.clearAll()
+    pluginManager.setOption('customPluginValue', 'foo')
+    expect(pluginManager.getOption('customPluginValue')).toEqual('foo')
+  })
 })

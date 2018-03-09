@@ -1,9 +1,12 @@
-import { mockResponse } from '../../util/testUtils'
+import {
+  jestMockResponse,
+  lastCall,
+} from '../../util/testUtils'
 
 import {
-  // getScopedProjects,
   constructPasswordMethod,
   constructTokenBody,
+  getRegions,
   getScopedProjects,
   getScopedToken,
   getUnscopedToken,
@@ -50,28 +53,23 @@ describe('keystone api', () => {
 
   describe('getUnscopedToken', () => {
     it('uses the username and password in the request', async () => {
-      const mockedFetch = jest.fn(() => mockResponse())
+      const mockedFetch = jestMockResponse()
       global.fetch = mockedFetch
       await getUnscopedToken('pf9@platform9.com', 'secret')
-      const [ url, params ] = mockedFetch.mock.calls[0]
+      const [ url, params ] = lastCall(mockedFetch)
       const body = JSON.parse(params.body)
       expect(url).toEqual('/keystone/v3/auth/tokens?nocatalog')
-      expect(body.auth.identity.password.user.name).toEqual('pf9@platform9.com')
-      expect(body.auth.identity.password.user.password).toEqual('secret')
+      expect(body.auth.identity.password.user).toMatchObject({ name: 'pf9@platform9.com', password: 'secret' })
     })
 
     it('returns the X-Subject-Token when the password is correct', async () => {
-      global.fetch = jest.fn(() =>
-        mockResponse({ headers: { 'X-Subject-Token': 'secretToken' } })
-      )
+      global.fetch = jestMockResponse({ headers: { 'X-Subject-Token': 'secretToken' } })
       const unscopedToken = await getUnscopedToken('pf9@platform9.com', 'secret')
       expect(unscopedToken).toEqual('secretToken')
     })
 
     it('returns the X-Subject-Token to be null when the password is bad', async () => {
-      global.fetch = jest.fn(() =>
-        mockResponse({ headers: {} })
-      )
+      global.fetch = jestMockResponse({ headers: {} })
       const unscopedToken = await getUnscopedToken('pf9@platform9.com', 'badPassword')
       expect(unscopedToken).toBeFalsy()
     })
@@ -85,7 +83,7 @@ describe('keystone api', () => {
 
     beforeEach(() => {
       registry.setItem('token', 'secretUnscopedToken')
-      mockedFetch = jest.fn(() => mockResponse({ projects: mockedTenants }))
+      mockedFetch = jestMockResponse({ projects: mockedTenants })
       global.fetch = mockedFetch
     })
 
@@ -122,11 +120,10 @@ describe('keystone api', () => {
 
     beforeEach(() => {
       registry.setItem('token', 'secretUnscopedToken')
-      const mockedResponse = mockResponse({
+      mockedFetch = jestMockResponse({
         ...mockScopedTokenResponseBody,
         headers: { 'x-subject-token': 'secretScopedToken' }
       })
-      mockedFetch = jest.fn(() => mockedResponse)
       global.fetch = mockedFetch
     })
 
@@ -140,6 +137,25 @@ describe('keystone api', () => {
     it('returns a different X-Subject-Token that is scoped to a tenant', async () => {
       const response = await getScopedToken('serviceTenantId')
       expect(response).toEqual({ scopedToken: 'secretScopedToken' })
+    })
+  })
+
+  describe('getRegions', () => {
+    let mockedFetch
+    beforeEach(() => {
+      registry.setItem('token', 'secretScopedToken')
+      mockedFetch = jestMockResponse({ regions: [] })
+      global.fetch = mockedFetch
+    })
+
+    it('should be authenticated', async () => {
+      await getRegions()
+      expect(lastCall(mockedFetch)[1].headers['X-Auth-Token']).toEqual('secretScopedToken')
+    })
+
+    it('should hit the regions endpoint', async () => {
+      await getRegions()
+      expect(lastCall(mockedFetch)[0]).toEqual('/keystone/v3/regions')
     })
   })
 })

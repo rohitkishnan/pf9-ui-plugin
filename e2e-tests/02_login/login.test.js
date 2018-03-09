@@ -28,6 +28,7 @@ describe.skip('login', () => {
     })
 
     it('should show an error when the user uses bad credentials')
+
     it('should redirect to the dashboard when the user enters valid credentials')
   })
 })

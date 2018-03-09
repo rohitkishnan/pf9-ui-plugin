@@ -1,5 +1,6 @@
 import http from '../../../util/http'
 import * as registry from '../../../util/registry'
+import { pluck } from '../../../util/fp'
 
 export const constructTokenBody = method => (tenantId, unscopedToken) => ({
   auth: {
@@ -37,7 +38,7 @@ export async function getUnscopedToken (username, password) {
   return response.headers.get('X-Subject-Token')
 }
 
-export const getScopedProjects = () => authHttp.get(`${v3Base}/auth/projects`).then(body => body.projects)
+export const getScopedProjects = () => authHttp.get(`${v3Base}/auth/projects`).then(pluck('projects'))
 
 export const getToken = () => registry.getItem('token')
 
@@ -52,6 +53,8 @@ export const getScopedToken = async tenantId => {
     token: responseBody.token // token = { user, roles }
   }
 }
+
+export const getRegions = () => authHttp.get(`${v3Base}/regions`).then(pluck('regions'))
 
 /*
 import {
