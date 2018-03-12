@@ -1,7 +1,11 @@
 import React from 'react'
+import { combineReducers } from 'redux'
+
 import LoginPage from './components/LoginPage'
 import TenantsPage from './components/TenantsPage'
 import DashboardPage from './components/DashboardPage'
+
+import loginReducer from './reducers/login'
 
 class OpenStack extends React.Component {
   render () {
@@ -10,6 +14,8 @@ class OpenStack extends React.Component {
     )
   }
 }
+
+OpenStack.__name__ = 'openstack'
 
 OpenStack.registerPlugin = pluginManager => {
   pluginManager.registerRoutes(
@@ -41,5 +47,9 @@ OpenStack.registerPlugin = pluginManager => {
     },
   )
 }
+
+OpenStack.reducer = combineReducers({
+  login: loginReducer,
+})
 
 export default OpenStack

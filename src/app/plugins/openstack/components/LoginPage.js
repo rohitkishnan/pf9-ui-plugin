@@ -4,8 +4,12 @@ import Button from 'material-ui/Button'
 import Session from '../actions/session'
 
 function mapStateToProps (state, ownProps) {
+  const { login } = state.openstack
+  const { startLogin, loginSucceeded, loginFailed } = login
   return {
-    errors: (state.errors && state.errors.login) || []
+    startLogin,
+    loginSucceeded,
+    loginFailed,
   }
 }
 
@@ -26,16 +30,13 @@ export class LoginPage extends React.Component {
     dispatch(session.signIn({ username, password }))
   }
 
-  renderErrors = () => {
-    const { errors } = this.props
-    if (errors.length === 0) {
-      return null
-    }
+  renderStatus = () => {
+    const { startLogin, loginSucceeded, loginFailed } = this.props
     return (
       <div className="error-message">
-        {errors.map((error, idx) => (
-          <div key={idx} className="error-message">{error}</div>
-        ))}
+        {startLogin && <div className="login-start">Attempting login...</div>}
+        {loginSucceeded && <div className="login-succeeded">Successfully logged in.</div>}
+        {loginFailed && <div className="login-failed">Login attempt failed.</div>}
       </div>
     )
   }
@@ -57,7 +58,7 @@ export class LoginPage extends React.Component {
     return (
       <div className="login-page">
         {this.renderHeader()}
-        {this.renderErrors()}
+        {this.renderStatus()}
         <h2>Please sign in</h2>
         <div><input type="text" value={username} onChange={this.updateValue('username')} /></div>
         <div><input type="password" value={password} onChange={this.updateValue('password')} /></div>

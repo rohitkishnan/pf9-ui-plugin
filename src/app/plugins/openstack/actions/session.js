@@ -1,13 +1,19 @@
 import * as Keystone from '../api/keystone'
 import * as registry from '../../../util/registry'
 
+import {
+  startLogin,
+  loginSucceeded,
+  loginFailed,
+} from './login'
+
 import { getStorage, setStorage } from '../../../core/common/pf9-storage'
 
 // redux flux actions
-const setTenants = tenants => ({ type: 'SET_TENANTS', payload: tenants })
-const setToken = token => { registry.setItem('token', token) }
-const setUnscopedToken = token => { registry.setItem('unscopedToken', token) }
-const setUsername = username => { registry.setItem('username', username) }
+export const setTenants = tenants => ({ type: 'SET_TENANTS', payload: tenants })
+export const setToken = token => { registry.setItem('token', token) }
+export const setUnscopedToken = token => { registry.setItem('unscopedToken', token) }
+export const setUsername = username => { registry.setItem('username', username) }
 
 export const setCurrentSession = ({ tenant, user, scopedToken, roles }) => {
   return { type: 'SET_CURRENT_SESSION', payload: { tenant, user, scopedToken, roles } }
@@ -44,15 +50,19 @@ const Session = (keystone = Keystone, mocks = {}) => {
   const setLastRegion = (username, tenant) => ctx.setStorage(regionStorageKey(username), tenant)
 
   const signIn = ({ username, password, mfa }) => async dispatch => {
+    dispatch(startLogin())
     // Authenticate the user
     const unscopedToken = await ctx.authenticate({ username, password, mfa })
     if (!unscopedToken) {
+      dispatch(loginFailed())
       return
     }
 
     ctx.setUnscopedToken(unscopedToken)
     ctx.setToken(unscopedToken)
     ctx.setUsername(username)
+
+    dispatch(loginSucceeded())
 
     // Figure out and set the default tenant based on previous usage.
     const tenants = await keystone.getScopedProjects()
