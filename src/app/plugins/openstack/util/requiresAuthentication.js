@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom'
 
 // Wraps a component class to make it require authentication.
 const requiresAuthentication = WrappedComponent => {
-  const mapState = state => ({ session: state.session })
+  const mapState = state => ({ session: state.openstack.session })
 
   return (
     @withRouter

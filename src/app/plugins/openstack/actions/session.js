@@ -15,9 +15,10 @@ export const setToken = token => { registry.setItem('token', token) }
 export const setUnscopedToken = token => { registry.setItem('unscopedToken', token) }
 export const setUsername = username => { registry.setItem('username', username) }
 
-export const setCurrentSession = ({ tenant, user, scopedToken, roles }) => {
-  return { type: 'SET_CURRENT_SESSION', payload: { tenant, user, scopedToken, roles } }
-}
+export const SET_CURRENT_SESSION = 'SET_CURRENT_SESSION'
+
+export const setCurrentSession = ({ tenant, user, scopedToken, roles }) =>
+  ({ type: SET_CURRENT_SESSION, payload: { tenant, user, scopedToken, roles } })
 
 // Figure out which tenant to make the current tenant
 export const getPreferredTenant = (tenants, lastTenant) => {
@@ -55,7 +56,7 @@ const Session = (keystone = Keystone, mocks = {}) => {
     const unscopedToken = await ctx.authenticate({ username, password, mfa })
     if (!unscopedToken) {
       dispatch(loginFailed())
-      return
+      return false
     }
 
     ctx.setUnscopedToken(unscopedToken)
@@ -88,6 +89,8 @@ const Session = (keystone = Keystone, mocks = {}) => {
       username,
     }))
     dispatch(ctx.setTenants(tenants))
+
+    return true
   }
 
   ctx = {

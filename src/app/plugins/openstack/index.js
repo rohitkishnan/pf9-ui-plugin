@@ -6,6 +6,7 @@ import TenantsPage from './components/TenantsPage'
 import DashboardPage from './components/DashboardPage'
 
 import loginReducer from './reducers/login'
+import sessionReducer from './reducers/session'
 
 class OpenStack extends React.Component {
   render () {
@@ -50,6 +51,7 @@ OpenStack.registerPlugin = pluginManager => {
 
 OpenStack.reducer = combineReducers({
   login: loginReducer,
+  session: sessionReducer,
 })
 
 export default OpenStack

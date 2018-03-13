@@ -2,6 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Button from 'material-ui/Button'
 import Session from '../actions/session'
+import { withRouter } from 'react-router'
 
 function mapStateToProps (state, ownProps) {
   const { login } = state.openstack
@@ -23,20 +24,25 @@ export class LoginPage extends React.Component {
     this.setState({ [key]: event.target.value })
   }
 
-  performLogin = () => {
+  performLogin = async () => {
     const { username, password } = this.state
-    const { dispatch } = this.props
+    const { dispatch, history } = this.props
     const session = Session()
-    dispatch(session.signIn({ username, password }))
+    const loginSuccessful = await dispatch(session.signIn({ username, password }))
+    if (loginSuccessful) {
+      console.log('redirecting')
+      // redirect to the dashboard page on successful login
+      history.push('/')
+    }
   }
 
   renderStatus = () => {
     const { startLogin, loginSucceeded, loginFailed } = this.props
     return (
-      <div className="error-message">
+      <div className="login-status">
         {startLogin && <div className="login-start">Attempting login...</div>}
-        {loginSucceeded && <div className="login-succeeded">Successfully logged in.</div>}
-        {loginFailed && <div className="login-failed">Login attempt failed.</div>}
+        {loginSucceeded && <div className="login-succeeded login-result">Successfully logged in.</div>}
+        {loginFailed && <div className="login-failed login-result">Login attempt failed.</div>}
       </div>
     )
   }
@@ -60,13 +66,13 @@ export class LoginPage extends React.Component {
         {this.renderHeader()}
         {this.renderStatus()}
         <h2>Please sign in</h2>
-        <div><input type="text" value={username} onChange={this.updateValue('username')} /></div>
-        <div><input type="password" value={password} onChange={this.updateValue('password')} /></div>
-        <div><Button color="primary" variant="raised" onClick={this.performLogin}>Log in</Button></div>
+        <div><input className="login-username" type="text" value={username} onChange={this.updateValue('username')} /></div>
+        <div><input className="login-password" type="password" value={password} onChange={this.updateValue('password')} /></div>
+        <div><Button className="login-submit" color="primary" variant="raised" onClick={this.performLogin}>Log in</Button></div>
         {this.renderFooter()}
       </div>
     )
   }
 }
 
-export default connect(mapStateToProps)(LoginPage)
+export default withRouter(connect(mapStateToProps)(LoginPage))
