@@ -4,6 +4,7 @@
   "description": "Platform9 UI",
   "main": "src/app/index.js",
   "dependencies": {
+    "history": "^4.7.2",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.5",
     "material-ui": "^1.0.0-beta.32",
@@ -16,7 +17,8 @@
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "redux": "^3.7.2",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "uuid": "^3.2.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -61,7 +63,7 @@
     "test": "npm run lint && npm run test:unit",
     "lint": "./node_modules/.bin/eslint src",
     "test:unit": "jest --coverage src",
-    "test:unit:watch": "jest --watch --coverage --testPathIgnorePatterns e2e-tests",
+    "test:unit:watch": "jest --watch --coverage src",
     "test:integration": "jest integration-tests/",
     "test:e2e": "jest -i e2e-tests/"
   },

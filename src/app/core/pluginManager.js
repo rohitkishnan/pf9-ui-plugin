@@ -1,7 +1,14 @@
+const defaultOptions = {
+  showFooter: false,
+  showNavMenu: false,
+  showSidebar: false,
+}
+
 let data = {
   pluginList: [],
   routes: [],
   navItems: [],
+  options: { ...defaultOptions },
 }
 
 const pluginManager = {
@@ -9,6 +16,7 @@ const pluginManager = {
     data.pluginList = []
     data.routes = []
     data.navItems = []
+    data.options = { ...defaultOptions }
   },
 
   registerRoutes (...components) {
@@ -27,6 +35,18 @@ const pluginManager = {
 
   getNavItems () {
     return data.navItems
+  },
+
+  getOptions () {
+    return data.options
+  },
+
+  getOption (key) {
+    return data.options[key]
+  },
+
+  setOption (key, value) {
+    data.options[key] = value
   },
 }
 

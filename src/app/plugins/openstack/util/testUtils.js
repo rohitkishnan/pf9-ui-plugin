@@ -10,6 +10,8 @@ export function mockResponse (params = {}) {
   })
 }
 
+export const jestMockResponse = (params) => jest.fn(() => mockResponse(params))
+
 export const lastCall = fn => fn.mock.calls[fn.mock.calls.length - 1]
 
 export const mockDispatch = jest.fn(identity)

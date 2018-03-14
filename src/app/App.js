@@ -22,19 +22,35 @@ class App extends React.Component {
     })
 
     const { pluginManager } = this.context
+    const options = pluginManager.getOptions()
+    const { showNavMenu, showSidebar, showFooter } = options
+
+    const renderNavMenu = () => (
+      <div id="nav-menu">
+        <ul>
+          {pluginManager.getNavItems().map(navItem => <li key={navItem.name}><Link to={navItem.link.path}>{navItem.name}</Link></li>)}
+        </ul>
+      </div>
+    )
+
+    const renderSidebar = () => (
+      <div id="main-sidebar">
+        TODO: Sidebar
+      </div>
+    )
+
+    const renderFooter = () => (
+      <div id="main-footer">
+        TODO: Footer
+      </div>
+    )
 
     return (
       <Router>
         <MuiThemeProvider theme={theme}>
           <div id="main-container">
-            <div id="nav-menu">
-              <ul>
-                {pluginManager.getNavItems().map(navItem => <li key={navItem.name}><Link to={navItem.link.path}>{navItem.name}</Link></li>)}
-              </ul>
-            </div>
-            <div id="main-sidebar">
-              TODO: Sidebar
-            </div>
+            {showNavMenu && renderNavMenu()}
+            {showSidebar && renderSidebar()}
             <div id="main-content">
               <Switch>
                 {pluginManager.getRoutes().map(route => {
@@ -44,9 +60,7 @@ class App extends React.Component {
                 })}
               </Switch>
             </div>
-            <div id="main-footer">
-              TODO: Footer
-            </div>
+            {showFooter && renderFooter()}
           </div>
         </MuiThemeProvider>
       </Router>

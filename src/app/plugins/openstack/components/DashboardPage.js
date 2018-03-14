@@ -11,7 +11,9 @@ function mapStateToProps (state, ownProps) {
 class Dashboard extends React.Component {
   render () {
     return (
-      <h1>This is the dashboard page</h1>
+      <div className="dashboard-page">
+        <h1>This is the dashboard page</h1>
+      </div>
     )
   }
 }

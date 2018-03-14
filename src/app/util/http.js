@@ -7,16 +7,23 @@ const urlWithHost = url => {
   return `${host}${url}`
 }
 
+const authTokenHeader = () => ({ 'X-Auth-Token': registry.getInstance().token })
+const jsonHeaders = () => ({
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+})
+
 const http = {
   bare: {},
 
   json: {
-    post (url, body) {
+    post (url, body, additionalHeaders = {}) {
       const params = {
         method: 'POST',
         body: JSON.stringify(body),
         headers: {
-          'Content-Type': 'application/json',
+          ...jsonHeaders(),
+          ...additionalHeaders,
         }
       }
       return fetch(urlWithHost(url), params)
@@ -26,14 +33,25 @@ const http = {
   authenticated: {
     openstack: {
       get (url) {
-        const { token } = registry.getInstance()
         const params = {
           method: 'GET',
           headers: {
-            'X-Auth-Token': token,
+            ...authTokenHeader()
           }
         }
-        return fetch(urlWithHost(url), params)
+        return fetch(urlWithHost(url), params).then(x => x.json())
+      },
+
+      post (url, body) {
+        const params = {
+          method: 'POST',
+          headers: {
+            ...authTokenHeader(),
+            ...jsonHeaders(),
+          },
+          body: JSON.stringify(body),
+        }
+        return fetch(urlWithHost(url), params).then(x => x.json())
       }
     }
   }
