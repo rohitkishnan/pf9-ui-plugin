@@ -71,7 +71,8 @@ const Session = (keystone = Keystone, mocks = {}) => {
     const tenant = ctx.getPreferredTenant(tenants, lastTenant)
     setLastTenant(username, tenant.name)
     const response = await keystone.getScopedToken(tenant.id, unscopedToken)
-    const { token: { user, roles }, scopedToken } = response
+    const { token, scopedToken } = response
+    const { user, roles } = token
 
     // TODO: Do we need to do this at login time?  Can we push it to a component further down?
     const regions = await keystone.getRegions(unscopedToken)

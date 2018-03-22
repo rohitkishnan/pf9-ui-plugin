@@ -3,7 +3,7 @@ require('isomorphic-fetch')
 const registry = require('./registry')
 
 const urlWithHost = url => {
-  const host = registry.getItem('host') || ''
+  const host = registry.getItem('apiHost') || ''
   return `${host}${url}`
 }
 
