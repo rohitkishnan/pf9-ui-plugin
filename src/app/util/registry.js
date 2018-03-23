@@ -11,6 +11,7 @@ export const setupFromConfig = config => {
   registry.host = config.host
   registry.username = config.username
   registry.password = config.password
+  registry.apiHost = config.apiHost
 }
 
 export const clearAll = () => {

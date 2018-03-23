@@ -4,11 +4,13 @@
   "description": "Platform9 UI",
   "main": "src/app/index.js",
   "dependencies": {
+    "cors": "^2.8.4",
     "history": "^4.7.2",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.17.5",
     "material-ui": "^1.0.0-beta.32",
     "material-ui-icons": "^1.0.0-beta.17",
+    "npm": "^5.7.1",
     "prop-types": "^15.6.0",
     "puppeteer": "^1.1.0",
     "react": "^16.2.0",
@@ -60,12 +62,14 @@
   "scripts": {
     "start": "./node_modules/.bin/babel-node src/server/server.js",
     "build": "./node_modules/.bin/webpack",
+    "dev": "NODE_ENV=development npm start",
+    "sim": "./node_modules/.bin/babel-node src/openstack-simulator/main.js",
     "test": "npm run lint && npm run test:unit",
     "lint": "./node_modules/.bin/eslint src",
-    "test:unit": "jest --coverage src",
-    "test:unit:watch": "jest --watch --coverage src",
-    "test:integration": "jest integration-tests/",
-    "test:e2e": "jest -i e2e-tests/"
+    "test:unit": "NODE_ENV=test jest --coverage src",
+    "test:unit:watch": "NODE_ENV=test jest --watch --coverage src",
+    "test:integration": "NODE_ENV=test jest integration-tests/",
+    "test:e2e": "NODE_ENV=test jest -i e2e-tests/"
   },
   "keywords": [
     "Platform9",
