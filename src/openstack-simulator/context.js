@@ -30,9 +30,6 @@ class Context {
 
     this.defaultQuota = { ...defaultQuota }
   }
-
-  getTokenById = tokenId => this.tokens.find(token => token.id === tokenId)
-  isValidToken = tokenId => !!this.getTokenById(tokenId)
 }
 
 const context = new Context()

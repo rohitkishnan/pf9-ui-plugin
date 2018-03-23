@@ -22,6 +22,8 @@ class Role extends ActiveModel {
     const json = {
       ...super.asJson(),
       name: this.name,
+      description: this.description,
+      displayName: this.displayName,
     }
     return json
   }
