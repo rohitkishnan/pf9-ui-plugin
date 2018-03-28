@@ -1,6 +1,7 @@
 import React from 'react'
 import requiresAuthentication from '../util/requiresAuthentication'
 import { connect } from 'react-redux'
+import { fetchUsers } from '../actions/users'
 
 import UsersListContainer from './users/UsersListContainer'
 
@@ -16,6 +17,12 @@ const Loader = () => <div>Loading...</div>
 @requiresAuthentication
 @connect(mapStateToProps)
 class UsersPage extends React.Component {
+  componentDidMount () {
+    // Load the users if they don't already exist
+    if (!this.props.usersLoaded) {
+      this.props.dispatch(fetchUsers())
+    }
+  }
   render () {
     const { usersLoaded } = this.props
     return (

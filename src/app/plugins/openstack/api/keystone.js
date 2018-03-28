@@ -1,6 +1,5 @@
 import http from '../../../util/http'
 import * as registry from '../../../util/registry'
-import { pluck } from '../../../util/fp'
 
 export const constructTokenBody = method => (tenantId, unscopedToken) => ({
   auth: {
@@ -38,7 +37,7 @@ export async function getUnscopedToken (username, password) {
   return response.headers.get('X-Subject-Token')
 }
 
-export const getScopedProjects = () => authHttp.get(`${v3Base}/auth/projects`).then(pluck('projects'))
+export const getScopedProjects = () => authHttp.get(`${v3Base}/auth/projects`).then(x => x.projects)
 
 export const getToken = () => registry.getItem('token')
 
@@ -54,7 +53,8 @@ export const getScopedToken = async tenantId => {
   }
 }
 
-export const getRegions = () => authHttp.get(`${v3Base}/regions`).then(pluck('regions'))
+export const getRegions = () => authHttp.get(`${v3Base}/regions`).then(x => x.regions)
+export const getUsers = () => authHttp.get(`${v3Base}/users`).then(x => x.users)
 
 /*
 import {
@@ -75,7 +75,6 @@ const constructUrlQuery = (...parts) => parts.join('&')
 
 let endpointsPromise
 
-export const getUsers = () => v3.getReq('/users')
 export const getUser = userId => v3.getReq(`/users/${userId}`)
 export const getTenants = () => admin.getReq('/PF9-KSADM/all_tenants_all_users')
 

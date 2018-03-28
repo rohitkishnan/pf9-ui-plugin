@@ -14,6 +14,7 @@ const options = {}
 
 const columns = [
   { id: 'name', label: 'Name' },
+  { id: 'username', label: 'Username' },
   { id: 'displayname', label: 'Display Name' },
   { id: 'email', label: 'E-mail' },
 ]
