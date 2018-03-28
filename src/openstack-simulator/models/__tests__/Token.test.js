@@ -1,4 +1,5 @@
 import Token from '../Token'
+import User from '../User'
 
 const UUID_STRING_LENGTH = 36
 
@@ -7,9 +8,18 @@ describe('Token', () => {
     Token.clearCollection()
   })
 
-  it('creates a token', () => {
-    const token = new Token()
-    expect(token).toBeDefined()
+  describe('constructor', () => {
+    it('creates a token', () => {
+      const token = new Token()
+      expect(token).toBeDefined()
+    })
+
+    it('extracts roles from the user object', () => {
+      const user = new User({ username: 'admin@platform9.com' })
+      const token = new Token({ user })
+      expect(token.user).toBeDefined()
+      expect(token.roles instanceof Array).toBe(true)
+    })
   })
 
   it('has an id by default', () => {
@@ -45,5 +55,13 @@ describe('Token', () => {
     expect(Token.validateToken(tokenId)).toMatchObject({ id: tokenId })
     token.destroy()
     expect(Token.validateToken(tokenId)).toBe(null)
+  })
+
+  describe('asJson', () => {
+    it('creates a JSON version of the Token', () => {
+      const token = new Token()
+      const json = token.asJson()
+      expect(Object.keys(json)).toEqual(['id', 'project', 'roles', 'user'])
+    })
   })
 })

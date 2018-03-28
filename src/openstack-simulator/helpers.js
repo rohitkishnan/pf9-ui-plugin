@@ -7,11 +7,13 @@ export const findById = arr => id => (typeof arr === 'function' ? arr() : arr).f
 
 export const pluck = key => obj => obj[key]
 
-export const mapAsJson = arr => (arr || []).map(x => x.asJson())
+export const ensureArray = maybeArr => (maybeArr && maybeArr instanceof Array) ? maybeArr : []
 
-export const jsonOrNull = obj => (obj && obj.asJson()) || null
+export const mapAsJson = arr => ensureArray(arr).map(x => (x.asJson && x.asJson()) || null)
 
-export const whitelistKeys = allowedKeys => obj => Object.keys().reduce(
+export const jsonOrNull = obj => (obj && obj.asJson && obj.asJson()) || null
+
+export const whitelistKeys = allowedKeys => obj => Object.keys(obj).reduce(
   (accum, key) => {
     if (allowedKeys.includes(key)) {
       accum[key] = obj[key]

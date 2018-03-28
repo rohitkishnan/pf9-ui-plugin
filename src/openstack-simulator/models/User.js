@@ -29,11 +29,6 @@ class User extends ActiveModel {
     return user.password === attemptedPassword ? user : null
   }
 
-  static createAdminUser = ({ username, password }) => {
-    const user = new User({ username, password })
-    return user
-  }
-
   // TODO
   getTenants = () => []
 
