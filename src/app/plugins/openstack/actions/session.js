@@ -7,10 +7,13 @@ import {
   loginFailed,
 } from './login'
 
+import {
+  setTenants,
+} from './tenants'
+
 import { getStorage, setStorage } from '../../../core/common/pf9-storage'
 
 // redux flux actions
-export const setTenants = tenants => ({ type: 'SET_TENANTS', payload: tenants })
 export const setToken = token => { registry.setItem('token', token) }
 export const setUnscopedToken = token => { registry.setItem('unscopedToken', token) }
 export const setUsername = username => { registry.setItem('username', username) }

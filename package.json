@@ -4,6 +4,7 @@
   "description": "Platform9 UI",
   "main": "src/app/index.js",
   "dependencies": {
+    "classnames": "^2.2.5",
     "cors": "^2.8.4",
     "history": "^4.7.2",
     "isomorphic-fetch": "^2.2.1",

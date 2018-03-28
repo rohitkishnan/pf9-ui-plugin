@@ -1,12 +1,15 @@
 import React from 'react'
 import { combineReducers } from 'redux'
 
+import DashboardPage from './components/DashboardPage'
 import LoginPage from './components/LoginPage'
 import TenantsPage from './components/TenantsPage'
-import DashboardPage from './components/DashboardPage'
+import UsersPage from './components/UsersPage'
 
 import loginReducer from './reducers/login'
 import sessionReducer from './reducers/session'
+import tenantsReducer from './reducers/tenants'
+import usersReducer from './reducers/users'
 
 class OpenStack extends React.Component {
   render () {
@@ -35,6 +38,11 @@ OpenStack.registerPlugin = pluginManager => {
       link: { path: '/tenants' },
       component: TenantsPage
     },
+    {
+      name: 'Users',
+      link: { path: '/users' },
+      component: UsersPage
+    },
   )
 
   pluginManager.registerNavItems(
@@ -46,12 +54,18 @@ OpenStack.registerPlugin = pluginManager => {
       name: 'Tenants',
       link: { path: '/tenants' }
     },
+    {
+      name: 'Users',
+      link: { path: '/users' }
+    },
   )
 }
 
 OpenStack.reducer = combineReducers({
   login: loginReducer,
   session: sessionReducer,
+  tenants: tenantsReducer,
+  users: usersReducer,
 })
 
 export default OpenStack

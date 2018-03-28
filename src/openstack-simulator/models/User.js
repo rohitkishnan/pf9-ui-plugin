@@ -7,11 +7,14 @@ const coll = () => context.users
 class User extends ActiveModel {
   constructor (params = {}) {
     super(params)
-    this.roles = params.roles || []
-    this.username = params.username
-    this.password = params.password
-    this.tenant = params.tenant
+    this.displayname = params.displayname || params.name || params.email || ''
+    this.email = params.email || ''
     this.mfa = params.mfa || false
+    this.password = params.password
+    this.roles = params.roles || []
+    this.tenant = params.tenant
+    this.username = params.username || ''
+    this.displayname = params.name || params.displayname || params.email || ''
   }
 
   static getCollection = coll
@@ -37,7 +40,10 @@ class User extends ActiveModel {
   asJson = () => {
     return {
       ...super.asJson(),
-      name: this.username,
+      displayname: this.displayName,
+      email: this.email,
+      name: this.name,
+      username: this.username,
     }
   }
 }
