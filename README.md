@@ -8,6 +8,28 @@ This is the new home for all things Platform9 UI related.
 `npm install`
 
 
+# OpenStack Simulator
+
+The OpenStack Simulator is used during UI tests to create a mock OpenStack
+API environment.  The simulator pretends to be OpenStack and expose API's
+that are equivalent.  It may not be 100% compatible but it should be
+enough for testing and development purposes.
+
+There are some presets that can be used to configure the initial OpenStack
+environment.
+
+
+# Storybook
+
+Storybook is used to create an isolated development environment and
+showcase the components.  This helps speed up development as we can control
+the data / props that are feed into the component.
+
+To see the Storybook just run:
+
+`npm run storybook`
+
+
 # Running tests
 
 We have several levels of testing: unit tests, integration tests, and end to
@@ -15,7 +37,7 @@ end tests (e2e).
 
 Unit tests and integration tests are run through jest.
 
-End to end tests are run through Mocha and the Selenium web driver.
+End to end tests are run through the Selenium web driver.
 
 If on Mac OS X, make sure to install the Selenium webdriver for chrome.  This
 can be done with:
@@ -72,6 +94,10 @@ These tests will run in Jest and Enzyme.
 
 
 ## End-To-End tests
+
+Currently we have an issue with tests not running in the correct order.  We may
+need to switch to Mocha instead of Jest if we can't find a way to force Jest to
+run tests in a specific order.
 
 To run them:
 
