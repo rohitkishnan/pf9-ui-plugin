@@ -1,18 +1,6 @@
-import context from '../context'
-import express from 'express'
-
-import Region from '../models/Region'
-import Tenant from '../models/Tenant'
-import Token from '../models/Token'
-import User from '../models/User'
-
-import { mapAsJson, notImplementedYet } from '../helpers' // eslint-disable-line no-unused-vars
-import { tokenValidator } from '../middleware'
-
-export const validateToken = authToken => {
-  const tokens = context.tokens || {}
-  return tokens[authToken]
-}
+import Tenant from '../../models/Tenant'
+import Token from '../../models/Token'
+import User from '../../models/User'
 
 const postToken = (req, res) => {
   const auth = req.body.auth
@@ -64,24 +52,4 @@ const postToken = (req, res) => {
   return sendAuthError()
 }
 
-const getProjects = (req, res) => {
-  const tenants = mapAsJson(Tenant.getCollection())
-  // TODO: need to filter this list by what the user is allowed to see
-  return res.send({ projects: tenants })
-}
-
-const getRegions = (req, res) => {
-  const regions = mapAsJson(Region.getCollection())
-  // TODO: need to filter this list by what the user is allowed to see
-  return res.send({ regions })
-}
-
-const router = express.Router()
-
-router.post('/v3/auth/tokens', postToken)
-router.get('/v3/regions', getRegions)
-
-// Everything past this point requires authentication
-router.get('/v3/auth/projects', tokenValidator, getProjects)
-
-export default router
+export default postToken

@@ -26,7 +26,7 @@ class App extends React.Component {
     const { showNavMenu, showSidebar, showFooter } = options
 
     const renderNavMenu = () => (
-      <div id="nav-menu">
+      <div id="_nav-menu">
         <ul>
           {pluginManager.getNavItems().map(navItem => <li key={navItem.name}><Link to={navItem.link.path}>{navItem.name}</Link></li>)}
         </ul>
@@ -34,13 +34,13 @@ class App extends React.Component {
     )
 
     const renderSidebar = () => (
-      <div id="main-sidebar">
+      <div id="_main-sidebar">
         TODO: Sidebar
       </div>
     )
 
     const renderFooter = () => (
-      <div id="main-footer">
+      <div id="_main-footer">
         TODO: Footer
       </div>
     )
@@ -48,10 +48,10 @@ class App extends React.Component {
     return (
       <Router>
         <MuiThemeProvider theme={theme}>
-          <div id="main-container">
+          <div id="_main-container">
             {showNavMenu && renderNavMenu()}
             {showSidebar && renderSidebar()}
-            <div id="main-content">
+            <div id="_main-content">
               <Switch>
                 {pluginManager.getRoutes().map(route => {
                   const { component, link } = route

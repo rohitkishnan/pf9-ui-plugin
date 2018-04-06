@@ -1,6 +1,6 @@
 const defaultOptions = {
   showFooter: false,
-  showNavMenu: false,
+  showNavMenu: true,
   showSidebar: false,
 }
 
