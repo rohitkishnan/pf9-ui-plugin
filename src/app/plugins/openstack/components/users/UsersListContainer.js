@@ -29,6 +29,7 @@ export class UsersListContainer extends React.Component {
         options={options}
         columns={columns}
         data={users}
+        addUrl="/users/add"
       />
     )
   }

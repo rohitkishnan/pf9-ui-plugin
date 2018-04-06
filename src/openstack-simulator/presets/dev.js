@@ -24,7 +24,7 @@ function loadPreset () {
   adminUser.addRole(adminRole)
 
   // Create a bunch of misc users
-  range(10).forEach(i => {
+  range(2).forEach(i => {
     let user = new User({ username: `user${i}@platform9.com`, password: 'secret', tenant: serviceTenant })
     user.addRole(memberRole)
   })

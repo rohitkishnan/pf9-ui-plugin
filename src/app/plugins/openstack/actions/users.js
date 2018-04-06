@@ -1,8 +1,22 @@
-import { getUsers } from '../api/keystone'
+import {
+  createUser,
+  getUsers,
+} from '../api/keystone'
 
+export const ADD_USER = 'ADD_USER'
 export const SET_USERS = 'SET_USERS'
 
-export const setUsers = users => ({ type: 'SET_USERS', payload: users })
+export const addUser = user => async dispatch => {
+  const userId = await createUser(user)
+
+  // Get the id of the newly created user
+  if (userId) {
+    user.id = userId
+    dispatch({ type: ADD_USER, payload: user })
+  }
+}
+
+export const setUsers = users => ({ type: SET_USERS, payload: users })
 
 export const fetchUsers = () => async dispatch => {
   const users = await getUsers()

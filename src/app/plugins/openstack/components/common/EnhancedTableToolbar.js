@@ -4,6 +4,8 @@ import PropTypes from 'prop-types'
 import Toolbar from 'material-ui/Toolbar'
 import Tooltip from 'material-ui/Tooltip'
 import Typography from 'material-ui/Typography'
+import Button from 'material-ui/Button'
+import AddIcon from 'material-ui-icons/Add'
 import IconButton from 'material-ui/IconButton'
 import DeleteIcon from 'material-ui-icons/Delete'
 import FilterListIcon from 'material-ui-icons/FilterList'
@@ -35,7 +37,7 @@ const toolbarStyles = theme => ({
   },
 })
 
-const EnhancedTableToolbar = ({ classes, numSelected, title }) => (
+const EnhancedTableToolbar = ({ classes, numSelected, title, onAdd }) => (
   <Toolbar
     className={classNames(classes.root, {
       [classes.highlight]: numSelected > 0,
@@ -59,11 +61,16 @@ const EnhancedTableToolbar = ({ classes, numSelected, title }) => (
           </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="Filter list">
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
+        <Toolbar>
+          <Tooltip title="Filter list">
+            <IconButton aria-label="Filter list">
+              <FilterListIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Add">
+            <Button color="primary" onClick={onAdd}><AddIcon /> Add</Button>
+          </Tooltip>
+        </Toolbar>
       )}
     </div>
   </Toolbar>
@@ -73,6 +80,7 @@ EnhancedTableToolbar.propTypes = {
   classes: PropTypes.object.isRequired,
   numSelected: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
+  onAdd: PropTypes.func,
 }
 
 export default withStyles(toolbarStyles)(EnhancedTableToolbar)

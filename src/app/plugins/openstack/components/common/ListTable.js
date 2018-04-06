@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
+import { withRouter } from 'react-router-dom'
 import Checkbox from 'material-ui/Checkbox'
 import Paper from 'material-ui/Paper'
 import Table, {
@@ -90,6 +91,13 @@ class ListTable extends React.Component {
 
   handleChangeRowsPerPage = event => this.setState({ rowsPerPage: event.target.value })
 
+  handleAdd = () => {
+    const { addUrl, history } = this.props
+    if (addUrl) {
+      history.push(addUrl)
+    }
+  }
+
   isSelected = id => this.state.selected.includes(id)
 
   paginate = data => {
@@ -176,7 +184,7 @@ class ListTable extends React.Component {
 
     return (
       <Paper className={classes.root}>
-        <EnhancedTableToolbar numSelected={selected.length} title={title} />
+        <EnhancedTableToolbar numSelected={selected.length} title={title} onAdd={this.handleAdd} />
         <div className={classes.tableWrapper}>
           <Table className={classes.table}>
             <EnhancedTableHead
@@ -209,6 +217,7 @@ ListTable.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   options: PropTypes.object,
   title: PropTypes.string.isRequired,
+  addUrl: PropTypes.string,
 }
 
 ListTable.defaultProps = {
@@ -217,4 +226,4 @@ ListTable.defaultProps = {
   options: {},
 }
 
-export default withStyles(styles)(ListTable)
+export default withRouter(withStyles(styles)(ListTable))

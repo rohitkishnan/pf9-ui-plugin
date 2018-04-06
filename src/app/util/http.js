@@ -52,6 +52,16 @@ const http = {
           body: JSON.stringify(body),
         }
         return fetch(urlWithHost(url), params).then(x => x.json())
+      },
+
+      delete (url) {
+        const params = {
+          method: 'DELETE',
+          headers: {
+            ...authTokenHeader(),
+          },
+        }
+        return fetch(urlWithHost(url), params)
       }
     }
   }

@@ -54,6 +54,21 @@ export const getScopedToken = async tenantId => {
 }
 
 export const getRegions = () => authHttp.get(`${v3Base}/regions`).then(x => x.regions)
+
+export const createUser = user => {
+  const body = {
+    user: {
+      name: user.name,
+      displayname: user.displayname || null,
+      email: user.name,
+      password: user.password,
+      default_project_id: 'TODO',
+    }
+  }
+  return authHttp.post(`${v3Base}/users`, body).then(json => json.user.id)
+}
+
+export const deleteUser = userId => authHttp.delete(`${v3Base}/users/${userId}`)
 export const getUsers = () => authHttp.get(`${v3Base}/users`).then(x => x.users)
 
 /*
