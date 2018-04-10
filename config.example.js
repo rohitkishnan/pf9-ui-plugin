@@ -6,7 +6,7 @@ const config = {
 
   development: {
     host: 'http://localhost:3000',
-    apiHost: 'http://localhost:3000',
+    apiHost: 'http://localhost:4444',
     simulator: {
       preset: 'base',
       username: 'user@domain.com',
