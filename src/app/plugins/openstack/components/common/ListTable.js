@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from 'material-ui/styles'
-import { withRouter } from 'react-router-dom'
 import Checkbox from 'material-ui/Checkbox'
 import Paper from 'material-ui/Paper'
 import Table, {
@@ -27,6 +26,7 @@ const styles = theme => ({
   },
 })
 
+@withStyles(styles)
 class ListTable extends React.Component {
   constructor (props) {
     super(props)
@@ -92,10 +92,7 @@ class ListTable extends React.Component {
   handleChangeRowsPerPage = event => this.setState({ rowsPerPage: event.target.value })
 
   handleAdd = () => {
-    const { addUrl, history } = this.props
-    if (addUrl) {
-      history.push(addUrl)
-    }
+    this.props.onAdd()
   }
 
   isSelected = id => this.state.selected.includes(id)
@@ -181,6 +178,7 @@ class ListTable extends React.Component {
 
     const sortedData = this.sortData(data)
     const paginatedData = this.paginate(sortedData)
+    const shouldShowPagination = sortedData.length > this.state.rowsPerPage
 
     return (
       <Paper className={classes.root}>
@@ -200,11 +198,13 @@ class ListTable extends React.Component {
             <TableBody>
               {paginatedData.map(this.renderRow)}
             </TableBody>
-            <TableFooter>
-              <TableRow>
-                {this.renderPaginationControls(sortedData.length)}
-              </TableRow>
-            </TableFooter>
+            {shouldShowPagination &&
+              <TableFooter>
+                <TableRow>
+                  {this.renderPaginationControls(sortedData.length)}
+                </TableRow>
+              </TableFooter>
+            }
           </Table>
         </div>
       </Paper>
@@ -217,7 +217,7 @@ ListTable.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   options: PropTypes.object,
   title: PropTypes.string.isRequired,
-  addUrl: PropTypes.string,
+  onAdd: PropTypes.func,
 }
 
 ListTable.defaultProps = {
@@ -226,4 +226,4 @@ ListTable.defaultProps = {
   options: {},
 }
 
-export default withRouter(withStyles(styles)(ListTable))
+export default ListTable

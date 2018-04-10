@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import ListTable from '../common/ListTable'
+import UsersList from './UsersList'
 
 const mapStateToProps = state => {
   const { users } = state.openstack
@@ -10,29 +10,15 @@ const mapStateToProps = state => {
   }
 }
 
-const options = {}
-
-const columns = [
-  { id: 'name', label: 'Name' },
-  { id: 'username', label: 'Username' },
-  { id: 'displayname', label: 'Display Name' },
-  { id: 'email', label: 'E-mail' },
-]
-
-export class UsersListContainer extends React.Component {
+@connect(mapStateToProps)
+class UsersListContainer extends React.Component {
   render () {
     const { users } = this.props
 
     return (
-      <ListTable
-        title="Users"
-        options={options}
-        columns={columns}
-        data={users}
-        addUrl="/users/add"
-      />
+      <UsersList users={users} />
     )
   }
 }
 
-export default connect(mapStateToProps)(UsersListContainer)
+export default UsersListContainer
