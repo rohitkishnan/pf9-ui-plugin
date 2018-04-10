@@ -3,7 +3,7 @@ output/*
 dist/*
 plugins/*
 config.js
-!stories/config.js
+!src/stories/config.js
 ._*
 .DS_Store
 .idea
