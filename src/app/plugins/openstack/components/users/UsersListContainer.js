@@ -18,11 +18,19 @@ class UsersListContainer extends React.Component {
     this.props.history.push('/users/add')
   }
 
+  handleDelete = user => {
+    console.log('About to delete user', user)
+  }
+
   render () {
     const { users } = this.props
 
     return (
-      <UsersList users={users} onAdd={this.redirectToAdd} />
+      <UsersList
+        users={users}
+        onAdd={this.redirectToAdd}
+        onDelete={this.handleDelete}
+      />
     )
   }
 }
