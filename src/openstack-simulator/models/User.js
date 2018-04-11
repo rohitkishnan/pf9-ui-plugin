@@ -7,14 +7,16 @@ const coll = () => context.users
 class User extends ActiveModel {
   constructor (params = {}) {
     super(params)
+    // These fields have a lot of overlap and it's a bit unclear what is needed and what is not.
+    // We should clean this up once we can figure out more specifically what fields should be used.
     this.displayname = params.displayname || params.name || params.email || ''
+    this.name = params.name || params.email || ''
     this.email = params.email || ''
     this.mfa = params.mfa || false
     this.password = params.password
     this.roles = params.roles || []
     this.tenant = params.tenant
-    this.username = params.username || ''
-    this.displayname = params.name || params.displayname || params.email || ''
+    this.username = params.username || params.name || params.email || ''
   }
 
   static getCollection = coll
@@ -40,7 +42,7 @@ class User extends ActiveModel {
   asJson = () => {
     return {
       ...super.asJson(),
-      displayname: this.displayName,
+      displayname: this.displayname,
       email: this.email,
       name: this.name,
       username: this.username,

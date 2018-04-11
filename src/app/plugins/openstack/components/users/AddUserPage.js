@@ -7,9 +7,9 @@ const mapStateToProps = state => ({})
 
 @connect(mapStateToProps)
 class AddUserPage extends React.Component {
-  handleSubmit = () => {
+  handleSubmit = user => {
     try {
-      this.props.dispatch(addUser(this.state))
+      this.props.dispatch(addUser(user))
     } catch (err) {
       console.error(err)
     }

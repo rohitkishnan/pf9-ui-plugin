@@ -19,13 +19,20 @@ function loadPreset () {
   // Create an admin user
   const adminRole = new Role({ name: 'admin' })
   const memberRole = new Role({ name: '_member_' })
-  const adminUser = new User({ username: 'admin@platform9.com', password: 'secret', tenant: serviceTenant })
+  const adminUser = new User({ name: 'admin@platform9.com', password: 'secret', tenant: serviceTenant })
   const region = new Region({ name: 'Default Region' })
   adminUser.addRole(adminRole)
 
   // Create a bunch of misc users
   range(2).forEach(i => {
-    let user = new User({ username: `user${i}@platform9.com`, password: 'secret', tenant: serviceTenant })
+    let email = `user${i}@platform9.com`
+    let user = new User({
+      email,
+      username: email,
+      name: email,
+      password: 'secret',
+      tenant: serviceTenant,
+    })
     user.addRole(memberRole)
   })
 }
