@@ -3,7 +3,7 @@ import requiresAuthentication from '../util/requiresAuthentication'
 import { connect } from 'react-redux'
 import { fetchUsers } from '../actions/users'
 
-import Loader from './common/Loader'
+import Loader from 'core/common/Loader'
 import UsersListContainer from './users/UsersListContainer'
 
 function mapStateToProps (state, ownProps) {

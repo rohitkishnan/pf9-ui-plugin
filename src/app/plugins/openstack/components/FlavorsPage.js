@@ -3,7 +3,7 @@ import requiresAuthentication from '../util/requiresAuthentication'
 import { connect } from 'react-redux'
 import { fetchFlavors } from '../actions/flavors'
 
-import Loader from './common/Loader'
+import Loader from 'core/common/Loader'
 import FlavorsListContainer from './flavors/FlavorsListContainer'
 
 function mapStateToProps (state, ownProps) {

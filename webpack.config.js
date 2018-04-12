@@ -55,5 +55,11 @@ module.exports = {
     ]
   },
   context: contextPath,
-  plugins
+  plugins,
+  resolve: {
+    alias: {
+      core: path.resolve(__dirname, 'src/app/core'),
+      openstack: path.resolve(__dirname, 'src/app/plugins/openstack')
+    }
+  }
 }
