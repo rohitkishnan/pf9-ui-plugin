@@ -3,6 +3,7 @@ import requiresAuthentication from '../util/requiresAuthentication'
 import { connect } from 'react-redux'
 import { fetchUsers } from '../actions/users'
 
+import Loader from './common/Loader'
 import UsersListContainer from './users/UsersListContainer'
 
 function mapStateToProps (state, ownProps) {
@@ -11,8 +12,6 @@ function mapStateToProps (state, ownProps) {
     usersLoaded: users.usersLoaded,
   }
 }
-
-const Loader = () => <div>Loading...</div>
 
 @requiresAuthentication
 @connect(mapStateToProps)

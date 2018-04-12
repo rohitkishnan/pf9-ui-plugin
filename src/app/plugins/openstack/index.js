@@ -8,10 +8,14 @@ import TenantsPage from './components/TenantsPage'
 import UsersPage from './components/UsersPage'
 import AddUserPage from './components/users/AddUserPage'
 
+import FlavorsPage from './components/FlavorsPage'
+import AddFlavorPage from './components/flavors/AddFlavorPage'
+
 import loginReducer from './reducers/login'
 import sessionReducer from './reducers/session'
 import tenantsReducer from './reducers/tenants'
 import usersReducer from './reducers/users'
+import flavorsReducer from './reducers/flavors'
 
 class OpenStack extends React.Component {
   render () {
@@ -50,6 +54,16 @@ OpenStack.registerPlugin = pluginManager => {
       link: { path: '/users/add' },
       component: AddUserPage
     },
+    {
+      name: 'Flavors',
+      link: { path: '/flavors', exact: true },
+      component: FlavorsPage
+    },
+    {
+      name: 'Flavors',
+      link: { path: '/flavors/add' },
+      component: AddFlavorPage
+    },
   )
 
   pluginManager.registerNavItems(
@@ -65,6 +79,10 @@ OpenStack.registerPlugin = pluginManager => {
       name: 'Users',
       link: { path: '/users' }
     },
+    {
+      name: 'Flavors',
+      link: { path: '/flavors' }
+    },
   )
 }
 
@@ -73,6 +91,7 @@ OpenStack.reducer = combineReducers({
   session: sessionReducer,
   tenants: tenantsReducer,
   users: usersReducer,
+  flavors: flavorsReducer,
 })
 
 export default OpenStack
