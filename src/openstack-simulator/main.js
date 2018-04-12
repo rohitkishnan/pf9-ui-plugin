@@ -18,6 +18,6 @@ if (simulator) {
 
   const { username, password } = simulator
   if (username && password) {
-    new User({ username, password })
+    new User({ name: username, password })
   }
 }
