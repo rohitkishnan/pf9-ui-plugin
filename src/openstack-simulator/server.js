@@ -8,6 +8,7 @@ import {
 } from './middleware'
 
 import keystone from './api/keystone'
+import nova from './api/nova'
 
 const defaultConfig = {
   port: 4444,
@@ -31,6 +32,7 @@ export function startServer (config = defaultConfig) {
     app.use(requestLogger)
   }
   app.use('/keystone', keystone)
+  app.use('/nova', nova)
 
   console.log(`Simulator server currently listening on port ${config.port}`)
   serverInstance = http.createServer(app).listen(config.port)

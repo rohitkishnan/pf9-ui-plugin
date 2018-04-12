@@ -2,6 +2,7 @@ import React from 'react'
 import requiresAuthentication from '../util/requiresAuthentication'
 import { connect } from 'react-redux'
 
+import Loader from './common/Loader'
 import TenantsListContainer from './tenants/TenantsListContainer'
 
 function mapStateToProps (state, ownProps) {
@@ -10,8 +11,6 @@ function mapStateToProps (state, ownProps) {
     tenantsLoaded: tenants.tenantsLoaded,
   }
 }
-
-const Loader = () => <div>Loading...</div>
 
 @requiresAuthentication
 @connect(mapStateToProps)
