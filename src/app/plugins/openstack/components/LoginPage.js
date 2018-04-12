@@ -30,7 +30,6 @@ export class LoginPage extends React.Component {
     const session = Session()
     const loginSuccessful = await dispatch(session.signIn({ username, password }))
     if (loginSuccessful) {
-      console.log('redirecting')
       // redirect to the dashboard page on successful login
       history.push('/')
     }

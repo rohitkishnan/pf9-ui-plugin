@@ -12,7 +12,7 @@ addStories('Common Components/ConfirmationDialog', {
     <ConfirmationDialog open={false} />
   ),
 
-  'Default settigns (open)': () => (
+  'Default settings (open)': () => (
     <ConfirmationDialog open />
   ),
 

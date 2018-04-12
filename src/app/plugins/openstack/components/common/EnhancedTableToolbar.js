@@ -37,7 +37,7 @@ const toolbarStyles = theme => ({
   },
 })
 
-const EnhancedTableToolbar = ({ classes, numSelected, title, onAdd }) => (
+const EnhancedTableToolbar = ({ classes, numSelected, title, onAdd, onDelete }) => (
   <Toolbar
     className={classNames(classes.root, {
       [classes.highlight]: numSelected > 0,
@@ -54,24 +54,25 @@ const EnhancedTableToolbar = ({ classes, numSelected, title, onAdd }) => (
     </div>
     <div className={classes.spacer} />
     <div className={classes.actions}>
-      {numSelected > 0 ? (
+      {numSelected > 0 && onDelete &&
         <Tooltip title="Delete">
-          <IconButton aria-label="Delete">
+          <IconButton aria-label="Delete" onClick={onDelete}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
-      ) : (
-        <Toolbar>
-          <Tooltip title="Filter list">
-            <IconButton aria-label="Filter list">
-              <FilterListIcon />
-            </IconButton>
-          </Tooltip>
+      }
+      <Toolbar>
+        <Tooltip title="Filter list">
+          <IconButton aria-label="Filter list">
+            <FilterListIcon />
+          </IconButton>
+        </Tooltip>
+        {onAdd &&
           <Tooltip title="Add">
             <Button color="primary" onClick={onAdd}><AddIcon /> Add</Button>
           </Tooltip>
-        </Toolbar>
-      )}
+        }
+      </Toolbar>
     </div>
   </Toolbar>
 )
@@ -81,6 +82,7 @@ EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   onAdd: PropTypes.func,
+  onDelete: PropTypes.func,
 }
 
 export default withStyles(toolbarStyles)(EnhancedTableToolbar)

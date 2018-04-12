@@ -95,6 +95,16 @@ class ListTable extends React.Component {
     this.props.onAdd()
   }
 
+  handleDelete = () => {
+    const { onDelete } = this.props
+    const { selected } = this.state
+    if (!onDelete) {
+      return
+    }
+
+    onDelete(selected)
+  }
+
   isSelected = id => this.state.selected.includes(id)
 
   paginate = data => {
@@ -115,6 +125,7 @@ class ListTable extends React.Component {
 
   renderRow = row => {
     const { columns } = this.props
+
     const isSelected = this.isSelected(row.id)
     return (
       <TableRow
@@ -182,7 +193,12 @@ class ListTable extends React.Component {
 
     return (
       <Paper className={classes.root}>
-        <EnhancedTableToolbar numSelected={selected.length} title={title} onAdd={this.handleAdd} />
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          title={title}
+          onAdd={this.handleAdd}
+          onDelete={this.handleDelete}
+        />
         <div className={classes.tableWrapper}>
           <Table className={classes.table}>
             <EnhancedTableHead
@@ -218,12 +234,12 @@ ListTable.propTypes = {
   options: PropTypes.object,
   title: PropTypes.string.isRequired,
   onAdd: PropTypes.func,
+  onDelete: PropTypes.func,
 }
 
 ListTable.defaultProps = {
   data: [],
   columns: [],
-  options: {},
 }
 
 export default ListTable

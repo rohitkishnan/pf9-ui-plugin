@@ -25,6 +25,7 @@ class UsersList extends React.Component {
         data={users}
         onAdd={onAdd}
         onDelete={onDelete}
+        actions={['delete']}
       />
     )
   }
