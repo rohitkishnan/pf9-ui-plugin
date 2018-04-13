@@ -2,7 +2,7 @@ import React from 'react'
 import requiresAuthentication from '../util/requiresAuthentication'
 import { connect } from 'react-redux'
 
-import Loader from './common/Loader'
+import Loader from 'core/common/Loader'
 import TenantsListContainer from './tenants/TenantsListContainer'
 
 function mapStateToProps (state, ownProps) {

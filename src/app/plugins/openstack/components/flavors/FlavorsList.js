@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import ListTable from '../common/ListTable'
+import ListTable from 'core/common/ListTable'
 
 const columns = [
   { id: 'name', label: 'Name' },

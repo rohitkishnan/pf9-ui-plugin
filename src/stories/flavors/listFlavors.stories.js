@@ -3,7 +3,7 @@ import { action } from '@storybook/addon-actions'
 import { number } from '@storybook/addon-knobs'
 import { addStories, range } from '../helpers'
 import fakeFlavor from './fakeFlavor'
-import FlavorsList from '../../app/plugins/openstack/components/flavors/FlavorsList'
+import FlavorsList from 'openstack/components/flavors/FlavorsList'
 
 const addLogger = action('FlavorsList#onAdd')
 const someFlavors = range(3).map(fakeFlavor)

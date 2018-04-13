@@ -2,7 +2,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import ListTable from '../common/ListTable'
+import ListTable from 'core/common/ListTable'
 
 const mapStateToProps = state => {
   const { tenants } = state.openstack

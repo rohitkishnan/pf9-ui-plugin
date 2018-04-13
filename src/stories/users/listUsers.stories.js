@@ -4,7 +4,7 @@ import { action } from '@storybook/addon-actions'
 import { number } from '@storybook/addon-knobs'
 import { addStories, range } from '../helpers'
 import fakeUser from './fakeUser'
-import UsersList from '../../app/plugins/openstack/components/users/UsersList'
+import UsersList from 'openstack/components/users/UsersList'
 
 const addAction = linkTo('Users management/Adding a user', 'Add a user')
 const deleteAction = action('Delete user')

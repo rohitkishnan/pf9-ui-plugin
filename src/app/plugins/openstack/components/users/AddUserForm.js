@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import NoAutofillHack from '../common/NoAutofillHack'
+import NoAutofillHack from 'core/common/NoAutofillHack'
 import TextField from 'material-ui/TextField'
 import Button from 'material-ui/Button'
 
