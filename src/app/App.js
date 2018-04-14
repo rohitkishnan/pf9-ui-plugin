@@ -52,6 +52,7 @@ class App extends React.Component {
             {showNavMenu && renderNavMenu()}
             {showSidebar && renderSidebar()}
             <div id="_main-content">
+              {pluginManager.getComponents().map((PluginComponent, idx) => <PluginComponent key={idx} />)}
               <Switch>
                 {pluginManager.getRoutes().map(route => {
                   const { component, link } = route

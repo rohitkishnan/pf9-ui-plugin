@@ -17,6 +17,8 @@ import tenantsReducer from './reducers/tenants'
 import usersReducer from './reducers/users'
 import flavorsReducer from './reducers/flavors'
 
+import SessionLoader from './components/SessionLoader'
+
 class OpenStack extends React.Component {
   render () {
     return (
@@ -84,6 +86,8 @@ OpenStack.registerPlugin = pluginManager => {
       link: { path: '/flavors' }
     },
   )
+
+  pluginManager.registerComponent(SessionLoader)
 }
 
 OpenStack.reducer = combineReducers({
