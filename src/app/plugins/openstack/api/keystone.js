@@ -1,15 +1,21 @@
 import http from '../../../util/http'
 import * as registry from '../../../util/registry'
 
-export const constructTokenBody = method => (tenantId, unscopedToken) => ({
-  auth: {
-    identity: {
-      methods: [method],
-      [method]: { id: unscopedToken },
-    },
-    scope: { project: { id: tenantId } }
+export const constructTokenBody = method => (unscopedToken, tenantId) => {
+  const body = {
+    auth: {
+      identity: {
+        methods: [method],
+        [method]: { id: unscopedToken },
+      },
+    }
   }
-})
+
+  if (tenantId) {
+    body.auth.scope = { project: { id: tenantId } }
+  }
+  return body
+}
 
 const v3Base = '/keystone/v3'
 const authHttp = http.authenticated.openstack
@@ -43,7 +49,7 @@ export const getToken = () => registry.getItem('token')
 
 export const getScopedToken = async tenantId => {
   const unscopedToken = getToken()
-  const body = constructTokenBody('token')(tenantId, unscopedToken)
+  const body = constructTokenBody('token')(unscopedToken, tenantId)
   const response = await http.json.post(`${v3Base}/auth/tokens?nocatalog`, body, { 'x-auth-token': unscopedToken })
   const responseBody = await response.json()
   const scopedToken = response.headers.get('x-subject-token')
@@ -51,6 +57,13 @@ export const getScopedToken = async tenantId => {
     scopedToken,
     token: responseBody.token // token = { user, roles }
   }
+}
+
+export const renewUnscopedToken = async (unscopedToken) => {
+  const body = constructTokenBody('token')(unscopedToken)
+  const response = await http.json.post(`${v3Base}/auth/tokens?nocatalog`, body)
+  const newUnscopedToken = response.headers.get('x-subject-token')
+  return newUnscopedToken || null
 }
 
 export const getRegions = () => authHttp.get(`${v3Base}/regions`).then(x => x.regions)

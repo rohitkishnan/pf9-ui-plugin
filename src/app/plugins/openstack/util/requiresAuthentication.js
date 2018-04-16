@@ -1,6 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
+import Session from '../actions/session'
+const { restoreSession } = Session()
 
 // import { getStorage } from '../../../core/common/pf9-storage'
 
@@ -12,18 +14,27 @@ const requiresAuthentication = WrappedComponent => {
     @withRouter
     @connect(mapState)
     class AuthenticatedComponent extends React.Component {
-      componentDidMount () {
-        const { session, history } = this.props
+      async componentDidMount () {
+        const { session, history, dispatch } = this.props
         if (!(session && session.user)) {
           // Check first to see if there is a session we can recover from LocalStorage
+          const restored = await dispatch(restoreSession)
+
           // Otherwise force the user to log in
-          history.push('/login')
+          if (!restored) {
+            history.push('/login')
+          }
         }
       }
+
       render () {
-        return (
-          <WrappedComponent {...this.props} />
-        )
+        // We need to delay rendering authenticated components until
+        // authentication is completed.  Otherwise components will attempt
+        // to make API calls (componentDidMount) before authentication / session
+        // restore has the chance to finish.
+        const { session } = this.props
+        const shouldRender = session && session.user
+        return shouldRender ? <WrappedComponent {...this.props} /> : null
       }
     }
   )

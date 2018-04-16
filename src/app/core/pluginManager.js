@@ -5,6 +5,7 @@ const defaultOptions = {
 }
 
 let data = {
+  components: [],
   pluginList: [],
   routes: [],
   navItems: [],
@@ -13,10 +14,15 @@ let data = {
 
 const pluginManager = {
   clearAll () {
+    data.components = []
     data.pluginList = []
     data.routes = []
     data.navItems = []
     data.options = { ...defaultOptions }
+  },
+
+  registerComponent (component) {
+    data.components.push(component)
   },
 
   registerRoutes (...components) {
@@ -27,6 +33,10 @@ const pluginManager = {
     items.forEach(item => {
       data.navItems.push(item)
     })
+  },
+
+  getComponents () {
+    return data.components
   },
 
   getRoutes () {

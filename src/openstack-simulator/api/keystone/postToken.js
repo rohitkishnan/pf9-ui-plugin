@@ -42,9 +42,6 @@ const postToken = (req, res) => {
     const user = unscopedToken.user
     const tenantScopeId = auth.scope && auth.scope.project && auth.scope.project.id
     const tenant = Tenant.findById(tenantScopeId)
-    if (!tenant) {
-      return sendAuthError('Must supply valid tenant for scope', 'Scope Required')
-    }
     const scopedToken = new Token({ user, tenant })
     return res.set('X-Subject-Token', scopedToken.id).status(201).send({ token: scopedToken.asJson() })
   }
