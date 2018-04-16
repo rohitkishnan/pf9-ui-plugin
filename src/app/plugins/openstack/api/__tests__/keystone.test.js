@@ -28,7 +28,7 @@ describe('keystone api', () => {
   describe('constructors', () => {
     it('constructTokenBody', () => {
       const tokenConstructor = constructTokenBody('token')
-      expect(tokenConstructor('serviceTenantId', 'secretUnscopedToken')).toEqual({
+      expect(tokenConstructor('secretUnscopedToken', 'serviceTenantId')).toEqual({
         auth: {
           identity: {
             methods: ['token'],

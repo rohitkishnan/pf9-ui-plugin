@@ -54,8 +54,11 @@ const Session = (keystone = Keystone, mocks = {}) => {
   const setLastRegion = (username, tenant) => ctx.setStorage(regionStorageKey(username), tenant)
 
   const initialSetup = async ({ username, unscopedToken, dispatch }) => {
+    // Store in the in-memory "registry"
     ctx.setUnscopedToken(unscopedToken)
+    ctx.setStorage('unscopedToken', unscopedToken)
     ctx.setToken(unscopedToken)
+    ctx.setStorage('username', username)
     ctx.setUsername(username)
 
     dispatch(loginSucceeded())
@@ -85,6 +88,21 @@ const Session = (keystone = Keystone, mocks = {}) => {
       username,
     }))
     dispatch(ctx.setTenants(tenants))
+    return true
+  }
+
+  const restoreSession = async (dispatch) => {
+    const username = getStorage('username')
+    const unscopedToken = getStorage('unscopedToken')
+
+    if (!unscopedToken) {
+      return
+    }
+
+    // See if unscopedToken is still valid
+    const newUnscopedToken = await keystone.renewUnscopedToken(unscopedToken)
+
+    return initialSetup({ username, unscopedToken: newUnscopedToken, dispatch })
   }
 
   const signIn = ({ username, password, mfa }) => async dispatch => {
@@ -95,8 +113,6 @@ const Session = (keystone = Keystone, mocks = {}) => {
       dispatch(loginFailed())
       return false
     }
-
-    ctx.setStorage('unscopedToken', unscopedToken)
 
     await initialSetup({ username, unscopedToken, dispatch })
 
@@ -124,6 +140,7 @@ const Session = (keystone = Keystone, mocks = {}) => {
   return {
     signIn,
     authenticate,
+    restoreSession,
   }
 }
 
