@@ -97,6 +97,8 @@ export function createTenant (project) {
   return authHttp.post(`${v3Base}/projects`, body)
 }
 
+export const deleteTenant = tenantId => authHttp.delete(`${v3Base}/projects/${tenantId}`)
+
 /*
 import {
   authOpenstackHttp,
@@ -132,7 +134,6 @@ export function updateTenant (project) {
   return v3.patchReq(`/projects/${project.id}`, body)
 }
 
-export const deleteTenant = (id) => v3.deleteReq(`/projects/${id}`)
 export const getRoles = (success, error) => v3.getReq('/roles')
 export const getUsersFor = tenantId => admin.getReq(`/tenants/${tenantId}/users`)
 export const removeUser = (userId) => v3.deleteReq(`/users/${userId}`)

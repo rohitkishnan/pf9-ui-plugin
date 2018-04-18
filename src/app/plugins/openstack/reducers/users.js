@@ -1,5 +1,6 @@
 import {
   ADD_USER,
+  REMOVE_USER,
   SET_USERS,
 } from '../actions/users'
 
@@ -23,6 +24,12 @@ const reducer = (state = initialState, action) => {
         ...state,
         users: payload,
         usersLoaded: true,
+      }
+
+    case REMOVE_USER:
+      return {
+        ...state,
+        users: state.users.filter(user => user.id !== payload)
       }
 
     default:

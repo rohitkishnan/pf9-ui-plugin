@@ -1,5 +1,6 @@
 import {
   ADD_TENANT,
+  REMOVE_TENANT,
   SET_TENANTS,
 } from '../actions/tenants'
 
@@ -23,6 +24,12 @@ const reducer = (state = initialState, action) => {
         ...state,
         tenants: payload,
         tenantsLoaded: true,
+      }
+
+    case REMOVE_TENANT:
+      return {
+        ...state,
+        tenants: state.tenants.filter(tenant => tenant.id !== payload)
       }
 
     default:

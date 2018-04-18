@@ -6,6 +6,8 @@ import { withRouter } from 'react-router-dom'
 import ConfirmationDialog from 'core/common/ConfirmationDialog'
 import ListTable from 'core/common/ListTable'
 
+import { removeProject } from '../../actions/tenants'
+
 const mapStateToProps = state => {
   const { tenants } = state.openstack
   return {
@@ -45,6 +47,8 @@ class TenantsListContainer extends React.Component {
 
   handleDeleteConfirm = () => {
     this.setState({ showConfirmation: false })
+    const tenants = this.state.tenantsToDelete || []
+    tenants.forEach(tenant => this.props.dispatch(removeProject(tenant.id)))
   }
 
   deleteConfirmText = () => {
