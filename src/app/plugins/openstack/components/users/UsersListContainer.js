@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
-import ConfirmationDialog from '../../../../core/common/ConfirmationDialog'
+import ConfirmationDialog from 'core/common/ConfirmationDialog'
 import UsersList from './UsersList'
 
 const mapStateToProps = state => {

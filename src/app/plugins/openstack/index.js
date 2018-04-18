@@ -3,6 +3,8 @@ import { combineReducers } from 'redux'
 
 import DashboardPage from './components/DashboardPage'
 import LoginPage from './components/LoginPage'
+
+import AddTenantPage from './components/tenants/AddTenantPage'
 import TenantsPage from './components/TenantsPage'
 
 import UsersPage from './components/UsersPage'
@@ -41,8 +43,13 @@ OpenStack.registerPlugin = pluginManager => {
     },
     {
       name: 'Tenants',
-      link: { path: '/tenants' },
+      link: { path: '/tenants', exact: true },
       component: TenantsPage
+    },
+    {
+      name: 'AddTenant',
+      link: { path: '/tenants/add' },
+      component: AddTenantPage
     },
     {
       name: 'Users',
@@ -50,7 +57,7 @@ OpenStack.registerPlugin = pluginManager => {
       component: UsersPage
     },
     {
-      name: 'Users',
+      name: 'AddUser',
       link: { path: '/users/add' },
       component: AddUserPage
     },

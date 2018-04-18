@@ -4,6 +4,8 @@ import postToken from './postToken'
 
 // Projects
 import getProjects from './getProjects'
+import postProject from './postProject'
+import deleteProject from './deleteProject'
 
 // Regions
 import getRegions from './getRegions'
@@ -22,6 +24,8 @@ router.post('/v3/auth/tokens', postToken)
 // Everything past this point requires authentication
 
 router.get('/v3/auth/projects', tokenValidator, getProjects)
+router.post('/v3/projects', tokenValidator, postProject)
+router.delete('/v3/projects/:projectId', tokenValidator, deleteProject)
 
 router.get('/v3/regions', tokenValidator, getRegions)
 
