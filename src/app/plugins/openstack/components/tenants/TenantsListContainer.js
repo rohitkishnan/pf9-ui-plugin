@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
 import ConfirmationDialog from 'core/common/ConfirmationDialog'
-import ListTable from 'core/common/ListTable'
+import TenantsList from './TenantsList'
 
 import { removeProject } from '../../actions/tenants'
 
@@ -14,14 +14,6 @@ const mapStateToProps = state => {
     tenants: tenants.tenants,
   }
 }
-
-const columns = [
-  { id: 'name', label: 'Name' },
-  { id: 'description', label: 'Description' },
-  { id: 'computeUsage', label: 'Compute usage' },
-  { id: 'blockStorageUsage', label: 'Block storage usage' },
-  { id: 'networkUsage', label: 'Network usage' },
-]
 
 @withRouter
 @connect(mapStateToProps)
@@ -72,10 +64,8 @@ class TenantsListContainer extends React.Component {
           onConfirm={this.handleDeleteConfirm}
         />
 
-        <ListTable
-          title="Tenants"
-          columns={columns}
-          data={tenants}
+        <TenantsList
+          tenants={tenants}
           onAdd={this.redirectToAdd}
           onDelete={this.handleDelete}
         />
