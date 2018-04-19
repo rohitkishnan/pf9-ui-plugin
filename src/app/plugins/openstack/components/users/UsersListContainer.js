@@ -2,8 +2,10 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router-dom'
 
-import ConfirmationDialog from '../../../../core/common/ConfirmationDialog'
+import ConfirmationDialog from 'core/common/ConfirmationDialog'
 import UsersList from './UsersList'
+
+import { removeUser } from '../../actions/users'
 
 const mapStateToProps = state => {
   const { users } = state.openstack
@@ -36,6 +38,8 @@ class UsersListContainer extends React.Component {
 
   handleDeleteConfirm = () => {
     this.setState({ showConfirmation: false })
+    const users = this.state.usersToDelete || []
+    users.forEach(user => this.props.dispatch(removeUser(user.id)))
   }
 
   deleteConfirmText = () => {

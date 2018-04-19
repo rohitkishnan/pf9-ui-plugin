@@ -84,6 +84,21 @@ export const createUser = user => {
 export const deleteUser = userId => authHttp.delete(`${v3Base}/users/${userId}`)
 export const getUsers = () => authHttp.get(`${v3Base}/users`).then(x => x.users)
 
+export function createTenant (project) {
+  const body = {
+    project: {
+      enabled: project.enabled,
+      name: project.name,
+      description: project.description,
+      domain_id: 'default',
+      is_domain: false
+    }
+  }
+  return authHttp.post(`${v3Base}/projects`, body)
+}
+
+export const deleteTenant = tenantId => authHttp.delete(`${v3Base}/projects/${tenantId}`)
+
 /*
 import {
   authOpenstackHttp,
@@ -106,19 +121,6 @@ let endpointsPromise
 export const getUser = userId => v3.getReq(`/users/${userId}`)
 export const getTenants = () => admin.getReq('/PF9-KSADM/all_tenants_all_users')
 
-export function createTenant (project) {
-  const body = {
-    project: {
-      enabled: project.enabled,
-      name: project.name,
-      description: project.description,
-      domain_id: 'default',
-      is_domain: false
-    }
-  }
-  return v3.postReq('/projects', body)
-}
-
 export function updateTenant (project) {
   const body = {
     project: {
@@ -132,7 +134,6 @@ export function updateTenant (project) {
   return v3.patchReq(`/projects/${project.id}`, body)
 }
 
-export const deleteTenant = (id) => v3.deleteReq(`/projects/${id}`)
 export const getRoles = (success, error) => v3.getReq('/roles')
 export const getUsersFor = tenantId => admin.getReq(`/tenants/${tenantId}/users`)
 export const removeUser = (userId) => v3.deleteReq(`/users/${userId}`)

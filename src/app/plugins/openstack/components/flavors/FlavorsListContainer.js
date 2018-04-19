@@ -12,11 +12,16 @@ const mapStateToProps = state => {
 
 @connect(mapStateToProps)
 class FlavorsListContainer extends React.Component {
+  handleAdd = () => {
+    // TODO
+    console.log('TODO: handle adding a new flavor')
+  }
+
   render () {
     const { flavors } = this.props
 
     return (
-      <FlavorsList flavors={flavors} />
+      <FlavorsList flavors={flavors} onAdd={this.handleAdd} />
     )
   }
 }
