@@ -26,7 +26,6 @@ const appEntry = []
 if (isDev) {
   appEntry.push('react-hot-loader/patch')
   appEntry.push('webpack-hot-middleware/client')
-  appEntry.push('babel-polyfill')
   plugins.push(
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NamedModulesPlugin(),
