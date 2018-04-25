@@ -1,7 +1,7 @@
 const config = {
   production: {
-    host: 'https://domain.com:80',
-    apiHost: 'https://domain.com:80',
+    host: 'https://localhost',
+    apiHost: 'https://localhost',
   },
 
   development: {
