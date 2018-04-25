@@ -42,6 +42,7 @@ if (isProd) {
 }
 
 // main entry point
+appEntry.push('babel-polyfill')
 appEntry.push('./index.js')
 
 module.exports = {
