@@ -1,5 +1,5 @@
 type Flavor {
-	id: ID!
+  id: ID!
 	name: String!
 	# units in GB
 	disk: Int!
