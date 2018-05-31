@@ -3,6 +3,7 @@ import Flavor from './models/Flavor'
 import Role from './models/Role'
 import Tenant from './models/Tenant'
 import User from './models/User'
+import Volume from './models/Volume'
 
 const defaultQuota = {
   cores: 10,
@@ -33,6 +34,7 @@ class Context {
     this.resMgrRoles = []
     this.hostAggregates = []
     this.regions = []
+    this.volumes = []
 
     this.defaultQuota = { ...defaultQuota }
   }
@@ -112,6 +114,29 @@ class Context {
       throw new Error('Unable to remove non-existant user')
     }
     user.destroy()
+    return id
+  }
+
+  getVolumes = () => Volume.getCollection().map(x => x.asGraphQl())
+
+  createVolume = ({ input }) => {
+    const volume = new Volume(input)
+    return volume.asGraphQl()
+  }
+
+  updateVolume = ({ id, input }) => {
+    const volume = Volume.findById(id)
+    if (!volume) {
+      throw new Error('Unable to update non-existant volume')
+    }
+  }
+
+  removeVolume = ({ id }) => {
+    const volume = Volume.findById(id)
+    if (!volume) {
+      throw new Error('Unable to delete non-existant volume')
+    }
+    volume.destroy()
     return id
   }
 

@@ -6,6 +6,7 @@ import Tenant from '../models/Tenant'
 import User from '../models/User'
 import Flavor from '../models/Flavor'
 import Network from '../models/Network'
+import Volume from '../models/Volume'
 // import Token from '../models/Token'
 import { range } from '../util'
 
@@ -55,6 +56,15 @@ function loadPreset () {
 
   // Networks
   new Network({ name: 'default network' })
+
+  // Volumes
+  new Volume({ name: 'TestVolume1', description: 'Docker storage test.', type: 'sfvol', metadata: '', size: 15, sizeUnit: 'GB', bootable: false, status: 'available', tenantId: '', tenant: 'Dev Team Tenant', source: 'Image', host: 'host.company.sys', instance: 'Test Instance 1', instanceId: '', device: '/dev/vdb', attachedMode: 'rw', readonly: false })
+  new Volume({ name: 'TestVolume2', description: 'Docker storage test.', type: 'testType', metadata: '', size: 30, sizeUnit: 'GB', bootable: false, status: 'available', tenantId: '', tenant: 'Dev Team Tenant', source: 'Snapshot', host: 'host.company.sys', instance: 'Test Instance 2', instanceId: '', device: '/dev/vdb', attachedMode: '', readonly: false })
+  new Volume({ name: 'TestVolume3', description: '', type: 'sfvol', metadata: '', size: 45, sizeUnit: 'GB', bootable: false, status: 'in-use', tenantId: '', tenant: 'Dev Team Tenant', source: 'Empty', host: 'host.company.sys', instance: 'Dev Instance 1', instanceId: '', device: '', attachedMode: 'rw', readonly: false })
+  new Volume({ name: 'TestVolume4', description: 'Convert volume to ext.', type: 'sfvol', metadata: '', size: 1, sizeUnit: 'TB', bootable: false, status: 'available', tenantId: '', tenant: 'Dev Team Tenant', source: 'Image', host: 'host.company.sys', instance: 'Dev Instance 1', instanceId: '', device: '/dev/vdb', attachedMode: 'rw', readonly: false })
+  new Volume({ name: 'TestVolume5', description: '', type: 'testType', metadata: '', size: 25, sizeUnit: 'GB', bootable: false, status: 'in-use', tenantId: '', tenant: 'Dev Team Tenant', source: 'Another Volume', host: 'host.company.sys', instance: 'Dev Instance 2', instanceId: '', device: '', attachedMode: '', readonly: false })
+
+  adminUser.addRole(adminRole)
 }
 
 export default loadPreset
