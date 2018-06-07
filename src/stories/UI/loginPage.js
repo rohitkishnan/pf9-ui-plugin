@@ -1,20 +1,6 @@
 import React, { Fragment } from 'react'
-import { connect } from 'react-redux'
-import { compose } from 'redux'
-import Session from '../actions/session'
-import { withRouter } from 'react-router'
 import { withStyles } from '@material-ui/core/styles'
 import { Paper, Typography, Grid, TextField, Button, FormControlLabel, Checkbox } from '@material-ui/core'
-
-function mapStateToProps (state, ownProps) {
-  const { login } = state.openstack
-  const { startLogin, loginSucceeded, loginFailed } = login
-  return {
-    startLogin,
-    loginSucceeded,
-    loginFailed,
-  }
-}
 
 const styles = theme => ({
   root: {
@@ -58,37 +44,9 @@ const styles = theme => ({
   }
 })
 
-export class LoginPage extends React.Component {
+class LoginPage extends React.Component {
   state = {
-    username: '',
-    password: '',
     MFAcheckbox: false
-  }
-
-  updateValue = key => event => {
-    this.setState({ [key]: event.target.value })
-  }
-
-  performLogin = async () => {
-    const { username, password } = this.state
-    const { dispatch, history } = this.props
-    const session = Session()
-    const loginSuccessful = await dispatch(session.signIn({ username, password }))
-    if (loginSuccessful) {
-      // redirect to the dashboard page on successful login
-      history.push('/')
-    }
-  }
-
-  renderStatus = () => {
-    const { startLogin, loginSucceeded, loginFailed } = this.props
-    return (
-      <div className="login-status">
-        {startLogin && <div className="login-start">Attempting login...</div>}
-        {loginSucceeded && <div className="login-succeeded login-result">Successfully logged in.</div>}
-        {loginFailed && <div className="login-failed login-result">Login attempt failed.</div>}
-      </div>
-    )
   }
 
   handleChangeBox = name => event => {
@@ -98,8 +56,8 @@ export class LoginPage extends React.Component {
   renderInputfield = () => {
     const { classes } = this.props
     return <Fragment>
-      <TextField required id="email" label="Email" placeholder="Email" className={classes.textField} onChange={this.updateValue('username')} />
-      <TextField required id="password" label="Password" className={classes.textField} type="password" onChange={this.updateValue('password')} />
+      <TextField required id="email" label="Email" placeholder="Email" className={classes.textField} />
+      <TextField required id="password" label="Password" className={classes.textField} type="password" />
     </Fragment>
   }
 
@@ -107,13 +65,11 @@ export class LoginPage extends React.Component {
     const { classes } = this.props
     return <Fragment>
       <FormControlLabel
-        value="MFAcheckbox"
         className={classes.checkbox}
         control={
           <Checkbox
             checked={this.state.MFAcheckbox}
             onChange={this.handleChangeBox('MFAcheckbox')}
-            value="MFAcheckbox"
             color="primary"
           />
         }
@@ -155,8 +111,8 @@ export class LoginPage extends React.Component {
   render () {
     const { classes } = this.props
     return (
-      <div className="login-page">
-        <Grid container justify="center" className={classes.root}>
+      <div className={classes.root}>
+        <Grid container justify="center">
           <Grid item md={4} lg={3}>
             <Paper className={classes.paper}>
               <img src="https://hostadvice.com/wp-content/uploads/2017/07/Platform9-LogoStacked-777x352.png" className={classes.img} />
@@ -167,7 +123,7 @@ export class LoginPage extends React.Component {
                 {this.renderInputfield()}
                 {this.renderMFACheckbox()}
                 {this.state.MFAcheckbox && this.renderMFAInput()}
-                <Button className={classes.signinButton} variant="contained" color="primary" onClick={this.performLogin}>
+                <Button className={classes.signinButton} variant="contained" color="primary">
                   SIGN IN
                 </Button>
                 <Typography className={classes.forgotPwd} gutterBottom>
@@ -183,8 +139,4 @@ export class LoginPage extends React.Component {
   }
 }
 
-export default compose(
-  withRouter,
-  connect(mapStateToProps),
-  withStyles(styles)
-)(LoginPage)
+export default withStyles(styles)(LoginPage)
