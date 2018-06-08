@@ -102,7 +102,7 @@ describe('Keystone', () => {
   })
 
   describe('users', () => {
-    it.only('list users', async () => {
+    it('list users', async () => {
       const client = await makeScopedClient()
       const users = await client.keystone.getUsers()
       expect(users).toBeDefined()
