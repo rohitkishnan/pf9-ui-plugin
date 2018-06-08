@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import TextField from 'material-ui/TextField'
-import Button from 'material-ui/Button'
+import { Button, TextField } from '@material-ui/core'
 
 class AddNetworkForm extends React.Component {
   state = {
