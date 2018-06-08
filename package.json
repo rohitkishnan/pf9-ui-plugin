@@ -107,6 +107,7 @@
     "automock": false,
     "setupFiles": [
       "./setupJest.js"
-    ]
+    ],
+    "testEnvironment": "node"
   }
 }

@@ -1,6 +1,7 @@
+import config from '../../../config'
 import OpenstackClient from '../OpenstackClient'
 
-const keystoneEndpoint = 'http://localhost:4444/keystone'
+const keystoneEndpoint = `${config.host}/keystone`
 const makeClient = () => new OpenstackClient({ keystoneEndpoint })
 
 describe('OpenstackClient', () => {

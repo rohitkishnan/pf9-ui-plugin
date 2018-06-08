@@ -49,7 +49,7 @@ class Keystone {
     body.auth.scope = { project: { id: projectId } }
     try {
       const response = await axios.post(this.tokensUrl, body)
-      const scopedToken = response.data.token.id
+      const scopedToken = response.headers['x-subject-token']
       this.client.scopedToken = scopedToken
       return scopedToken
     } catch (err) {
@@ -63,7 +63,7 @@ class Keystone {
 
     try {
       const response = await axios.post(this.tokensUrl, body)
-      const unscopedToken = response.data.token.id
+      const unscopedToken = response.headers['x-subject-token']
       this.client.unscopedToken = unscopedToken
       return unscopedToken
     } catch (err) {

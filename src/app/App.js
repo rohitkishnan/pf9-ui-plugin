@@ -13,6 +13,7 @@ import { setupFromConfig } from './util/registry'
 import config from '../../config'
 
 setupFromConfig(config)
+window.process = process
 
 class App extends React.Component {
   render () {
