@@ -30,10 +30,11 @@ if (isDev) {
 
 if (isProd) {
   plugins.push(new UglifyJSPlugin({ sourceMap: true }))
-  plugins.push(new webpack.DefinePlugin({
-    'process.env.NODE_ENV': JSON.stringify('production')
-  }))
 }
+
+plugins.push(new webpack.DefinePlugin({
+  'process.env.NODE_ENV': JSON.stringify(env)
+}))
 
 // main entry point
 appEntry.push('babel-polyfill')
