@@ -9,7 +9,7 @@ const {
   OS_API_HOST,
   OS_USERNAME,
   OS_PASSWORD,
-} = process.env
+} = (process && process.env) || {}
 
 const config = {
   production: {
