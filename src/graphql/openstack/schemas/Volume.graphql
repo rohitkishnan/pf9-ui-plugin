@@ -2,20 +2,17 @@ type Volume {
 	id: ID!
   name: String!
   description: String
-  type: String!
+  volume_type: String!
   metadata: String
   size: Int!
-  sizeUnit: String!
   bootable: Boolean!
   status: String
-  tenantId: String!
   tenant: String!
   source: String
   host: String!
   instance: String
-  instanceId: String
   device: String
-  created: String!
+  created_at: String!
   attachedMode: String
   readonly: Boolean
 }
@@ -27,18 +24,15 @@ type Query {
 input VolumeInput {
   name: String!
   description: String
-  type: String!
+  volume_type: String!
   metadata: String
   size: Int!
-  sizeUnit: String!
   bootable: Boolean!
   status: String
-  tenantId: String!
   tenant: String!
   source: String
   host: String!
   instance: String
-  instanceId: String
   device: String
   attachedMode: String
   readonly: Boolean
