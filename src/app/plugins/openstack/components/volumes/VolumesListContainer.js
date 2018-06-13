@@ -15,7 +15,7 @@ class VolumesListContainer extends React.Component {
       variables: { id },
       update: cache => {
         const data = cache.readQuery({ query: GET_VOLUMES })
-        data.users = data.users.filter(x => x.id !== id)
+        data.volumes = data.volumes.filter(x => x.id !== id)
         cache.writeQuery({ query: GET_VOLUMES, data })
       }
     })
@@ -27,12 +27,14 @@ class VolumesListContainer extends React.Component {
         items={this.props.volumes}
         onRemove={this.handleRemove}
         addUrl="/ui/openstack/volumes/add"
+        editUrl="/ui/openstack/volumes/edit"
       >
-        {({ onDelete, onAdd }) => (
+        {({ onDelete, onAdd, onEdit }) => (
           <VolumesList
             volumes={this.props.volumes}
             onAdd={onAdd}
             onDelete={onDelete}
+            onEdit={onEdit}
           />
         )}
       </CRUDListContainer>

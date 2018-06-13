@@ -2,22 +2,11 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Button, Checkbox, FormControl, TextField } from '@material-ui/core'
 
-class AddVolumeForm extends React.Component {
+class UpdateVolumeForm extends React.Component {
   state = {
-    name: '',
-    description: '',
-    volume_type: '',
-    status: '',
-    tenant: '',
-    host: '',
-    instance: '',
-    device: '',
-    size: 0,
-    bootable: false,
-    attachedMode: '',
-    source: '',
-    readonly: false,
-    metadata: ''
+    name: this.props.volume.name || '',
+    description: this.props.volume.description || '',
+    bootable: this.props.volume.bootable || false
   }
 
   setField = field => event => this.setState({ [field]: event.target.value })
@@ -25,30 +14,19 @@ class AddVolumeForm extends React.Component {
   setCheckbox = field => event => this.setState({ [field]: event.target.checked })
 
   fields = [
-    { id: 'name', label: 'Volume Name' },
-    { id: 'volume_type', label: 'Volume Type' },
+    { id: 'name', label: 'Name' },
     { id: 'description', label: 'Description' },
-    { id: 'status', label: 'Status' },
-    { id: 'tenant', label: 'Tenant' },
-    { id: 'source', label: 'Source' },
-    { id: 'host', label: 'Host' },
-    { id: 'instance', label: 'Instance' },
-    { id: 'device', label: 'Device' },
-    { id: 'size', label: 'Capacity', type: 'number' },
-    { id: 'bootable', label: 'Bootable', type: 'checkbox' },
-    { id: 'attachedMode', label: 'attached_mode' },
-    { id: 'readonly', label: 'readonly', type: 'checkbox' },
-    { id: 'metadata', label: 'Metadata' }
+    { id: 'bootable', label: 'Bootable', type: 'checkbox' }
   ]
 
   renderField = ({ id, label, type = 'text' }) => {
-    if (type === 'text' || type === 'number') {
+    if (type === 'text') {
       return (
         <div key={id}>
           <TextField id={id} type={type} label={label} value={this.state[id]} onChange={this.setField(id)} />
         </div>
       )
-    } else {
+    } else if (type === 'checkbox') {
       return (
         <div key={id}>
           <FormControl>
@@ -66,7 +44,7 @@ class AddVolumeForm extends React.Component {
 
   render () {
     return (
-      <form noValidate>
+      <form>
         {this.fields.map(this.renderField)}
         <div>
           <Button variant="raised" onClick={this.handleSubmit}>Submit</Button>
@@ -76,8 +54,8 @@ class AddVolumeForm extends React.Component {
   }
 }
 
-AddVolumeForm.propTypes = {
+UpdateVolumeForm.propTypes = {
   onSubmit: PropTypes.func.isRequired
 }
 
-export default AddVolumeForm
+export default UpdateVolumeForm

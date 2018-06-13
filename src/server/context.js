@@ -143,6 +143,14 @@ class Context {
     return network
   }
 
+  getVolume = (id) => {
+    const volume = Volume.findById(id)
+    if (!volume) {
+      throw new Error('Unable to find non-existent volume')
+    }
+    return volume.asGraphQl()
+  }
+
   getVolumes = () => Volume.getCollection().map(x => x.asGraphQl())
 
   createVolume = ({ input }) => {
@@ -150,14 +158,15 @@ class Context {
     return volume.asGraphQl()
   }
 
-  updateVolume = ({ id, input }) => {
-    const volume = Volume.findById(id)
+  updateVolume = (id, input) => {
+    let volume = Volume.updateById(id, input)
     if (!volume) {
       throw new Error('Unable to update non-existent volume')
     }
+    return volume.asGraphQl()
   }
 
-  removeVolume = ({ id }) => {
+  removeVolume = id => {
     const volume = Volume.findById(id)
     if (!volume) {
       throw new Error('Unable to delete non-existent volume')
