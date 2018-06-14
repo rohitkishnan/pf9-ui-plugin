@@ -15,14 +15,15 @@ class EnhancedTableHead extends React.Component {
   }
 
   render () {
-    const { columns, onSelectAllClick, order, orderBy, numSelected, rowCount, showCheckboxes } = this.props
+    const { columns, onSelectAllClick, checked, order, orderBy, numSelected, rowCount, showCheckboxes } = this.props
 
     const headerCheckbox = showCheckboxes ? (
       <TableCell padding="checkbox">
         <Checkbox
           indeterminate={numSelected > 0 && numSelected < rowCount}
-          checked={numSelected === rowCount}
+          checked={checked}
           onChange={onSelectAllClick}
+          color='primary'
         />
       </TableCell>
     ) : null
