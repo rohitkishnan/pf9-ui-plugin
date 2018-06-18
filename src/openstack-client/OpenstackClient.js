@@ -37,6 +37,9 @@ class OpenstackClient {
 
   getAuthHeaders (scoped = true) {
     const token = scoped ? this.scopedToken : this.unscopedToken
+    if (!token) {
+      return { headers: {} }
+    }
     return ({
       headers: {
         'X-Auth-Token': token
