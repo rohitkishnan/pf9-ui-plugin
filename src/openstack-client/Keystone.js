@@ -25,6 +25,23 @@ const constructAuthBody = (method, ...args) => {
   return body
 }
 
+const groupByRegion = catalog => {
+  let regions = {}
+  catalog.forEach(service => {
+    const { name } = service
+    service.endpoints.forEach(endpoint => {
+      const { region } = endpoint
+      regions[region] = regions[region] || {}
+      regions[region][name] = regions[region][name] || {}
+      regions[region][name][endpoint.interface] = {
+        id: endpoint.id,
+        url: endpoint.url,
+      }
+    })
+  })
+  return regions
+}
+
 class Keystone {
   constructor (client) {
     this.client = client
@@ -34,6 +51,7 @@ class Keystone {
   get v3 () { return `${this.endpoint}/v3` }
 
   get catalogUrl () { return `${this.v3}/auth/catalog` }
+  get endpointsUrl () { return `${this.v3}/endpoints` }
   get regionsUrl () { return `${this.v3}/regions` }
   get projectsUrl () { return `${this.v3}/auth/projects` }
   get tokensUrl () { return `${this.v3}/auth/tokens?nocatalog` }
@@ -79,7 +97,25 @@ class Keystone {
 
   async getServiceCatalog () {
     const response = await axios.get(this.catalogUrl, this.client.getAuthHeaders())
+    this.client.serviceCatalog = response.data.catalog
     return response.data.catalog
+  }
+
+  async getEndpoints () {
+    const response = await axios.get(this.endpointsUrl, this.client.getAuthHeaders())
+    this.client.endpoints = response.data.endpoints
+    return response.data.endpoints
+  }
+
+  async getServicesForActiveRegion () {
+    if (!this.client.activeRegion) {
+      throw new Error('Must first select a region before getting services for that region')
+    }
+    if (!this.client.serviceCatalog) {
+      await this.getServiceCatalog()
+    }
+    const servicesByRegion = groupByRegion(this.client.serviceCatalog)
+    return servicesByRegion[this.client.activeRegion]
   }
 
   async getUsers () {
