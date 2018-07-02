@@ -1,62 +1,29 @@
 import React from 'react'
-import { withRouter } from 'react-router-dom'
+import { Query } from 'react-apollo'
 import FormWrapper from 'core/common/FormWrapper'
 import UpdateUserForm from './UpdateUserForm'
-import { UPDATE_USER, GET_USER } from './actions'
-import { compose, withApollo } from 'react-apollo'
+import { GET_USER } from './actions'
 import requiresAuthentication from '../../util/requiresAuthentication'
 
 class UpdateUserPage extends React.Component {
-  componentDidMount () {
-    const { client } = this.props
-    const userId = this.props.match.params.userId
-
-    client.query({
-      query: GET_USER,
-      variables: {
-        id: userId
-      }
-    }).then((response) => {
-      const user = response.data.user
-      if (user) {
-        this.setState({ user })
-      }
-    })
-  }
-
-  handleSubmit = user => {
-    const { client, history } = this.props
-    const userId = this.props.match.params.userId
-
-    try {
-      client.mutate({
-        mutation: UPDATE_USER,
-        variables: {
-          id: userId,
-          input: user
-        },
-      })
-      history.push('/ui/openstack/users')
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
   render () {
-    const user = this.state && this.state.user
+    const id = this.props.match.params.userId
 
     return (
-      <FormWrapper title="Update User" backUrl="/ui/openstack/users">
-        { user &&
-          <UpdateUserForm onSubmit={this.handleSubmit} user={user} />
+      <Query query={GET_USER} variables={{ id }}>
+        {({ data }) =>
+          <FormWrapper title="Update User" backUrl="/ui/openstack/users">
+            { data && data.user &&
+              <UpdateUserForm
+                user={data.user}
+                objId={id}
+              />
+            }
+          </FormWrapper>
         }
-      </FormWrapper>
+      </Query>
     )
   }
 }
 
-export default compose(
-  requiresAuthentication,
-  withRouter,
-  withApollo
-)(UpdateUserPage)
+export default requiresAuthentication(UpdateUserPage)

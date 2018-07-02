@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { ADD_FLAVOR, GET_FLAVORS } from './actions'
 import { Button } from '@material-ui/core'
 import ValidatedForm from 'core/common/ValidatedForm'
 import TextField from 'core/common/TextField'
@@ -12,17 +12,21 @@ const initialValue = {
   public: false,
 }
 
-const AddFlavorForm = ({ onSubmit }) =>
-  <ValidatedForm initialValue={initialValue} onSubmit={onSubmit}>
+const AddFlavorForm = () =>
+  <ValidatedForm
+    initialValue={initialValue}
+    backUrl="/ui/openstack/flavors"
+    action="add"
+    addQuery={ADD_FLAVOR}
+    getQuery={GET_FLAVORS}
+    objType="flavors"
+    cacheQuery="createFlavor"
+  >
     <TextField id="name" label="Name" />
     <TextField id="vcpus" label="VCPUs" type="number" />
     <TextField id="ram" label="RAM" type="number" />
     <TextField id="disk" label="Disk" type="number" />
     <Button type="submit" variant="raised">Add Flavor</Button>
   </ValidatedForm>
-
-AddFlavorForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired
-}
 
 export default AddFlavorForm

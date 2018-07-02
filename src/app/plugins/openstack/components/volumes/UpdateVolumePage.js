@@ -1,62 +1,29 @@
 import React from 'react'
-import { withRouter } from 'react-router-dom'
+import { Query } from 'react-apollo'
 import FormWrapper from 'core/common/FormWrapper'
 import UpdateVolumeForm from './UpdateVolumeForm'
-import { GET_VOLUME, UPDATE_VOLUME } from './actions'
-import { compose, withApollo } from 'react-apollo'
+import { GET_VOLUME } from './actions'
 import requiresAuthentication from '../../util/requiresAuthentication'
 
 class UpdateVolumePage extends React.Component {
-  componentDidMount () {
-    const { client } = this.props
-    const volumeId = this.props.match.params.volumeId
-
-    client.query({
-      query: GET_VOLUME,
-      variables: {
-        id: volumeId
-      }
-    }).then((response) => {
-      const volume = response.data.volume
-      if (volume) {
-        this.setState({ volume })
-      }
-    })
-  }
-
-  handleSubmit = volume => {
-    const { client, history } = this.props
-    const volumeId = this.props.match.params.volumeId
-
-    try {
-      client.mutate({
-        mutation: UPDATE_VOLUME,
-        variables: {
-          id: volumeId,
-          input: volume
-        }
-      })
-      history.push('/ui/openstack/volumes')
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
   render () {
-    const volume = this.state && this.state.volume
+    const id = this.props.match.params.volumeId
 
     return (
-      <FormWrapper title="Update Volume" backUrl="/ui/openstack/volumes">
-        { volume &&
-          <UpdateVolumeForm onSubmit={this.handleSubmit} volume={volume} />
+      <Query query={GET_VOLUME} variables={{ id }}>
+        {({ data }) =>
+          <FormWrapper title="Update Volume" backUrl="/ui/openstack/volumes">
+            { data && data.volume &&
+              <UpdateVolumeForm
+                volume={data.volume}
+                objId={id}
+              />
+            }
+          </FormWrapper>
         }
-      </FormWrapper>
+      </Query>
     )
   }
 }
 
-export default compose(
-  requiresAuthentication,
-  withRouter,
-  withApollo
-)(UpdateVolumePage)
+export default requiresAuthentication(UpdateVolumePage)

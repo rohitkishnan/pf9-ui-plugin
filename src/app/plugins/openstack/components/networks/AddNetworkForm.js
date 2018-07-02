@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { ADD_NETWORK, GET_NETWORKS } from './actions'
 import Button from '@material-ui/core/Button'
 import ValidatedForm from 'core/common/ValidatedForm'
 import Checkbox from 'core/common/Checkbox'
@@ -16,8 +16,16 @@ const initialValue = {
   status: ''
 }
 
-const AddNetworkForm = ({ onSubmit }) =>
-  <ValidatedForm initialValue={initialValue} onSubmit={onSubmit}>
+const AddNetworkForm = () =>
+  <ValidatedForm
+    initialValue={initialValue}
+    backUrl="/ui/openstack/networks"
+    action="add"
+    addQuery={ADD_NETWORK}
+    getQuery={GET_NETWORKS}
+    objType="networks"
+    cacheQuery="createNetwork"
+  >
     <TextField id="name" label="Name" />
     <TextField id="subnets" label="Subnets Associated" />
     <TextField id="tenant" label="Tenant" />
@@ -27,9 +35,5 @@ const AddNetworkForm = ({ onSubmit }) =>
     <Checkbox id="admin_state_up" label="Admin State" />
     <Button type="submit" variant="raised">Add Network</Button>
   </ValidatedForm>
-
-AddNetworkForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired
-}
 
 export default AddNetworkForm
