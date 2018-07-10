@@ -4,23 +4,20 @@ import { withStyles } from '@material-ui/core/styles'
 import { withRouter } from 'react-router'
 import { rootPath } from '../globals'
 import classNames from 'classnames'
+import Avatar from './Avatar'
+import Selector from './Selector'
+import MenuIcon from '@material-ui/icons/Menu'
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import {
   AppBar,
-  Avatar,
-  Button,
   Divider,
   Drawer,
   IconButton,
   ListItemText,
-  Menu,
   MenuItem,
   MenuList,
-  Toolbar,
-  Typography
+  Toolbar
 } from '@material-ui/core'
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
-import MenuIcon from '@material-ui/icons/Menu'
-import { LOCAL_STORAGE_NAMESPACE } from './pf9-storage'
 
 const drawerWidth = 240
 
@@ -107,16 +104,11 @@ const styles = theme => ({
   logo: {
     maxHeight: theme.spacing.unit * 6.5
   },
-  avatar: {
+  rightTools: {
     position: 'absolute',
-    right: 0
-  },
-  avatarImg: {
-    backgroundColor: theme.palette.primary.dark,
-    marginRight: theme.spacing.unit,
-    fontSize: theme.spacing.unit * 2,
-    height: theme.spacing.unit * 3,
-    width: theme.spacing.unit * 3
+    right: theme.spacing.unit * 2,
+    display: 'flex',
+    alignItems: 'center'
   }
 })
 
@@ -125,8 +117,7 @@ const styles = theme => ({
 class Navbar extends React.Component {
   state = {
     open: false,
-    anchor: 'left',
-    anchorEl: null
+    anchor: 'left'
   }
 
   handleDrawerOpen = () => {
@@ -135,14 +126,6 @@ class Navbar extends React.Component {
 
   handleDrawerClose = () => {
     this.setState({ open: false })
-  }
-
-  handleClick = event => {
-    this.setState({ anchorEl: event.currentTarget })
-  }
-
-  handleClose = () => {
-    this.setState({ anchorEl: null })
   }
 
   navTo = link => () => {
@@ -156,37 +139,8 @@ class Navbar extends React.Component {
 
   render () {
     const { classes, links } = this.props
-    const { open, anchorEl } = this.state
+    const { open } = this.state
     const logoPath = rootPath+'images/logo.png'
-    const userName = JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAMESPACE)).username || ''
-
-    const avatar = (
-      <div className={classes.avatar}>
-        <Button
-          aria-owns={anchorEl ? 'user-menu' : null}
-          aria-haspopup="true"
-          onClick={this.handleClick}
-          color="inherit"
-        >
-          <Avatar className={classes.avatarImg}>{userName.charAt(0)}</Avatar>
-          <Typography color="inherit" variant="body1">
-            {userName}
-          </Typography>
-        </Button>
-        <Menu
-          id="user-menu"
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={this.handleClose}
-          getContentAnchorEl={null}
-          anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
-        >
-          <MenuItem onClick={this.handleClose}>Change Password</MenuItem>
-          <MenuItem onClick={this.handleClose}>SSH Keys</MenuItem>
-          <MenuItem onClick={this.navTo('/ui/logout')}>Sign Out</MenuItem>
-        </Menu>
-      </div>
-    )
 
     const drawer = (
       <Drawer
@@ -226,7 +180,11 @@ class Navbar extends React.Component {
                 <MenuIcon />
               </IconButton>
               <img src={logoPath} className={classes.logo} align="middle" />
-              {localStorage[LOCAL_STORAGE_NAMESPACE] && avatar}
+              <div className={classes.rightTools}>
+                <Selector name="Region" list={[`AWS-US-West-1-Test`, `KVM-Neutron`]} />
+                <Selector name="Tenant" list={[`Dev Team Tenant`, `Test Tenant`]} />
+                <Avatar />
+              </div>
             </Toolbar>
           </AppBar>
           {drawer}
