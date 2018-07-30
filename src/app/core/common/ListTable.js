@@ -13,6 +13,9 @@ import {
 } from '@material-ui/core'
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableToolbar from './EnhancedTableToolbar'
+import Session from 'openstack/actions/session'
+
+const session = new Session()
 
 const styles = theme => ({
   root: {
@@ -36,7 +39,7 @@ class ListTable extends React.Component {
       order: 'asc',
       orderBy: this.props.columns[0].id,
       page: 0,
-      rowsPerPage: 5,
+      rowsPerPage: session.getUserPreference().perPage || 10,
       selected: [],
       selectedAll: false,
       searchTerm: ''
@@ -100,7 +103,10 @@ class ListTable extends React.Component {
 
   handleChangePage = (event, page) => this.setState({ page })
 
-  handleChangeRowsPerPage = event => this.setState({ rowsPerPage: event.target.value })
+  handleChangeRowsPerPage = event => {
+    session.setUserPreference('perPage', event.target.value)
+    this.setState({ rowsPerPage: event.target.value })
+  }
 
   handleAdd = () => {
     this.props.onAdd()
@@ -214,6 +220,7 @@ class ListTable extends React.Component {
         nextIconButtonProps={{ 'arial-label': 'Next Page' }}
         onChangePage={this.handleChangePage}
         onChangeRowsPerPage={this.handleChangeRowsPerPage}
+        rowsPerPageOptions={[5, 10, 25, 50, 100]}
       />
     )
   }

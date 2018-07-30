@@ -1,8 +1,10 @@
 export const LOCAL_STORAGE_NAMESPACE = 'pf9'
 
 export const getInstance = () => {
-  const json = localStorage.getItem(LOCAL_STORAGE_NAMESPACE) || '{}'
-  return JSON.parse(json)
+  if (global.localStorage === undefined) {
+    return {}
+  }
+  return JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAMESPACE) ||'{}')
 }
 
 export const getStorage = key => getInstance()[key]
