@@ -117,7 +117,11 @@ const styles = theme => ({
 class Navbar extends React.Component {
   state = {
     open: false,
-    anchor: 'left'
+    anchor: 'left',
+    curRegion: '',
+    curTenant: '',
+    regionSearch: '',
+    tenantSearch: ''
   }
 
   handleDrawerOpen = () => {
@@ -126,6 +130,18 @@ class Navbar extends React.Component {
 
   handleDrawerClose = () => {
     this.setState({ open: false })
+  }
+
+  handleClick = key => event => {
+    this.setState({
+      [key]: event.target.innerText
+    })
+  }
+
+  handleSearch = key => value => {
+    this.setState({
+      [key]: value
+    })
   }
 
   navTo = link => () => {
@@ -139,7 +155,7 @@ class Navbar extends React.Component {
 
   render () {
     const { classes, links } = this.props
-    const { open } = this.state
+    const { open, curRegion, curTenant, regionSearch, tenantSearch } = this.state
     const logoPath = rootPath+'images/logo.png'
 
     const drawer = (
@@ -181,8 +197,20 @@ class Navbar extends React.Component {
               </IconButton>
               <img src={logoPath} className={classes.logo} align="middle" />
               <div className={classes.rightTools}>
-                <Selector name="Region" list={[`AWS-US-West-1-Test`, `KVM-Neutron`]} />
-                <Selector name="Tenant" list={[`Dev Team Tenant`, `Test Tenant`]} />
+                <Selector
+                  name={curRegion.length === 0 ? 'Current Reigion' : curRegion}
+                  list={[`AWS-US-West-1-Test`, `KVM-Neutron`]}
+                  onChoose={this.handleClick('curRegion')}
+                  onSearchChange={this.handleSearch('regionSearch')}
+                  searchTerm={regionSearch}
+                />
+                <Selector
+                  name={curTenant.length === 0 ? 'Current Tenant' : curTenant}
+                  list={[`Dev Team Tenant`, `Test Tenant`]}
+                  onChoose={this.handleClick('curTenant')}
+                  onSearchChange={this.handleSearch('tenantSearch')}
+                  searchTerm={tenantSearch}
+                />
                 <Avatar />
               </div>
             </Toolbar>

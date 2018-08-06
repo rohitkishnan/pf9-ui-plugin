@@ -1,17 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
-import { Button, InputAdornment, Menu, MenuItem, TextField, Typography } from '@material-ui/core'
-import SearchIcon from '@material-ui/icons/Search'
+import {
+  Button,
+  Menu,
+  MenuItem,
+  Typography
+} from '@material-ui/core'
+import SearchBar from './SearchBar'
 
 const styles = theme => ({
   selector: {
     position: 'relative',
     float: 'right'
-  },
-  menuSearch: {
-    outline: 'none',
-    padding: theme.spacing.unit * 2
   }
 })
 
@@ -28,14 +29,32 @@ class Selector extends React.Component {
     this.setState({ [anchor]: event.currentTarget })
   }
 
-  handleClose = anchor => () => {
+  // Clear search bar when selector is closed.
+  handleClose = anchor => event => {
+    const { onChoose, onSearchChange } = this.props
+    event.target.innerText && onChoose(event)
+    onSearchChange('')
     this.setState({ [anchor]: null })
   }
 
+  filterBySearch = list => {
+    const { searchTerm } = this.props
+    return list.filter(item => item.match(new RegExp(searchTerm, 'i')) !== null)
+  }
+
+  sortList = list => {
+    let _list = [...list]
+    return _list.sort((a, b) => (a < b ? -1 : 1))
+  }
+
   render () {
-    const { classes, name, list } = this.props
+    const { classes, name, list, searchTerm, onSearchChange } = this.props
     const { anchor } = this.state
     const selectorName = `${name}-selector`
+
+    const sortedList = this.sortList(list)
+    const filteredList = searchTerm === '' ? sortedList : this.filterBySearch(sortedList)
+
     return (
       <div className={classes.selector}>
         <Button
@@ -46,7 +65,7 @@ class Selector extends React.Component {
           disableRipple
         >
           <Typography color="inherit" variant="body1">
-            Current {name}  &#9662;
+            {name}  &#9662;
           </Typography>
         </Button>
         <Menu
@@ -57,18 +76,11 @@ class Selector extends React.Component {
           getContentAnchorEl={null}
           anchorOrigin={{vertical: 'bottom', horizontal: 'left'}}
         >
-          <TextField
-            placeholder={'Search '+name}
-            className={classes.menuSearch}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-          {list.map(item => (<MenuItem onClick={this.handleClose('anchor')} key={item}>{item}</MenuItem>))}
+          { searchTerm !== undefined && <SearchBar
+            onSearchChange={onSearchChange}
+            searchTerm={searchTerm}
+          />}
+          {filteredList.map(item => (<MenuItem onClick={this.handleClose('anchor')} key={item}>{item}</MenuItem>))}
         </Menu>
       </div>
     )
@@ -79,6 +91,7 @@ Selector.propTypes = {
   name: PropTypes.string.isRequired,
   list: PropTypes.array.isRequired,
   classes: PropTypes.object,
+  onChoose: PropTypes.func.isRequired
 }
 
 export default Selector
