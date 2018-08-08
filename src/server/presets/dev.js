@@ -9,6 +9,7 @@ import Network from '../models/Network'
 import Router from '../models/Router'
 import Volume from '../models/Volume'
 import GlanceImage from '../models/GlanceImage'
+import Application from '../models/Application'
 // import Token from '../models/Token'
 import { range } from '../util'
 
@@ -79,7 +80,10 @@ function loadPreset () {
   new GlanceImage({ name: 'Test-Image-2', description: 'Version 1118', status: 'OK', owner: 'Development Team Tenant', visibility: 'public', protected: false, disk_format: 'qcow2', virtual_size: 50, size: 8 })
   new GlanceImage({ name: 'Test-Image-3', description: 'A plain test image.', status: 'OK', owner: 'Development Team Tenant', visibility: 'private', protected: true, disk_format: 'qcow2', virtual_size: 100, size: 22 })
 
-  adminUser.addRole(adminRole)
+  // Applications
+  new Application({ name: 'ApacheHttpServer', author: 'admin', public: true, tenant: 'Development Team Tenant', description: 'The Apache HTTP Server Project is a collaborative software development effort aimed at creating a robust, commercial-grade, featureful, and freely-available source code implementation of an HTTP (Web) server.', categories: 'Web' })
+  new Application({ name: 'WordPress', author: 'admin', public: true, tenant: 'Development Team Tenant', description: 'WordPress is a free and open-source content management system (CMS) based on PHP and MySQL.', categories: 'SAP' })
+  new Application({ name: 'MongoDB', author: 'user', public: true, tenant: 'Test Tenant', description: 'MongoDB is a cross-platform document-oriented database. Classified as a NoSQL database, MongoDB eschews the traditional table-based relational database structure in favor of JSON-like documents with dynamic schemas.', categories: 'Databases' })
 }
 
 export default loadPreset
