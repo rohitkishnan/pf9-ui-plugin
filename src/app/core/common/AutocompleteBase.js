@@ -60,7 +60,7 @@ class AutocompleteBase extends React.Component {
   // was never clicked.  `onBlur` does not happen until `onMouseUp` so this seems
   // to work.  Not sure about tap events.
   handleClick = item => () => {
-    this.setState({ value: item, open: false, abc: 123 }, this.propogateChange)
+    this.setState({ value: item, open: false }, this.propogateChange)
   }
 
   handleClose = () => {
