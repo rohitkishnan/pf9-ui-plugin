@@ -13,9 +13,8 @@ import {
 } from '@material-ui/core'
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableToolbar from './EnhancedTableToolbar'
-import Session from 'openstack/actions/session'
-
-const session = new Session()
+import { compose } from 'core/fp'
+import { withAppContext } from 'core/AppContext'
 
 const styles = theme => ({
   root: {
@@ -30,16 +29,17 @@ const styles = theme => ({
   },
 })
 
-@withStyles(styles)
 class ListTable extends React.Component {
   constructor (props) {
     super(props)
+    const { columns, getUserPreferences } = props
+    const prefs = (getUserPreferences && getUserPreferences()) || {}
 
     this.state = {
       order: 'asc',
-      orderBy: this.props.columns[0].id,
+      orderBy: columns[0].id,
       page: 0,
-      rowsPerPage: session.getUserPreference().perPage || 10,
+      rowsPerPage: prefs.perPage || 10,
       selected: [],
       selectedAll: false,
       searchTerm: ''
@@ -104,7 +104,7 @@ class ListTable extends React.Component {
   handleChangePage = (event, page) => this.setState({ page })
 
   handleChangeRowsPerPage = event => {
-    session.setUserPreference('perPage', event.target.value)
+    this.props.setUserPreference('perPage', event.target.value)
     this.setState({ rowsPerPage: event.target.value })
   }
 
@@ -310,4 +310,7 @@ ListTable.defaultProps = {
   showCheckboxes: true
 }
 
-export default ListTable
+export default compose(
+  withStyles(styles),
+  withAppContext,
+)(ListTable)

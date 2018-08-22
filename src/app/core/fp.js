@@ -1,5 +1,12 @@
 // functional programming helpers
 
+export const pluck = key => obj => obj[key]
+export const identity = x => x
+export const isTruthy = x => !!x
+export const exists = x => x !== undefined
+
+export const pluckAsync = key => promise => promise.then(obj => obj[key])
+
 export const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args)))
 export const pipe = (...fns) => compose(...fns.reverse())
 export const pick = key => obj => obj[key]
@@ -20,3 +27,21 @@ export const filterFields = (...keys) => obj =>
     (accum, key) => keys.includes(key) ? accum : mergeKey(obj, accum, key),
     {}
   )
+
+// Lens-style setter useful for setState operations
+// Allows for setting of values in a deeply nested object using cloning.
+// We can extend with other functionality like arrays and using
+// functions as selectors in the future if it looks like it will be useful.
+export function setObjLens (obj, value, paths) {
+  const [head, ...tail] = paths
+  if (tail.length === 0) {
+    return { ...obj, [head]: value }
+  }
+  return {
+    ...obj, [head]: setObjLens(obj[head], value, tail)
+  }
+}
+
+export const setStateLens = (value, paths) => state => {
+  return setObjLens(state, value, paths)
+}

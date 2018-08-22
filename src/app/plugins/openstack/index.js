@@ -1,5 +1,4 @@
 import React from 'react'
-import { combineReducers } from 'redux'
 
 import DashboardPage from './components/DashboardPage'
 
@@ -27,6 +26,8 @@ import VolumesListPage from './components/volumes/VolumesListPage'
 import AddVolumePage from './components/volumes/AddVolumePage'
 import UpdateVolumePage from './components/volumes/UpdateVolumePage'
 
+// import AddVolumeTypePage from './components/volumes/AddVolumeTypePage'
+
 import GlanceImageIndex from './components/glanceimages/GlanceImageIndex'
 import GlanceImageListPage from './components/glanceimages/GlanceImageListPage'
 import AddGlanceImagePage from './components/glanceimages/AddGlanceImagePage'
@@ -35,12 +36,6 @@ import UpdateGlanceImagePage from './components/glanceimages/UpdateGlanceImagePa
 import ApiAccessPage from './components/api-access/ApiAccessListPage'
 
 import ApplicationsPage from './components/applications/ApplicationsListPage'
-
-import loginReducer from './reducers/login'
-import sessionReducer from './reducers/session'
-import tenantsReducer from './reducers/tenants'
-import usersReducer from './reducers/users'
-import flavorsReducer from './reducers/flavors'
 
 import openstackSchemas from 'schema/openstack'
 
@@ -158,6 +153,13 @@ OpenStack.registerPlugin = pluginManager => {
         link: { path: '/storage/volumes/edit/:volumeId', exact: true },
         component: UpdateVolumePage
       },
+      /*
+      {
+        name: 'AddVolumeType',
+        link: { path: '/storage/volumeTypes/add', exact: true },
+        component: AddVolumeTypePage
+      },
+      */
       {
         name: 'GlanceImages',
         link: { path: '/glanceimages', exact: true },
@@ -234,13 +236,5 @@ OpenStack.registerPlugin = pluginManager => {
 
   pluginManager.registerSchema(openstackSchemas)
 }
-
-OpenStack.reducer = combineReducers({
-  login: loginReducer,
-  session: sessionReducer,
-  tenants: tenantsReducer,
-  users: usersReducer,
-  flavors: flavorsReducer,
-})
 
 export default OpenStack

@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react'
-import { connect } from 'react-redux'
-import { compose } from 'redux'
-import Session from '../actions/session'
+import PropTypes from 'prop-types'
+import { compose } from 'core/fp'
 import { withRouter } from 'react-router'
 import { withStyles } from '@material-ui/core/styles'
 import { rootPath } from 'core/globals'
+import { withAppContext } from 'core/AppContext'
 import {
   Button,
   Checkbox,
@@ -15,16 +15,6 @@ import {
   Typography,
 } from '@material-ui/core'
 import Alert from 'core/common/Alert'
-
-function mapStateToProps (state, ownProps) {
-  const { login } = state.openstack
-  const { startLogin, loginSucceeded, loginFailed } = login
-  return {
-    startLogin,
-    loginSucceeded,
-    loginFailed,
-  }
-}
 
 const styles = theme => ({
   root: {
@@ -74,6 +64,7 @@ export class LoginPage extends React.Component {
     password: '',
     MFAcheckbox: false,
     loginFailed: false,
+    loading: false,
   }
 
   updateValue = key => event => {
@@ -82,25 +73,26 @@ export class LoginPage extends React.Component {
 
   performLogin = async (event) => {
     event.preventDefault()
-    this.setState({ loginFailed: false })
+    const { onAuthSuccess, context } = this.props
     const { username, password } = this.state
-    const { dispatch, history } = this.props
-    const session = Session()
-    const loginSuccessful = await dispatch(session.signIn({ username, password }))
-    if (loginSuccessful) {
-      // redirect to the dashboard page on successful login
-      history.push('/')
-    } else {
-      this.setState({ loginFailed: true })
+    const { keystone } = context.openstackClient
+
+    this.setState({ loginFailed: false, loading: true })
+    const unscopedToken = await keystone.authenticate(username, password)
+    this.setState({ loading: false })
+
+    if (!unscopedToken) {
+      return this.setState({ loginFailed: true })
     }
+
+    onAuthSuccess({ username, unscopedToken })
   }
 
   renderStatus = () => {
-    const { startLogin, loginSucceeded, loginFailed } = this.props
+    const { loading, loginFailed } = this.state
     return (
       <div className="login-status">
-        {startLogin && <div className="login-start">Attempting login...</div>}
-        {loginSucceeded && <div className="login-succeeded login-result">Successfully logged in.</div>}
+        {loading && <div className="login-start">Attempting login...</div>}
         {loginFailed && <div className="login-failed login-result">Login attempt failed.</div>}
       </div>
     )
@@ -201,8 +193,15 @@ export class LoginPage extends React.Component {
   }
 }
 
+LoginPage.propTypes = {
+  /**
+   * Handler that is invoked upon successful authentication.
+  */
+  onAuthSuccess: PropTypes.func,
+}
+
 export default compose(
+  withAppContext,
   withRouter,
-  connect(mapStateToProps),
   withStyles(styles)
 )(LoginPage)
