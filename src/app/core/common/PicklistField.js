@@ -1,10 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { default as BaseTextField } from '@material-ui/core/TextField'
+import Picklist from 'core/common/Picklist'
 import { withFormContext } from 'core/common/ValidatedForm'
 import { pickMultiple, filterFields } from 'core/fp'
 
-class TextField extends React.Component {
+/**
+ * PicklistField builds upon Picklist and adds integration with ValidatedForm
+ */
+class PicklistField extends React.Component {
   constructor (props) {
     super(props)
     const spec = pickMultiple('validations')(props)
@@ -17,35 +20,39 @@ class TextField extends React.Component {
 
   get restFields () { return filterFields(...withFormContext.propsToExclude)(this.props) }
 
-  handleChange = e => {
-    const { id, onChange, setField } = this.props
-    setField(id, e.target.value)
-    if (onChange) { onChange(e.target.value) }
-  }
-
   render () {
-    const { id, value } = this.props
+    const { id, label, value, setField, showNone } = this.props
+    const options = showNone ? [{ value: '', label: 'None' }, ...this.props.options] : this.props.options
     return (
       <div id={id}>
-        <BaseTextField
+        <Picklist
+          name={id}
+          label={label}
           {...this.restFields}
+          options={options}
           value={value[id] !== undefined ? value[id] : ''}
-          onChange={this.handleChange}
+          onChange={value => setField(id, value)}
         />
       </div>
     )
   }
 }
 
-TextField.defaultProps = {
+PicklistField.defaultProps = {
   validations: [],
 }
 
-TextField.propTypes = {
+PicklistField.propTypes = {
   id: PropTypes.string.isRequired,
   label: PropTypes.string,
+  options: PropTypes.arrayOf(PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+  ])).isRequired,
   validations: PropTypes.arrayOf(PropTypes.object),
   initialValue: PropTypes.string,
-  onChange: PropTypes.func,
+
+  /** Create an option of 'None' as the first default choice */
+  showNone: PropTypes.bool,
 }
-export default withFormContext(TextField)
+export default withFormContext(PicklistField)

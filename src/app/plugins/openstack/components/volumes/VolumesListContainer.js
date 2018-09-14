@@ -2,27 +2,26 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import CRUDListContainer from 'core/common/CRUDListContainer'
 import VolumesList from './VolumesList'
-import { GET_VOLUMES, REMOVE_VOLUME } from './actions'
+import { compose } from 'core/fp'
+import { withAppContext } from 'core/AppContext'
 
 class VolumesListContainer extends React.Component {
+  handleRemove = async id => {
+    const { context, setContext } = this.props
+    await context.openstackClient.cinder.deleteVolume(id)
+    const newVolumes = context.volumes.filter(x => x.id !== id)
+    setContext({ volumes: newVolumes })
+  }
+
   render () {
     return (
       <CRUDListContainer
         items={this.props.volumes}
-        objType="volumes"
-        getQuery={GET_VOLUMES}
-        removeQuery={REMOVE_VOLUME}
         addUrl="/ui/openstack/storage/volumes/add"
         editUrl="/ui/openstack/storage/volumes/edit"
+        onRemove={this.handleRemove}
       >
-        {({ onDelete, onAdd, onEdit }) => (
-          <VolumesList
-            volumes={this.props.volumes}
-            onAdd={onAdd}
-            onDelete={onDelete}
-            onEdit={onEdit}
-          />
-        )}
+        {handlers => <VolumesList volumes={this.props.volumes} {...handlers} />}
       </CRUDListContainer>
     )
   }
@@ -32,4 +31,6 @@ VolumesListContainer.propTypes = {
   volumes: PropTypes.arrayOf(PropTypes.object)
 }
 
-export default VolumesListContainer
+export default compose(
+  withAppContext,
+)(VolumesListContainer)
