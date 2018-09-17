@@ -38,7 +38,7 @@ class App extends React.Component {
       }
     })
 
-    const { pluginManager } = this.context
+    const { pluginManager } = this.props
     const options = pluginManager.getOptions()
     const { showFooter } = options
 
@@ -54,7 +54,7 @@ class App extends React.Component {
           <AppContext initialContext={{ openstackClient }}>
             <div id="_main-container">
               <SessionManager>
-                <Navbar links={pluginManager.getNavItems()} >
+                <Navbar links={pluginManager.getNavItems()}>
                   {pluginManager.getComponents().map((PluginComponent, idx) => <PluginComponent key={idx} />)}
                   <Switch>
                     {pluginManager.getRoutes().map(route => {
@@ -77,7 +77,7 @@ class App extends React.Component {
   }
 }
 
-App.contextTypes = {
+App.propTypes = {
   pluginManager: PropTypes.object
 }
 
