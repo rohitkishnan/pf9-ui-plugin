@@ -27,11 +27,13 @@ import AddFloatingIpPage from './components/floatingips/AddFloatingIpPage'
 import UpdateFloatingIpPage from './components/floatingips/UpdateFloatingIpPage'
 
 import StorageIndex from './components/volumes/StorageIndex'
+
 import VolumesListPage from './components/volumes/VolumesListPage'
 import AddVolumePage from './components/volumes/AddVolumePage'
 import UpdateVolumePage from './components/volumes/UpdateVolumePage'
 
-// import AddVolumeTypePage from './components/volumes/AddVolumeTypePage'
+import VolumeSnapshotsListPage from './components/volumes/VolumeSnapshotsListPage'
+import UpdateVolumeSnapshotPage from './components/volumes/UpdateVolumeSnapshotPage'
 
 import HostsListPage from './components/hosts/HostsListPage'
 
@@ -185,6 +187,16 @@ OpenStack.registerPlugin = pluginManager => {
         component: AddVolumeTypePage
       },
       */
+      {
+        name: 'VolumeSnapshots',
+        link: { path: '/storage#volumeSnapshots', exact: true },
+        component: VolumeSnapshotsListPage
+      },
+      {
+        name: 'EditVolumeSnapshot',
+        link: { path: '/storage/volumeSnapshots/edit/:volumeSnapshotId', exact: true },
+        component: UpdateVolumeSnapshotPage
+      },
       {
         name: 'GlanceImages',
         link: { path: '/glanceimages', exact: true },
