@@ -15,6 +15,7 @@ import {
 } from '@material-ui/core'
 import EnhancedTableHead from './EnhancedTableHead'
 import EnhancedTableToolbar from './EnhancedTableToolbar'
+import MoreMenu from 'core/common/MoreMenu'
 import { compose } from 'core/fp'
 import { withAppContext } from 'core/AppContext'
 
@@ -193,6 +194,20 @@ class ListTable extends React.Component {
     )
   }
 
+  handleRowActionsClick = e => {
+    e.stopPropagation()
+  }
+
+  renderRowActions = row => {
+    const { rowActions } = this.props
+    if (!rowActions) { return null }
+    return (
+      <TableCell>
+        <MoreMenu items={rowActions} data={row} />
+      </TableCell>
+    )
+  }
+
   renderRow = row => {
     const { columns, showCheckboxes } = this.props
     const isSelected = this.isSelected(row)
@@ -214,6 +229,7 @@ class ListTable extends React.Component {
         {columns.map((columnDef, colIdx) =>
           this.renderCell(columnDef, row[columnDef.id]))
         }
+        {this.renderRowActions(row)}
       </TableRow>
     )
   }
@@ -252,20 +268,21 @@ class ListTable extends React.Component {
       classes,
       columns,
       data,
-      title,
       onAdd,
       onDelete,
       onEdit,
-      showCheckboxes,
+      paginate,
+      rowActions,
       searchTarget,
-      paginate
+      showCheckboxes,
+      title,
     } = this.props
 
     const {
       order,
       orderBy,
+      searchTerm,
       selected,
-      searchTerm
     } = this.state
 
     if (!data) {
@@ -305,6 +322,7 @@ class ListTable extends React.Component {
                   title={title}
                   rowCount={sortedData.length}
                   showCheckboxes={showCheckboxes}
+                  showRowActions={!!rowActions}
                 />
                 <TableBody>
                   {paginatedData.map(this.renderRow)}
@@ -328,7 +346,20 @@ ListTable.propTypes = {
   onDelete: PropTypes.func,
   onEdit: PropTypes.func,
   paginate: PropTypes.bool,
-  showCheckboxes: PropTypes.bool
+
+  /**
+   * List of action items to make available to each row.
+   */
+  rowActions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      action: PropTypes.func,
+      icon: PropTypes.node,
+    })
+  ),
+
+  showCheckboxes: PropTypes.bool,
+  searchTarget: PropTypes.string,
 }
 
 ListTable.defaultProps = {
