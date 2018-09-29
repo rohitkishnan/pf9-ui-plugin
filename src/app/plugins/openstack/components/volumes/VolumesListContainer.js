@@ -2,8 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import CRUDListContainer from 'core/common/CRUDListContainer'
 import VolumesList from './VolumesList'
+import PhotoCameraIcon from '@material-ui/icons/PhotoCamera'
 import { compose } from 'core/fp'
 import { withAppContext } from 'core/AppContext'
+import { withRouter } from 'react-router'
 
 class VolumesListContainer extends React.Component {
   handleRemove = async id => {
@@ -13,7 +15,15 @@ class VolumesListContainer extends React.Component {
     setContext({ volumes: newVolumes })
   }
 
+  handleSnapshot = async volume => {
+    this.props.history.push(`/ui/openstack/storage/volumes/snapshot/${volume.id}`)
+  }
+
   render () {
+    const rowActions = [
+      { icon: <PhotoCameraIcon />, label: 'Snapshot', action: this.handleSnapshot }
+    ]
+
     return (
       <CRUDListContainer
         items={this.props.volumes}
@@ -21,7 +31,7 @@ class VolumesListContainer extends React.Component {
         editUrl="/ui/openstack/storage/volumes/edit"
         onRemove={this.handleRemove}
       >
-        {handlers => <VolumesList volumes={this.props.volumes} {...handlers} />}
+        {handlers => <VolumesList volumes={this.props.volumes} {...handlers} rowActions={rowActions} />}
       </CRUDListContainer>
     )
   }
@@ -33,4 +43,5 @@ VolumesListContainer.propTypes = {
 
 export default compose(
   withAppContext,
+  withRouter,
 )(VolumesListContainer)
