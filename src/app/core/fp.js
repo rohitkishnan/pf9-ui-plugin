@@ -11,6 +11,11 @@ export const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args
 export const pipe = (...fns) => compose(...fns.reverse())
 export const pick = key => obj => obj[key]
 
+// Transparently inject side-effects in a functional composition "chain".
+// Ex: const value = await somePromise.then(tap(x => console.log))
+// Ex: compose(fn1, fn2, fn3, tap(log), fn4)(value)
+export const tap = fn => arg => { fn(arg); return arg }
+
 export const mergeKey = (srcObj, destObj = {}, key) => {
   const clonedObj = { ...destObj }
   if (srcObj[key] !== undefined) {
@@ -69,6 +74,20 @@ export const asyncMap = async (arr, callback) => {
   let newArr = []
   for (let i=0; i<arr.length; i++) {
     newArr.push(await callback(arr[i], i, arr))
+  }
+  return newArr
+}
+
+export const asyncFlatMap = async (arr, callback) => {
+  let newArr = []
+  for (let i=0; i<arr.length; i++) {
+    // Array#flat is not widely supported so best to just implement ourselves.
+    const values = await callback(arr[i], i, arr)
+    if (values instanceof Array) {
+      values.forEach(item => newArr.push(item))
+    } else {
+      newArr.push(values)
+    }
   }
   return newArr
 }
