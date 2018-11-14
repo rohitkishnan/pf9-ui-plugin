@@ -1,4 +1,5 @@
-import { asyncMap, asyncFlatMap, tap } from 'core/fp'
+import { asyncMap, asyncFlatMap, tap, pathOrNull } from 'core/fp'
+import { combineHost } from './combineHosts'
 
 export const loadClusters = async ({ context, setContext, reload }) => {
   if (!reload && context.clusters) { return context.clusters }
@@ -57,8 +58,9 @@ export const loadNodes = async ({ context, setContext, reload }) => {
  */
 export const loadInfrastructure = async ({ context, setContext, reload }) => {
   if (reload || !context.namespaces || !context.clusters || !context.nodes) {
+    const { qbert, resmgr } = context.apiClient
+
     // First `setContext` as the data arrive so we can at least render something.
-    const qbert = context.apiClient.qbert
     const [rawClusters, nodes] = await Promise.all([
       qbert.getClusters().then(tap(clusters => setContext({ clusters }))),
       qbert.getNodes().then(tap(nodes => setContext({ nodes }))),
@@ -96,7 +98,42 @@ export const loadInfrastructure = async ({ context, setContext, reload }) => {
     asyncFlatMap(masterNodeClusters, cluster => qbert.getClusterNamespaces(cluster.uuid))
       .then(namespaces => setContext({ namespaces }))
 
-    return { nodes, clusters, namespaces: [] }
+    let hostsById = {}
+    // We don't want to perform a check to see if the object exists yet for each type of host
+    // so make a utility to make it cleaner.
+    const setHost = (type, id, value) => {
+      hostsById[id] = hostsById[id] || {}
+      hostsById[id][type] = value
+    }
+    nodes.forEach(node => setHost('qbert', node.uuid, node))
+    await Promise.all([
+      resmgr.getHosts().then(
+        resmgrHosts => {
+          resmgrHosts.forEach(resmgrHost => setHost('resmgr', resmgrHost.id, resmgrHost))
+          setContext({ resmgrHosts })
+        }
+      ),
+      // TODO: include nova hosts here as well
+    ])
+
+    // Convert it back to array form
+    const combinedHosts = Object.values(hostsById).map(combineHost)
+    const combinedHostsObj = combinedHosts.reduce(
+      (accum, host) => {
+        const id = pathOrNull('resmgr.id')(host) || pathOrNull('qbert.uuid')(host)
+        accum[id] = host
+        return accum
+      },
+      {}
+    )
+
+    setContext({ combinedHosts })
+
+    // associate nodes with the combinedHost entry
+    const nodesCombined = nodes.map(node => ({ ...node, combined: combinedHostsObj[node.uuid] }))
+    setContext({ nodes: nodesCombined })
+
+    return { nodes: nodesCombined, clusters, namespaces: [] }
   }
 
   return {
