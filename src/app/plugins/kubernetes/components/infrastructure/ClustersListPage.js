@@ -1,11 +1,27 @@
+import React from 'react'
 import createCRUDComponents from 'core/createCRUDComponents'
+import DownloadKubeConfigLink from './DownloadKubeConfigLink'
+import KubeCLI from './KubeCLI'
+import SimpleLink from 'core/common/SimpleLink'
+import { loadInfrastructure } from './actions'
+
+const renderLinks = links => {
+  if (!links) { return null }
+  return (
+    <div>
+      {links.dashboard && <SimpleLink src={links.dashboard} target="_blank">Dashboard</SimpleLink>}
+      {links.kubeconfig && <DownloadKubeConfigLink cluster={links.kubeconfig.cluster} />}
+      {links.cli && <KubeCLI {...links.cli} />}
+    </div>
+  )
+}
 
 export const options = {
   baseUrl: '/ui/kubernetes/infrastructure/clusters',
   columns: [
     { id: 'name', label: 'Cluster name' },
     { id: 'status', label: 'Status' },
-    { id: 'links', label: 'Links' },
+    { id: 'links', label: 'Links', render: renderLinks },
     { id: 'deployment_type', label: 'Deployment Type' },
     { id: 'resource_utilization', label: 'Resource Utilization' },
     { id: 'version', label: 'Kubernetes version' },
@@ -28,7 +44,7 @@ export const options = {
     { id: 'metadata', label: 'Metadata', render: data => JSON.stringify(data) }
   ],
   dataKey: 'clusters',
-  actions: { service: 'qbert', entity: 'clusters' },
+  loaderFn: loadInfrastructure,
   name: 'Clusters',
   title: 'Clusters',
   uniqueIdentifier: 'uuid',
