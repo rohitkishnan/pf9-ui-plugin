@@ -1,11 +1,22 @@
 import { asyncMap, asyncFlatMap, tap, pathOrNull } from 'core/fp'
 import { combineHost } from './combineHosts'
+import { castFuzzyBool } from 'utils/misc'
+import { pathOr } from 'ramda'
 
 export const loadClusters = async ({ context, setContext, reload }) => {
   if (!reload && context.clusters) { return context.clusters }
   const clusters = await context.apiClient.qbert.getClusters()
   setContext({ clusters })
   return clusters
+}
+
+export const deleteCluster = async ({ id, context, setContext }) => {
+  await context.apiClient.qbert.deleteCluster(id)
+  const clusters = context.clusters.filter(x => x.uuid !== id)
+  setContext({ clusters })
+  // Force refresh using 'loadInfrastructure' since combinedHosts will still
+  // have references to the deleted cluster.
+  loadInfrastructure({ context, setContext, reload: true })
 }
 
 export const loadCloudProviders = async ({ context, setContext, reload }) => {
@@ -66,6 +77,13 @@ export const loadInfrastructure = async ({ context, setContext, reload }) => {
       const clusterOk = nodesInCluster.length > 0 && cluster.status === 'ok'
       const dashboardLink =`${qbertEndpoint}/clusters/${cluster.uuid}/k8sapi/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:443/proxy/`
       const host = qbertEndpoint.match(/(.*?)\/qbert/)[1]
+      const fuzzyBools = ['allowWorkloadsOnMaster', 'privileged', 'appCatalogEnabled'].reduce(
+        (accum, key) => {
+          accum[key] = castFuzzyBool(cluster[key])
+          return accum
+        },
+        {}
+      )
       return {
         ...cluster,
         nodes: nodesInCluster,
@@ -80,6 +98,9 @@ export const loadInfrastructure = async ({ context, setContext, reload }) => {
           // Rendering happens in <ClusterCLI />
           cli: clusterOk ? { host, cluster }: null,
         },
+        ...fuzzyBools,
+        hasVpn: castFuzzyBool(pathOr(false, ['cloudProperties', 'internalElb'], cluster)),
+        hasLoadBalancer: castFuzzyBool(cluster.enableMetallb || pathOr(false, ['cloudProperties', 'enableLbaas'], cluster))
       }
     })
     setContext({ clusters })
@@ -87,9 +108,10 @@ export const loadInfrastructure = async ({ context, setContext, reload }) => {
     const masterNodeClusters = clusters.filter(x => x.hasMasterNode)
     asyncMap(masterNodeClusters, async cluster => {
       try {
+        const version = await qbert.getKubernetesVersion(cluster.uuid)
         return {
           ...cluster,
-          k8sVersion: await qbert.getKubernetesVersion(cluster.uuid),
+          version: version && version.gitVersion && version.gitVersion.substr(1),
         }
       } catch (err) {
         console.log(err)
