@@ -2,7 +2,8 @@ import context from '../../../context'
 import Namespace from '../../../models/qbert/Namespace'
 
 const getNamespaces = (req, res) => {
-  const namespaces = Namespace.list(context)
+  const { clusterId } = req.params
+  const namespaces = Namespace.list({ context, config: { clusterId } })
   const response = {
     apiVersion: 'v1',
     items: namespaces,
