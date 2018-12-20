@@ -37,7 +37,7 @@ const options = {
       pod.status.phase = 'Running'
     }, 5000)
 
-    return { ..._input, name: _input.metadata.name, metadata: { ..._input.metadata, name: _input.metadata.name, namespace: _input.namespace, creationTimestamp: getCurrentTime() } }
+    return { ..._input, name: _input.metadata.name, metadata: { ..._input.metadata, namespace: _input.namespace, creationTimestamp: getCurrentTime() } }
   },
   loaderFn: (pods) => {
     return pods.map((pod) => {

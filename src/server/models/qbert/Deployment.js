@@ -46,7 +46,7 @@ const options = {
       })
     }
 
-    return { ..._input, name: _input.metadata.name, uuid: deploymentUuid, metadata: { ..._input.metadata, name: _input.metadata.name, namespace: _input.namespace, creationTimestamp: getCurrentTime() } }
+    return { ..._input, name: _input.metadata.name, uuid: deploymentUuid, metadata: { ..._input.metadata, namespace: _input.namespace, creationTimestamp: getCurrentTime() } }
   },
   loaderFn: (deployments) => {
     return deployments.map((deployment) => {

@@ -28,7 +28,7 @@ const options = {
   },
   createFn: (input, context) => {
     const _input = omit(['apiVersion', 'kind'], input)
-    return { ..._input, name: _input.metadata.name, metadata: { ..._input.metadata, name: _input.metadata.name, namespace: _input.namespace, creationTimestamp: getCurrentTime() } }
+    return { ..._input, name: _input.metadata.name, metadata: { ..._input.metadata, namespace: _input.namespace, creationTimestamp: getCurrentTime() } }
   },
   loaderFn: (services) => {
     return services.map((service) => {
