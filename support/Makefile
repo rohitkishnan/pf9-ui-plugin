@@ -45,7 +45,7 @@ $(NODEJS_DIR):
 
 dependencies: $(NODEJS_DIR)
 	pushd $(TOP_DIR) && \
-	$(NODE_BIN) $(NPM_BIN) install && \
+	$(NPM_BIN) install && \
 	popd
 
 build: $(NODEJS_DIR) | dependencies
