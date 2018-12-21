@@ -49,6 +49,10 @@ dependencies: $(NODEJS_DIR)
 	popd
 
 build: $(NODEJS_DIR) | dependencies
+	echo "NODE VERSION: "
+	$(NODE_BIN) --version
+	echo "NPM VERSION: "
+	$(NPM_BIN) --version
 	echo "building (npm run build)..."
 	NODE_ENV=$(ENV_TYPE) $(NPM_BIN) run build 
 
