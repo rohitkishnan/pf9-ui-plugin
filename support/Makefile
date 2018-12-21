@@ -56,7 +56,7 @@ build: $(NODEJS_DIR) | dependencies
 	echo "building (npm run build)..."
 	NODE_ENV=$(ENV_TYPE) $(NPM_BIN) run build 
 
-rpm: build ${ui-plugin_RPM}
+rpm: build ${UI_PLUGIN_RPM}
 
 clean:
 	rm -rf $(BUILD_DIR)
