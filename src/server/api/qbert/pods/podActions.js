@@ -23,7 +23,7 @@ export const postPod = (req, res) => {
   if (pod.kind !== 'Pod') {
     return res.status(400).send({code: 400, message: 'Must be of kind "Pod"'})
   }
-  if (Pod.findByName(pod.metadata.name)) {
+  if (Pod.findByName({ name: pod.metadata.name, context, config: { clusterId, namespace } })) {
     return res.status(409).send({code: 409, message: `pods #{pod.metadata.name} already exists`})
   }
 
@@ -44,7 +44,7 @@ export const deletePod = (req, res) => {
   // Set status to Running after some time
   setTimeout(() => {
     console.log(`Deleting pod #{pod.metadata.uid}`)
-    Pod.delete(pod.metadata.uid, context)
+    Pod.delete({ id: pod.metadata.uid, context })
   }, 30000)
 
   res.status(200).send(pod)

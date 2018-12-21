@@ -23,7 +23,7 @@ export const postDeployment = (req, res) => {
   if (deployment.kind !== 'Deployment') {
     return res.status(400).send({code: 400, message: 'Must be of kind "Deployment"'})
   }
-  if (Deployment.findByName(deployment.metadata.name)) {
+  if (Deployment.findByName({ name: deployment.metadata.name, context, config: { namespace, clusterId } })) {
     return res.status(409).send({code: 409, message: `deployments #{deployment.metadata.name} already exists`})
   }
 

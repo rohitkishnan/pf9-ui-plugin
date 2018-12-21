@@ -23,7 +23,7 @@ export const postService = (req, res) => {
   if (service.kind !== 'service') {
     return res.status(400).send({code: 400, message: 'Must be of kind "Service"'})
   }
-  if (Service.findByName(service.metadata.name)) {
+  if (Service.findByName({ name: service.metadata.name, context, config: { clusterId, namespace } })) {
     return res.status(409).send({code: 409, message: `services #{service.metadata.name} already exists`})
   }
 
@@ -39,6 +39,6 @@ export const deleteService = (req, res) => {
   if (!service) {
     res.status(404).send({code: 404, message: 'service not found'})
   }
-  Service.delete(service.metadata.uid, context)
+  Service.delete({ id: service.metadata.uid, context })
   res.status(200).send(service)
 }
