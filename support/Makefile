@@ -11,7 +11,7 @@ ENV_TYPE ?= production
 PF9_VERSION ?= 3.9.0
 BUILD_NUMBER ?= 0
 UI_PLUGIN_RPM := $(BUILD_DIR)/ui-plugin-$(VERSION).rpm
-RPM_DIR := $(BUILD_DIR)/rpmbuild
+RPM_DIR := $(BUILD_DIR)
 SPEC_FILE := $(BUILD_DIR)/rpm.spec
 
 NODEJS_DIR := $(TOP_DIR)/node
