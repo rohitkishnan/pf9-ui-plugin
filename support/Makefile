@@ -5,7 +5,7 @@
 TOP_DIR := $(abspath ..)
 SRC_DIR := $(TOP_DIR)/build/ui
 SUPPORT_DIR := $(TOP_DIR)/support
-BUILD_DIR := $(SRC_DIR)/rpmbuild
+BUILD_DIR := $(TOP_DIR)/build/rpmbuild
 
 ENV_TYPE ?= production
 PF9_VERSION ?= 3.9.0
