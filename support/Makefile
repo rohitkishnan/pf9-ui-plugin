@@ -17,7 +17,7 @@ SPEC_FILE := $(BUILD_DIR)/rpm.spec
 NODEJS_DIR := $(TOP_DIR)/node
 NODEJS_DOWNLOAD_SCRIPT = $(shell pwd)/download-nodejs-latest-v10.x.sh
 NODE_BIN := $(NODEJS_DIR)/bin/node
-NPM_BIN := $(NODEJS_DIR)/bin/npm --scripts-prepend-node-path=true
+NPM_BIN := $(NODE_BIN) $(NODEJS_DIR)/bin/npm --scripts-prepend-node-path=true
 
 # example usage: $(call download_nodejs,"linux","/path/to/node")
 define download_nodejs
