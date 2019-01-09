@@ -1,8 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { withAppContext } from 'core/AppContext'
-import Loader from 'core/common/Loader'
 import DisplayError from 'core/common/DisplayError'
+import Loader from 'core/common/Loader'
+import { all, partition, pick, props } from 'ramda'
+import { ensureArray, exists, propExists } from 'core/fp'
+import { withAppContext } from 'core/AppContext'
 
 class DataLoaderBase extends React.Component {
   state = {
@@ -19,29 +21,31 @@ class DataLoaderBase extends React.Component {
     window.removeEventListener('scopeChanged', this.listener)
   }
 
+  doneLoading = () => {
+    const { dataKey, context } = this.props
+    const dataKeys = ensureArray(dataKey)
+    return all(exists, props(dataKeys, context))
+  }
+
   loadData = () => {
-    const { dataKey, loaderFn, setContext, context } = this.props
-    if (context[dataKey] === undefined) {
+    const { loaderFn, setContext, context } = this.props
+    if (!this.doneLoading()) {
       this.setState({ loading: true })
       const parseErr = err => {
         if (typeof err === 'string') { return err }
         if (err instanceof Error) { return err.message }
       }
-      if (loaderFn) {
-        try {
-          const promise = loaderFn({ setContext, context })
-          if (promise && promise.then) {
-            return promise.then(
-              () => { this.setState({ loading: false }) },
-              err => { this.setState({ loading: false, error: parseErr(err) }) }
-            )
-          }
-          // loaderFn is sync so loading is done
-          this.setState({ loading: false })
-        } catch (err) {
-          console.log(err)
-          this.setState({ loading: false, error: parseErr(err) })
-        }
+      const loaderFns = ensureArray(loaderFn)
+      try {
+        const promises = loaderFns.map(fn => fn({ setContext, context }))
+        const [promiseFns, syncFns] = partition(propExists('then'), promises) // eslint-disable-line no-unused-vars
+        Promise.all(promises).then(
+          () => { this.setState({ loading: false }) },
+          err => { this.setState({ loading: false, error: parseErr(err) }) }
+        )
+      } catch (err) {
+        console.log(err)
+        this.setState({ loading: false, error: parseErr(err) })
       }
     }
   }
@@ -49,8 +53,9 @@ class DataLoaderBase extends React.Component {
   render () {
     const { loading, error } = this.state
     const { context, dataKey, children } = this.props
-    if (!context) { return <Loader /> }
-    const data = context[dataKey]
+    const dataKeys = ensureArray(dataKey)
+    if (!context || !this.doneLoading()) { return <Loader /> }
+    const data = dataKeys.length === 1 ? context[dataKey] : pick(dataKeys, context)
     if (loading || !data) { return <Loader /> }
     if (error) { return <DisplayError error={error} /> }
     return children({ data, loading, error, context })
@@ -64,14 +69,22 @@ DataLoader.propTypes = {
    * If `context[dataKey]` exists it does not run the `loaderFn`.
    * Once the data has been loaded `context[dataKey]` is passed
    * to the child component in the `data` prop.
+   * Can also take an array of multiple dataKeys to check.
    */
-  dataKey: PropTypes.string.isRequired,
+  dataKey: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]).isRequired,
 
   /**
    * This function is invoked when the data does not yet exist.
    * It is passed `setContext` to use for updating.
+   * Can also take an array of multiple loaders.
   */
-  loaderFn: PropTypes.func.isRequired,
+  loaderFn: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.arrayOf(PropTypes.func),
+  ]).isRequired,
 }
 
 export const withDataLoader = ({ dataKey, loaderFn }) => Component => props =>

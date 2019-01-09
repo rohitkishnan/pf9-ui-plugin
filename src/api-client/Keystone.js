@@ -145,6 +145,11 @@ class Keystone {
     return response.data.regions
   }
 
+  // Allow programmatic access
+  regions = {
+    list: this.getRegions.bind(this),
+  }
+
   async getServiceCatalog () {
     const response = await axios.get(this.catalogUrl, this.client.getAuthHeaders())
     this.client.serviceCatalog = response.data.catalog
