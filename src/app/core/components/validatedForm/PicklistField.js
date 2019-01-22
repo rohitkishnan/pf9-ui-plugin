@@ -1,7 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Picklist from 'core/components/Picklist'
-import withFormContext from 'core/components/validatedForm/withFormContext'
+import {
+  FormHelperText,
+} from '@material-ui/core'
+import { withInfoTooltip } from 'app/core/components/InfoTooltip'
+import { compose } from 'app/utils/fp'
+import withFormContext, { ValidatedFormInputPropTypes } from 'core/components/validatedForm/withFormContext'
 
 /**
  * PicklistField builds upon Picklist and adds integration with ValidatedForm
@@ -16,7 +21,7 @@ class PicklistField extends React.Component {
   }
 
   render () {
-    const { id, label, value, showNone, ...restProps } = this.props
+    const { id, label, value, showNone, classes, hasError, errorMessage, ...restProps } = this.props
     const options = showNone ? [{ value: '', label: 'None' }, ...this.props.options] : this.props.options
     return (
       <div id={id}>
@@ -25,9 +30,10 @@ class PicklistField extends React.Component {
           name={id}
           label={label}
           options={options}
-          value={value !== undefined ? value : ''}
+          value={value !== undefined ? value: ''}
           onChange={this.handleChange}
         />
+        <FormHelperText error={hasError}>{errorMessage}</FormHelperText>
       </div>
     )
   }
@@ -53,6 +59,10 @@ PicklistField.propTypes = {
 
   /** Create an option of 'None' as the first default choice */
   showNone: PropTypes.bool,
+  ...ValidatedFormInputPropTypes,
 }
 
-export default PicklistField
+export default compose(
+  withFormContext,
+  withInfoTooltip,
+)(PicklistField)

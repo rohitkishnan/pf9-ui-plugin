@@ -24,13 +24,11 @@ class ValidatedFormInput extends Component {
   constructor (props) {
     super(props)
     const spec = pickMultiple('validations')(props)
-
     if (props.required) {
       spec.validations = Array.isArray(props.validations)
         ? [requiredValidator, ...props.validations]
         : { required: true, ...props.validations }
     }
-
     props.defineField(spec)
     const { initialValue, setFieldValue } = this.props
 
@@ -113,6 +111,9 @@ const withFormContext = Input =>
               onChange={onChange}
               onMouseEnter={onMouseEnter}
               onBlur={onBlur}
+              /*  supposedly validations should not be required to pass here,
+                  but PicklistField does not work without this prop passed here  */
+              validations={validations}
             />
           )}
         </ValidatedFormInput>
