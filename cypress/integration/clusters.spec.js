@@ -29,4 +29,52 @@ describe('clusters', () => {
       cy.contains('Add Cluster')
     })
   })
+
+  context('cluster actions', () => {
+    before(() => {
+      cy.resetServerContext('dev')
+    })
+
+    context('attach node', () => {
+      it('shows the modal for adding nodes to the cluster', () => {
+        cy.visit('/ui/kubernetes/clusters')
+        cy.row('fakeCluster1')
+          .rowAction('Attach node')
+        cy.contains('Attach Node to Cluster')
+      })
+
+      it('selects "master" on the node', () => {
+        cy.get('div[role=dialog]').contains('tr', 'fakeNode2').contains('Master').click()
+      })
+
+      it('closes the modal on attach', () => {
+        cy.contains('button', 'Attach').click()
+        cy.contains('Attach Node to Cluster').should('not.exist')
+      })
+
+      it('should not allow the node to be added to another cluster', () => {
+        cy.row('fakeCluster1')
+          .rowAction('Attach node')
+        cy.get('div[role=dialog]').contains('fakeNode2').should('not.exist')
+      })
+
+      it('should show "No nodes available to attach"', () => {
+        cy.contains('No nodes available to attach')
+      })
+
+      it('closes the modal on cancel', () => {
+        cy.contains('Cancel').click()
+        cy.contains('Attach Node to Cluster').should('not.exist')
+      })
+
+      it('only allows attaching for "local" cloudProviders', () => {
+        cy.row('mockOpenStackCluster').rowAction().contains('Attach node').isDisabled()
+        cy.closeModal()
+        cy.row('mockAwsCluster').rowAction().contains('Attach node').isDisabled()
+        cy.closeModal()
+        cy.row('fakeCluster1').rowAction().contains('Attach node').isEnabled()
+        cy.closeModal()
+      })
+    })
+  })
 })

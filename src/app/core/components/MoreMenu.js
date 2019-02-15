@@ -4,10 +4,12 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import IconButton from '@material-ui/core/IconButton'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
+import { withAppContext } from 'core/AppContext'
 
 class MoreMenu extends React.Component {
   state = {
-    anchorEl: null
+    anchorEl: null,
+    openedAction: null,
   }
 
   handleOpen = e => {
@@ -20,17 +22,27 @@ class MoreMenu extends React.Component {
     this.setState({ anchorEl: null })
   }
 
-  handleClick = action => e => {
+  handleClick = (action, label) => e => {
     e.stopPropagation()
     this.handleClose(e)
-    action(this.props.data)
+    action && action(this.props.data, this.props.context)
+    this.setState({ openedAction: label })
+  }
+
+  handleModalClose = () => {
+    this.setState({ openedAction: null })
   }
 
   render () {
-    const { anchorEl } = this.state
+    const { anchorEl, openedAction } = this.state
+    const { data, context } = this.props
 
     return (
       <div>
+        {this.props.items.map(({ action, cond, dialog, icon, label }) => {
+          const Modal = dialog
+          return openedAction === label && <Modal key={label} onClose={this.handleModalClose} row={this.props.data} />
+        })}
         <IconButton
           aria-label="More Actions"
           aria-owns={anchorEl ? 'more-menu' : null}
@@ -43,9 +55,10 @@ class MoreMenu extends React.Component {
           anchorEl={anchorEl}
           open={!!anchorEl}
           onClose={this.handleClose}
+          onClick={e => e.stopPropagation()}
         >
-          {this.props.items.map(({ label, action, icon }) =>
-            <MenuItem key={label} onClick={this.handleClick(action)}>
+          {this.props.items.map(({ action, cond, icon, label }) =>
+            <MenuItem key={label} onClick={this.handleClick(action, label)} disabled={!cond(data, context)}>
               {icon && icon}
               {label}
             </MenuItem>
@@ -62,8 +75,13 @@ MoreMenu.propTypes = {
    */
   items: PropTypes.arrayOf(
     PropTypes.shape({
-      label: PropTypes.string.isRequired,
       action: PropTypes.func,
+      dialog: PropTypes.func, // React class or functional component
+      icon: PropTypes.node,
+      label: PropTypes.string.isRequired,
+
+      // cond :: fn -> bool
+      cond: PropTypes.func,
     })
   ),
 
@@ -73,4 +91,4 @@ MoreMenu.propTypes = {
   data: PropTypes.any,
 }
 
-export default MoreMenu
+export default withAppContext(MoreMenu)
