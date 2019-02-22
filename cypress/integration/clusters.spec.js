@@ -122,5 +122,45 @@ describe('clusters', () => {
         cy.contains('Detach node from cluster').should('not.exist')
       })
     })
+
+    context('scale cluster', () => {
+      it('only allows scaling for "AWS" cloudProviders', () => {
+        cy.visit('/ui/kubernetes/clusters')
+        cy.row('mockOpenStackCluster').rowAction().contains('Scale cluster').isDisabled()
+        cy.closeModal()
+        cy.row('mockAwsCluster').rowAction().contains('Scale cluster').isEnabled()
+        cy.closeModal()
+        cy.row('fakeCluster1').rowAction().contains('Scale cluster').isDisabled()
+        cy.closeModal()
+      })
+
+      it('show the modal for scaling the cluster', () => {
+        cy.row('mockAwsCluster')
+          .rowAction('Scale cluster')
+        cy.contains('Scale Cluster') // Note we capitalize 'Cluster' to differentiate and have text on the modal
+      })
+
+      it('scales a cluster', () => {
+        cy.get('#numWorkers input').clear().type('3')
+        // cy.get('#enableSpotWorkers input').click()
+      })
+
+      it('closes the modal on scale', () => {
+        cy.contains('button', 'Scale Cluster').click()
+        cy.contains('Scale Cluster').should('not.exist')
+      })
+
+      it('should show the cluster with the new number of worker nodes', () => {
+        cy.visit('/ui/kubernetes/clusters')
+        cy.row('mockAwsCluster')
+          .rowAction('Scale cluster')
+        cy.get('#numWorkers input').should('have.value', '3')
+      })
+
+      it('should close the modal when cancelled', () => {
+        cy.contains('button', 'Cancel').click()
+        cy.contains('Scale Cluster').should('not.exist')
+      })
+    })
   })
 })
