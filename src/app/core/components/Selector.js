@@ -1,28 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
-import { Button, Menu, MenuItem, Typography } from '@material-ui/core'
+import { Menu, MenuItem, Typography } from '@material-ui/core'
 import SearchBar from './SearchBar'
 
 const styles = theme => ({
   selector: {
     position: 'relative',
-    float: 'right'
+    float: 'right',
   }
 })
 
 @withStyles(styles)
 class Selector extends React.Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      anchor: null
-    }
-  }
-
-  handleClick = anchor => event => {
-    this.setState({ [anchor]: event.currentTarget })
-  }
+  state = { anchor: null }
+  handleClick = event => this.setState({ anchor: event.currentTarget })
 
   // Clear search bar when selector is closed.
   handleClose = anchor => event => {
@@ -46,7 +38,7 @@ class Selector extends React.Component {
   }
 
   render () {
-    const { classes, name, list, searchTerm, onSearchChange } = this.props
+    const { className, classes, name, list, searchTerm, onSearchChange, type } = this.props
     const { anchor } = this.state
     const selectorName = `${name}-selector`
 
@@ -54,18 +46,8 @@ class Selector extends React.Component {
     const filteredList = searchTerm === '' ? sortedList : this.filterBySearch(sortedList)
 
     return (
-      <div className={classes.selector}>
-        <Button
-          aria-owns={anchor ? selectorName : null}
-          aria-haspopup="true"
-          onClick={this.handleClick('anchor')}
-          color="inherit"
-          disableRipple
-        >
-          <Typography color="inherit" variant="body1">
-            {name}  &#9662;
-          </Typography>
-        </Button>
+      <div className={`${className} ${classes.selector}`}>
+        <Typography color="inherit" variant="subtitle2" onClick={this.handleClick}>{type && `${type}: `}{name} &#9662;</Typography>
         <Menu
           id={selectorName}
           anchorEl={anchor}
@@ -87,6 +69,7 @@ class Selector extends React.Component {
 
 Selector.propTypes = {
   name: PropTypes.string.isRequired,
+  type: PropTypes.string,
   list: PropTypes.array.isRequired,
   classes: PropTypes.object,
   onChoose: PropTypes.func.isRequired
