@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { pluck } from 'ramda'
+import { getHighestRole } from './helpers'
 
 const authConstructors = {
   password: (username, password) => ({
@@ -103,12 +105,25 @@ class Keystone {
     try {
       const response = await axios.post(this.tokensUrl, body)
       const scopedToken = response.headers['x-subject-token']
+      const _user = response.data.token.user
+      const roles = response.data.token.roles
+
+      const roleNames = pluck('name', roles)
+      const role = getHighestRole(roleNames)
+
+      const user = {
+        username: _user.name,
+        userId: _user.id,
+        tenantId: projectId,
+        role
+      }
       this.client.activeProjectId = projectId
       this.client.scopedToken = scopedToken
       await this.getServiceCatalog()
-      return scopedToken
+      return { scopedToken, user }
     } catch (err) {
       // authentication failed
+      console.error(err)
       return null
     }
   }
