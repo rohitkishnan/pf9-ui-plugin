@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui-simulator-deployment
+  namespace: ui-staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: simulator
+  template:
+    metadata:
+      labels:
+        component: simulator
+    spec:
+      containers:
+        - name: ui-simulator
+          image: platform9/ui-simulator:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4444
