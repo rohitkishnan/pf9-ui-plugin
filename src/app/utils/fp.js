@@ -12,6 +12,11 @@ export const propExists = curry((key, obj) => obj[key] !== undefined)
 // Works for arrays and strings.  All other types return false.
 export const notEmpty = arr => !!(arr && arr.length)
 
+export const hasKeys = obj => {
+  if (!(obj instanceof Object)) { return false }
+  return Object.keys(obj).length > 0
+}
+
 export const pluckAsync = key => promise => promise.then(obj => obj[key])
 
 export const compose = (...fns) =>
@@ -126,7 +131,7 @@ export const asyncFlatMap = async (arr, callback) => {
   return newArr
 }
 
-export const pathOrNull = pathStr => pathOr(null, pathStr.split('.'))
+export const pathOrNull = curry((pathStr, obj) => pathOr(null, pathStr.split('.'), obj))
 
 // I didn't see anything in Ramda that would allow me to create a "Maybe"
 // composition so creating a simple version here.
