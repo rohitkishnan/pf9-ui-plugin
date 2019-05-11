@@ -64,12 +64,12 @@ export const loadClusterTags = async ({ context, setContext, reload }) => {
   return clusterTags
 }
 
-export const loadPrometheusResources = async ({ context, setContext, reload }) => {
+export const loadPrometheusResources = async ({ context, getContext, setContext, reload }) => {
   if (!reload && context.prometheusInstances) { return context.prometheusInstances }
 
   const [_, clusterTags] = await Promise.all([ // eslint-disable-line no-unused-vars
-    loadClusters({ context, setContext, reload }),
-    loadClusterTags({ context, setContext, reload })
+    loadClusters({ context, getContext, setContext, reload }),
+    loadClusterTags({ context, getContext, setContext, reload })
   ])
 
   const hasMonitoring = cluster => cluster.tags.includes('pf9-system:monitoring')
@@ -118,7 +118,49 @@ export const deletePrometheusInstance = async ({ id, context, setContext }) => {
   const instance = context.prometheusInstances.find(propEq('id', id))
   if (!instance) {
     console.error(`Unable to find prometheus instance with id: ${id} in deletePrometheusInstance`)
-    return // eslint-disable-line no-useless-return
+    return
   }
-  // TODO: waiting on documentation from backend team on how to do DELETE calls
+  const response = await context.apiClient.qbert.deletePrometheusInstance(instance.clusterUuid, instance.namespace, instance.name)
+  const prometheusInstances = context.prometheusInstances.filter(x => x.id !== id)
+  setContext({ prometheusInstances })
+  return response
+}
+
+export const deletePrometheusRule = async ({ id, context, setContext }) => {
+  const calcId = x => `${x.clusterUuid}-${x.namespace}-${x.name}`
+  const rule = context.prometheusRules.find(rule => id === calcId(rule))
+  if (!rule) {
+    console.error(`Unable to find prometheus rule with id: ${id} in deletePrometheusrule`)
+    return
+  }
+  const response = await context.apiClient.qbert.deletePrometheusRule(rule.clusterUuid, rule.namespace, rule.name)
+  const prometheusRules = context.prometheusRules.filter(x => calcId(x) !== calcId(rule))
+  setContext({ prometheusRules })
+  return response
+}
+
+export const deletePrometheusServiceMonitor = async ({ id, context, setContext }) => {
+  const calcId = x => `${x.clusterUuid}-${x.namespace}-${x.name}`
+  const sm = context.prometheusServiceMonitors.find(rule => id === calcId(rule))
+  if (!sm) {
+    console.error(`Unable to find prometheus service monitor with id: ${id} in deletePrometheusServiceMonitor`)
+    return
+  }
+  const response = await context.apiClient.qbert.deletePrometheusServiceMonitor(sm.clusterUuid, sm.namespace, sm.name)
+  const prometheusServiceMonitors = context.prometheusServiceMonitors.filter(x => calcId(x) !== calcId(sm))
+  setContext({ prometheusServiceMonitors })
+  return response
+}
+
+export const deletePrometheusAlertManager = async ({ id, context, setContext }) => {
+  const calcId = x => `${x.clusterUuid}-${x.namespace}-${x.name}`
+  const am = context.prometheusAlertManagers.find(rule => id === calcId(rule))
+  if (!am) {
+    console.error(`Unable to find prometheus alert manager with id: ${id} in deletePrometheusAlertManager`)
+    return
+  }
+  const response = await context.apiClient.qbert.deletePrometheusAlertManager(am.clusterUuid, am.namespace, am.name)
+  const prometheusAlertManagers = context.prometheusAlertManagers.filter(x => calcId(x) !== calcId(am))
+  setContext({ prometheusAlertManagers })
+  return response
 }
