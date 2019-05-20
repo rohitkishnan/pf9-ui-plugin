@@ -1,17 +1,26 @@
 import { keyValueArrToObj } from 'utils/fp'
 
 const normalizePrometheusResponse = (clusterUuid, response) => response.items.map(x => ({ ...x, clusterUuid }))
+const normalizePrometheusUpdate = (clusterUuid, response) => ({ ...response, clusterUuid })
 
 /* eslint-disable camelcase */
 class Qbert {
   constructor (client) {
     this.client = client
+    this.cachedEndpoint = ''
   }
 
   endpoint = async () => {
     const services = await this.client.keystone.getServicesForActiveRegion()
     const endpoint = services.qbert.admin.url
-    return endpoint.replace(/v(1|2|3)$/, `v3/${this.client.activeProjectId}`)
+    const mappedEndpoint = endpoint.replace(/v(1|2|3)$/, `v3/${this.client.activeProjectId}`)
+
+    // Certain operations like column renderers from ListTable need to prepend the Qbert URL to links
+    // sent from the backend.  But getting the endpoint is an async operation so we need to make an
+    // sync version.  In theory this should always be set since keystone must get the service
+    // catalog before any Qbert API calls are made.
+    this.cachedEndpoint = mappedEndpoint
+    return mappedEndpoint
   }
 
   monocularBaseUrl = async () => {
@@ -332,6 +341,18 @@ class Qbert {
     return normalizePrometheusResponse(clusterUuid, response)
   }
 
+  updatePrometheusInstance = async data => {
+    const { clusterUuid, namespace, name } = data
+    const body = [
+      { op: 'replace', path: '/spec/replicas', value: data.replicas },
+      { op: 'replace', path: '/spec/retention', value: data.retention },
+      { op: 'replace', path: '/spec/resources/requests/cpu', value: data.cpu },
+      { op: 'replace', path: '/spec/resources/requests/memory', value: data.memory },
+    ]
+    const response = await this.client.basicPatch(`${await this.baseUrl()}/clusters/${clusterUuid}/k8sapi/apis/monitoring.coreos.com/v1/namespaces/${namespace}/prometheuses/${name}`, body)
+    return normalizePrometheusUpdate(clusterUuid, response)
+  }
+
   deletePrometheusInstance = async (clusterUuid, namespace, name) => {
     const response = await this.client.basicDelete(`${await this.baseUrl()}/clusters/${clusterUuid}/k8sapi/apis/monitoring.coreos.com/v1/namespaces/${namespace}/prometheuses/${name}`)
     return response
@@ -428,6 +449,17 @@ class Qbert {
     return normalizePrometheusResponse(clusterUuid, response)
   }
 
+  updatePrometheusServiceMonitor = async data => {
+    const { clusterUuid, namespace, name } = data
+    const body = [{
+      op: 'replace',
+      path: '/metadata/labels',
+      value: data.labels,
+    }]
+    const response = await this.client.basicPatch(`${await this.baseUrl()}/clusters/${clusterUuid}/k8sapi/apis/monitoring.coreos.com/v1/namespaces/${namespace}/servicemonitors/${name}`, body)
+    return normalizePrometheusUpdate(clusterUuid, response)
+  }
+
   deletePrometheusServiceMonitor = async (clusterUuid, namespace, name) => {
     const response = await this.client.basicDelete(`${await this.baseUrl()}/clusters/${clusterUuid}/k8sapi/apis/monitoring.coreos.com/v1/namespaces/${namespace}/servicemonitors/${name}`)
     return response
@@ -436,6 +468,17 @@ class Qbert {
   getPrometheusRules = async (clusterUuid) => {
     const response = await this.client.basicGet(`${await this.baseUrl()}/clusters/${clusterUuid}/k8sapi/apis/monitoring.coreos.com/v1/prometheusrules`)
     return normalizePrometheusResponse(clusterUuid, response)
+  }
+
+  updatePrometheusRules = async rulesObject => {
+    const { clusterUuid, namespace, name } = rulesObject
+    const body = [{
+      op: 'replace',
+      path: '/spec/groups/0/rules',
+      value: rulesObject.rules,
+    }]
+    const response = await this.client.basicPatch(`${await this.baseUrl()}/clusters/${clusterUuid}/k8sapi/apis/monitoring.coreos.com/v1/namespaces/${namespace}/prometheusrules/${name}`, body)
+    return normalizePrometheusUpdate(clusterUuid, response)
   }
 
   deletePrometheusRule = async (clusterUuid, namespace, name) => {
@@ -452,6 +495,8 @@ class Qbert {
     const response = await this.client.basicDelete(`${await this.baseUrl()}/clusters/${clusterUuid}/k8sapi/apis/monitoring.coreos.com/v1/namespaces/${namespace}/alertmanagers/${name}`)
     return response
   }
+
+  getPrometheusDashboardLink = instance => `${this.cachedEndpoint}/clusters/${instance.clusterUuid}/k8sapi${instance.dashboard}`
 }
 
 export default Qbert

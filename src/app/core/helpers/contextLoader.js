@@ -14,14 +14,14 @@ let resolvers = {}
 const contextLoader = (contextPath, loaderFn, defaultValue = []) => {
   const arrContextPath = ensureArray(contextPath)
 
-  const resolver = async ({ getContext, setContext, params = {}, reload = false, cascade = false, ...rest }) => {
+  const resolver = async ({ getContext, setContext, params = {}, reload = false, cascade = false, nofetch = false, ...rest }) => {
     let promise = path(arrContextPath, pendingPromises)
     if (promise) {
       return promise
     }
     let output = getContext(arrContextPath)
 
-    if (reload || !output) {
+    if ((reload || !output) && !nofetch) {
       if (!output && defaultValue) {
         await setContext(assocPath(arrContextPath, defaultValue))
       }
@@ -43,7 +43,7 @@ const contextLoader = (contextPath, loaderFn, defaultValue = []) => {
       await setContext(context => assocPath(arrContextPath, output, context))
       pendingPromises = dissocPath(arrContextPath, pendingPromises)
     }
-    return output
+    return output || defaultValue
   }
 
   // Store the resolver in an key indexed object that we will use in the exported "getLoader" function

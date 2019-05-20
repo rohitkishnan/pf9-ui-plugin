@@ -1,4 +1,4 @@
-import { pathOr, prop, groupBy, assocPath, flatten, omit, path } from 'ramda'
+import { pathOr, prop, groupBy, assocPath } from 'ramda'
 import { loadClusters } from 'k8s/components/infrastructure/actions'
 import contextLoader from 'core/helpers/contextLoader'
 import { ensureArray } from 'utils/fp'
@@ -26,9 +26,15 @@ const clusterContextLoader = (key, loaderFn, filterMasterNodes = true, defaultVa
     const clusters = (await loadClusters({ getContext, setContext, ...rest, reload: false }))
       .filter(cluster => !filterMasterNodes || cluster.hasMasterNode)
     const { clusterId = pathOr('__all__', [0, 'uuid'], clusters) } = params
-    const loadedData = await contextLoader([...keyPath, clusterId], loaderFn, defaultValue)(
-      { getContext, setContext, params: { ...params, clusterId }, clusters, ...rest },
-    )
+    const resolver = contextLoader([...keyPath, clusterId], loaderFn, defaultValue)
+
+    const loadedData = await resolver({
+      getContext,
+      setContext,
+      params: { ...params, clusterId },
+      clusters,
+      ...rest,
+    })
     if (clusterId === '__all__') {
       // update all cluster indexed positions in bulk
       await setContext(context => {
@@ -37,14 +43,6 @@ const clusterContextLoader = (key, loaderFn, filterMasterNodes = true, defaultVa
           '__all__': loadedData,
         }, context)
       })
-    } else {
-      // update "__all__" key
-      await setContext(context =>
-        assocPath(
-          [...keyPath, '__all__'],
-          flatten(Object.values(omit(['__all__'], path(keyPath, context)))),
-          context),
-      )
     }
     return loadedData
   }
