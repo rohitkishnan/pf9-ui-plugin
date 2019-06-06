@@ -13,6 +13,7 @@ import amber from '@material-ui/core/colors/amber'
 import WarningIcon from '@material-ui/icons/Warning'
 import SnackbarContent from '@material-ui/core/SnackbarContent/SnackbarContent'
 
+// Possible values for 'type' are ['success', 'warning', 'error', 'info']
 const variantIcon = {
   success: CheckCircleIcon,
   warning: WarningIcon,
@@ -76,6 +77,12 @@ const ToastContent = withStyles(styles)(({onClose, type, message, classes, class
   />
 })
 
+const snackbarStyle = {
+  marginBottom: '80px',
+  // Intercom uses a ridiculously high zIndex so we have to be even more ridiculous
+  zIndex: '9999999999',
+}
+
 export class ToastProvider extends Component {
   state = {
     toasts: []
@@ -122,10 +129,11 @@ export class ToastProvider extends Component {
       <ToastContext.Provider value={this.showToast}>
         {toasts.map(({id, isOpen, text, onClose, type}) =>
           <Snackbar
+            style={snackbarStyle}
             key={id}
             anchorOrigin={{
               vertical: 'bottom',
-              horizontal: 'left',
+              horizontal: 'right',
             }}
             open={isOpen}
             autoHideDuration={toastsTimeout}
