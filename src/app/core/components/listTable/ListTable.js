@@ -359,7 +359,6 @@ class ListTable extends React.Component {
       data,
       paginate,
       showCheckboxes,
-      title,
       canDragColumns,
       filters,
       inlineFilters,
@@ -372,6 +371,7 @@ class ListTable extends React.Component {
       selected,
       visibleColumns,
       filterValues,
+      rowsPerPage,
     } = this.state
 
     if (!data) {
@@ -390,7 +390,6 @@ class ListTable extends React.Component {
           <Paper className={classes.root}>
             <ListTableToolbar
               selected={selected}
-              title={title}
               onAdd={this.props.onAdd && this.handleAdd}
               onDelete={this.props.onDelete && this.handleDelete}
               onEdit={this.props.onEdit && this.handleEdit}
@@ -405,6 +404,9 @@ class ListTable extends React.Component {
               onFilterUpdate={this.handleFilterUpdate}
               onFiltersReset={this.handleFiltersReset}
               batchActions={batchActions}
+              rowsPerPage={rowsPerPage}
+              onChangeRowsPerPage={this.handleChangeRowsPerPage}
+              rowsPerPageOptions={[5, 10, 25, 50, 100]}
             />
             <div className={classes.tableWrapper}>
               <Table className={classes.table}>
@@ -418,7 +420,6 @@ class ListTable extends React.Component {
                   onSelectAllClick={this.handleSelectAllClick}
                   onRequestSort={this.handleRequestSort}
                   checked={selectedAll}
-                  title={title}
                   rowCount={data.length}
                   showCheckboxes={showCheckboxes}
                 />
@@ -456,7 +457,6 @@ ListTable.propTypes = {
   })).isRequired,
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   options: PropTypes.object,
-  title: PropTypes.string.isRequired,
   onAdd: PropTypes.func,
   onDelete: PropTypes.func,
   onEdit: PropTypes.func,
