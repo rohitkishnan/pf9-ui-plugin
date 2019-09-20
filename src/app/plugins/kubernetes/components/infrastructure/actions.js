@@ -129,8 +129,8 @@ export const createCluster = async ({ data, context }) => {
 export const cloudProviderActions = createCRUDActions(cloudProvidersCacheKey, {
   listFn: () => qbert.getCloudProviders(),
   createFn: (params) => qbert.createCloudProvider(params),
-  updateFn: ({ uuid: id, ...data }) => qbert.updateCloudProvider(id, data),
-  deleteFn: ({ uuid: id }) => qbert.deleteCloudProvider(id),
+  updateFn: ({ id, ...data }) => qbert.updateCloudProvider(id, data),
+  deleteFn: ({ id }) => qbert.deleteCloudProvider(id),
   customOperations: {
     attachNodesToCluster: async ({ clusterUuid, nodes }, currentItems) => {
       const nodeUuids = pluck('uuid', nodes)
@@ -148,6 +148,18 @@ export const cloudProviderActions = createCRUDActions(cloudProvidersCacheKey, {
   },
   uniqueIdentifier: 'uuid',
 })
+
+export const loadCloudProviderDetails = createContextLoader(
+  'cloudProviderDetails',
+  async ({ cloudProviderId }) => {
+    const response = await qbert.getCloudProviderDetails(cloudProviderId)
+    return response.Regions
+  },
+  {
+    uniqueIdentifier: 'RegionName',
+    indexBy: 'cloudProviderId',
+  },
+)
 
 export const flavorActions = createCRUDActions('flavors', { service: 'nova' })
 

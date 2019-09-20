@@ -9,6 +9,8 @@ export const allKey = '__all__'
 export const noneKey = '__none__'
 export const listTablePrefs = ['visibleColumns', 'columnsOrder', 'rowsPerPage', 'orderBy', 'orderDirection']
 
+export const k8sPrefix = `${appUrlRoot}/kubernetes`
+
 // Errors
 export const addError = 'ERR_ADD'
 export const updateError = 'ERR_UPDATE'
