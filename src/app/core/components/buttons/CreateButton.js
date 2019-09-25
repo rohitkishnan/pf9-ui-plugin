@@ -7,6 +7,7 @@ const styles = theme => ({
     margin: theme.spacing(1),
     borderRadius: 2,
     textTransform: 'none',
+    height: 40,
   }
 })
 

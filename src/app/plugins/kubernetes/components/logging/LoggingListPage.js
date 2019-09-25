@@ -1,10 +1,16 @@
 import React, { Fragment } from 'react'
+import useReactRouter from 'use-react-router'
 import { makeStyles, createStyles } from '@material-ui/styles'
 import Box from '@material-ui/core/Box'
 import ListTable from 'core/components/listTable/ListTable'
 import FontAwesomeIcon from 'core/components/FontAwesomeIcon'
+import CreateButton from 'core/components/buttons/CreateButton'
 
 const useStyles = makeStyles(theme => createStyles({
+  titleAndCreateButton: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
   actionIconWrapper: {
     display: 'flex',
     flexDirection: 'column',
@@ -39,6 +45,9 @@ const useStyles = makeStyles(theme => createStyles({
     color: '#e44c34',
   },
 }))
+
+const addUrl = '/ui/kubernetes/logging/add'
+const editUrl = '/ui/kubernetes/logging/edit'
 
 const status = {
   ENABLED: 'enabled',
@@ -163,14 +172,18 @@ const data = [
   },
 ]
 
-const LoggingPage = () => {
+const LoggingListPage = () => {
   const classes = useStyles()
+  const { history } = useReactRouter()
   const columns = getColumns(classes)
-  const actions = getActions(classes)
+  const actions = getActions(classes, history)
 
   return (
     <Fragment>
-      <h2>Logging</h2>
+      <Box className={classes.titleAndCreateButton}>
+        <h2>Logging</h2>
+        <CreateButton onClick={() => history.push(addUrl)}>New Logging</CreateButton>
+      </Box>
       <ListTable columns={columns} data={data} batchActions={actions} />
     </Fragment>
   )
@@ -235,7 +248,7 @@ const ActionIcon = ({ classes, icon, label }) =>
     {label}
   </Box>
 
-const getActions = (classes) => [
+const getActions = (classes, history) => [
   {
     icon: <ActionIcon classes={classes} icon='check' label='Enable' />,
     label: 'Enable',
@@ -251,7 +264,7 @@ const getActions = (classes) => [
   {
     icon: <ActionIcon classes={classes} icon='edit' label='Edit' />,
     label: 'Edit',
-    action: () => {},
+    action: (clusters) => history.push(`${editUrl}/${clusters[0].cluster}`),
     cond: (clusters) => clusters.length === 1
   },
   {
@@ -261,4 +274,4 @@ const getActions = (classes) => [
   },
 ]
 
-export default LoggingPage
+export default LoggingListPage
