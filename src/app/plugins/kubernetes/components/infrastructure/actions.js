@@ -162,6 +162,19 @@ export const loadCloudProviderDetails = createContextLoader(
   },
 )
 
+export const loadCloudProviderRegionDetails = createContextLoader(
+  'cloudProviderRegionDetails',
+  async ({ cloudProviderId, cloudProviderRegionId }) => {
+    const response = await qbert.getCloudProviderRegionDetails(cloudProviderId, cloudProviderRegionId)
+    // We create an artificial `id` parameter in the response so that createContextLoader has a
+    // uniqueIdentifier to key off of.  Failure to do this results in inproperly cached values.
+    return { id: `${cloudProviderId}-${cloudProviderRegionId}`, ...response }
+  },
+  {
+    indexBy: ['cloudProviderId', 'cloudProviderRegionId']
+  }
+)
+
 export const flavorActions = createCRUDActions('flavors', { service: 'nova' })
 
 export const regionActions = createCRUDActions('regions', { service: 'keystone' })
