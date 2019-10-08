@@ -6,23 +6,17 @@ import useDataLoader from 'core/hooks/useDataLoader'
 import Picklist from 'core/components/Picklist'
 import { loadCloudProviderRegionDetails } from './actions'
 
-const ClusterDomainPicklist = forwardRef(({
-  cloudProviderId, cloudProviderRegionId, hasError, errorMessage, onChange, ...rest
+const AwsClusterVpcPicklist = forwardRef(({
+  cloudProviderId, cloudProviderRegionId, hasError, errorMessage, ...rest
 }, ref) => {
   const [details, loading] = useDataLoader(loadCloudProviderRegionDetails, { cloudProviderId, cloudProviderRegionId })
 
-  const domains = pathStrOr([], '0.domains', details)
-  const options = domains.map(x => ({ label: x.Name, value: x.Id }))
-
-  const handleChange = value => {
-    const option = options.find(x => x.value === value)
-    onChange && onChange(value, option && option.label)
-  }
+  const vpcs = pathStrOr([], '0.vpcs', details)
+  const options = vpcs.map(x => ({ label: `${x.VpcName}-${x.CidrBlock}`, value: x.VpcId }))
 
   return (
     <Picklist
       {...rest}
-      onChange={handleChange}
       ref={ref}
       loading={loading}
       options={options}
@@ -32,7 +26,7 @@ const ClusterDomainPicklist = forwardRef(({
   )
 })
 
-ClusterDomainPicklist.propTypes = {
+AwsClusterVpcPicklist.propTypes = {
   id: PropTypes.string.isRequired,
   cloudProviderId: PropTypes.string,
   cloudProviderRegionId: PropTypes.string,
@@ -41,4 +35,4 @@ ClusterDomainPicklist.propTypes = {
   ...ValidatedFormInputPropTypes,
 }
 
-export default ClusterDomainPicklist
+export default AwsClusterVpcPicklist

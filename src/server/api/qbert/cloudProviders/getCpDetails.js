@@ -29,14 +29,41 @@ const awsAzs = [
   { RegionName: 'us-east-2', State: 'available', ZoneName: 'us-east-2' },
 ]
 
+const fakeAwsVpc = () => {
+  const VpcId = uuid.v4()
+  const vpc = {
+    CidrBlock: faker.internet.ip(),
+    VpcName: faker.random.word(),
+    VpcId,
+    Subnets: [
+      ...awsAzs.map(fakeAwsVpcSubnet({ VpcId, isPublic: false })),
+      ...awsAzs.map(fakeAwsVpcSubnet({ VpcId, isPublic: true })),
+    ],
+  }
+  return vpc
+}
+
+const fakeAwsVpcSubnet = ({ VpcId, isPublic }) => az => {
+  return {
+    VpcId,
+    SubnetId: uuid.v4(),
+    CidrBlock: faker.internet.ip(),
+    MapPublicIpOnLaunch: isPublic,
+    State: az.State,
+    AvailabilityZone: az.ZoneName,
+  }
+}
+
+const fakeAwsDomain = () => ({ Name: faker.internet.domainName(), Id: uuid.v4() })
+
 const randomAwsRegionDetails = (regionId) => {
   return {
     azs: awsAzs,
-    domains: uniq(times(() => ({ 'Name': faker.random.word(), 'Id': faker.random.word() }), 8)),
+    domains: uniq(times(fakeAwsDomain, 8)),
     flavors: 't2.small t2.medium t2.large'.split(' '),
     keyPairs: uniq(times(() => ({ 'KeyName': faker.fake('{{name.firstName}}'), 'KeyFingerprint': uuid.v4() }), 5)),
     operatingSystems: ['centos', 'ubuntu'],
-    vpcs: uniq(times(() => ({ 'CidrBlock': faker.internet.ip(), 'VpcName': faker.random.word() }), 5))
+    vpcs: uniq(times(fakeAwsVpc, 5))
   }
 }
 
