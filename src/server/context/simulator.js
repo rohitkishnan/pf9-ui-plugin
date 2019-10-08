@@ -72,6 +72,7 @@ class Context {
     this.prometheusRules = []
     this.prometheusServiceMonitors = []
     this.prometheusAlertManagers = []
+    this.loggings = []
   }
 
   createSimUser = () => {

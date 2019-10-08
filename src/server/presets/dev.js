@@ -31,6 +31,8 @@ import Repository from '../models/monocular/Repository'
 import StorageClass from '../models/qbert/StorageClass'
 import ClusterRepository from '../models/qbert/Repository'
 import PrometheusInstance from '../models/prometheus/PrometheusInstance'
+import Logging from '../models/qbert/Logging'
+import LoggingStub from '../../app/plugins/kubernetes/components/logging/LoggingStub'
 import { attachNodeToCluster } from '../models/qbert/Operations'
 // import Token from '../models/openstack/Token'
 import { range } from '../util'
@@ -238,6 +240,10 @@ function loadPreset () {
 
   // Qbert repositories
   range(3).forEach(i => ClusterRepository.create({ data: {}, context, config: { clusterId: cluster.uuid, namespace: defaultNamespace.name } }))
+
+  // Logging
+  const loggings = LoggingStub.getLoggings()
+  loggings.forEach(logging => Logging.create({ data: logging, context, config: { clusterId: logging.cluster }, raw: true }))
 }
 
 export default loadPreset

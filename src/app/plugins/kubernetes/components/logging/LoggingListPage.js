@@ -2,10 +2,8 @@ import React from 'react'
 import useReactRouter from 'use-react-router'
 import { makeStyles, createStyles } from '@material-ui/styles'
 import FontAwesomeIcon from 'core/components/FontAwesomeIcon'
-import ApiClient from 'api-client/ApiClient'
 import createCRUDComponents from 'core/helpers/createCRUDComponents'
-
-const { qbert } = ApiClient.getInstance()
+import loggingActions from './actions'
 
 const useStyles = makeStyles(theme => createStyles({
   titleAndCreateButton: {
@@ -50,10 +48,11 @@ const LoggingListPage = () => {
   const columns = getColumns(classes)
   const batchActions = getActions(classes, history)
 
+  // TODO: onEdit and onDelete
   const options = {
     addText: 'New Logging',
     uniqueIdentifier: 'cluster',
-    loaderFn: qbert.getLoggings,
+    loaderFn: loggingActions.list,
     onEdit: () => {},
     onDelete: () => {},
     addUrl,
