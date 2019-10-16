@@ -1,6 +1,7 @@
 import ApiClient from 'api-client/ApiClient'
 import createCRUDActions from 'core/helpers/createCRUDActions'
 import { clustersCacheKey } from 'k8s/components/infrastructure/actions'
+import { mapAsync } from 'utils/async'
 
 const { qbert } = ApiClient.getInstance()
 
@@ -34,14 +35,12 @@ const loggingActions = createCRUDActions(loggingsCacheKey, {
   listFn: async (params, loadFromContext) => {
     const clusters = await loadFromContext(clustersCacheKey)
 
-    const loggingsPromises = clusters.map(async cluster => {
+    const loggings = await mapAsync(async cluster => {
       const response = await qbert.getLoggings(cluster.uuid)
-      return mapLoggings(cluster, response[0])
-    })
+      return response ? mapLoggings(cluster, response) : null
+    }, clusters)
 
-    const loggings = await Promise.all(loggingsPromises)
-
-    return loggings
+    return loggings.filter(cluster => cluster !== null)
   },
   createFn: async data => {
     return qbert.createLogging(data)
