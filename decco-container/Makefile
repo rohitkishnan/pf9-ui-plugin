@@ -60,7 +60,7 @@ image: stage $(CONTAINER_TAG)
 	docker build --rm -t $(IMAGE_REPO):$(IMAGE_TAG) \
 		--build-arg BUILD_ID=$(BUILD_ID) \
 		--build-arg VERSION=$(PF9_VERSION) \
-		--build-arg BRANCH=$(BRANCH_NAME) \
+		--build-arg BRANCH="$(BRANCH_NAME)" \
 		--build-arg APP_METADATA=`cat $(METADATA_FILE)` \
 		$(STAGE)
 	echo -ne "$(IMAGE_TAG)" >$(CONTAINER_BUILD_DIR)/container-tag
