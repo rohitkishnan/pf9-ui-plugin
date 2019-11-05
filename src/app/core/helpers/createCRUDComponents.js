@@ -51,6 +51,9 @@ const createCRUDComponents = options => {
     name,
     searchTarget = 'name',
     multiSelection = true,
+    showCheckboxes,
+    compactTable,
+    blankFirstColumn,
   } = options
 
   // List
@@ -86,6 +89,9 @@ const createCRUDComponents = options => {
         onSortChange={getParamsUpdater('orderBy', 'orderDirection')}
         onRowsPerPageChange={getParamsUpdater('rowsPerPage')}
         onColumnsChange={getParamsUpdater('visibleColumns', 'columnsOrder')}
+        showCheckboxes={showCheckboxes}
+        compactTable={compactTable}
+        blankFirstColumn={blankFirstColumn}
       />
     )
   }

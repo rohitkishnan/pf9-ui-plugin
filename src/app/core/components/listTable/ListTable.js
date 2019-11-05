@@ -20,12 +20,16 @@ import { filterSpecPropType } from 'core/components/cardTable/CardTableToolbar'
 import { isNilOrEmpty, emptyArr, pathStr, emptyObj } from 'utils/fp'
 import { listTableActionPropType } from 'core/components/listTable/ListTableBatchActions'
 import moize from 'moize'
+import clsx from 'clsx'
 
 const styles = theme => ({
   root: {
     width: '100%',
     marginTop: theme.spacing(2),
     minHeight: 300,
+  },
+  compactTableHeight: {
+    minHeight: 'auto',
   },
   tableWrapper: {
     overflowX: 'auto',
@@ -453,6 +457,8 @@ class ListTable extends PureComponent {
       editDisabledInfo,
       selectedRows = selected,
       size,
+      compactTable,
+      blankFirstColumn,
     } = this.props
 
     if (!data) {
@@ -479,6 +485,7 @@ class ListTable extends PureComponent {
           checked={selectedAll}
           rowCount={filteredData.length}
           showCheckboxes={multiSelection && showCheckboxes}
+          blankFirstColumn={blankFirstColumn}
         />
         <TableBody>
           {paginatedData.map(this.renderRow)}
@@ -490,36 +497,38 @@ class ListTable extends PureComponent {
       <Progress loading={loading} overlay renderContentOnMount>
         <Grid container justify="center">
           <Grid item xs={12} zeroMinWidth>
-            <div className={classes.root}>
-              <ListTableToolbar
-                selected={selectedRows}
-                onAdd={onAdd && this.handleAdd}
-                onDelete={onDelete && this.handleDelete}
-                deleteCond={deleteCond}
-                deleteDisabledInfo={deleteDisabledInfo}
-                onEdit={onEdit && this.handleEdit}
-                editCond={editCond}
-                editDisabledInfo={editDisabledInfo}
-                onSearchChange={this.handleSearch}
-                searchTerm={searchTerm}
-                columns={columns}
-                visibleColumns={visibleColumns}
-                onColumnToggle={this.handleColumnToggle}
-                filters={filters}
-                filterValues={filterValues}
-                onFilterUpdate={this.handleFilterUpdate}
-                onFiltersReset={this.handleFiltersReset}
-                onReload={onReload}
-                onRefresh={onRefresh}
-                batchActions={batchActions}
-                rowsPerPage={rowsPerPage}
-                onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                rowsPerPageOptions={[5, 10, 25, 50, 100]}
-              />
+            <div className={clsx(classes.root, compactTable && classes.compactTableHeight)}>
+              {!compactTable &&
+                <ListTableToolbar
+                  selected={selectedRows}
+                  onAdd={onAdd && this.handleAdd}
+                  onDelete={onDelete && this.handleDelete}
+                  deleteCond={deleteCond}
+                  deleteDisabledInfo={deleteDisabledInfo}
+                  onEdit={onEdit && this.handleEdit}
+                  editCond={editCond}
+                  editDisabledInfo={editDisabledInfo}
+                  onSearchChange={this.handleSearch}
+                  searchTerm={searchTerm}
+                  columns={columns}
+                  visibleColumns={visibleColumns}
+                  onColumnToggle={this.handleColumnToggle}
+                  filters={filters}
+                  filterValues={filterValues}
+                  onFilterUpdate={this.handleFilterUpdate}
+                  onFiltersReset={this.handleFiltersReset}
+                  onReload={onReload}
+                  onRefresh={onRefresh}
+                  batchActions={batchActions}
+                  rowsPerPage={rowsPerPage}
+                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                  rowsPerPageOptions={[5, 10, 25, 50, 100]}
+                />
+              }
               <div className={classes.tableWrapper}>
                 {tableContent}
               </div>
-              {this.renderPaginationControls(filteredData.length)}
+              {!compactTable && this.renderPaginationControls(filteredData.length)}
             </div>
           </Grid>
         </Grid>
@@ -611,7 +620,7 @@ ListTable.propTypes = {
   selectedRows: PropTypes.array,
   onSelectedRowsChange: PropTypes.func,
   size: PropTypes.oneOf(['small', 'medium']),
-
+  compactTable: PropTypes.bool,
 }
 
 ListTable.defaultProps = {
@@ -625,6 +634,7 @@ ListTable.defaultProps = {
   emptyText: 'No data found',
   loading: false,
   size: 'medium',
+  compactTable: false,
 }
 
 export default compose(
