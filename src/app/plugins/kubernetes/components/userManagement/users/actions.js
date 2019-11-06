@@ -24,6 +24,7 @@ const adminUserNames = ['heatadmin', 'admin@platform9.net']
 export const mngmUsersCacheKey = 'managementUsers'
 export const mngmUserActions = createCRUDActions(mngmUsersCacheKey, {
   listFn: async () => {
+    console.log('asdf')
     return keystone.getUsers()
   },
   dataMapper: async (users, { systemUsers }, loadFromContext) => {
