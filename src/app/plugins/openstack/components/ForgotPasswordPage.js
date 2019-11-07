@@ -1,0 +1,120 @@
+import React, { useState } from 'react'
+import axios from 'axios'
+import useReactRouter from 'use-react-router'
+import { withStyles } from '@material-ui/styles'
+import {
+  Button, Grid, Paper, TextField, Typography,
+} from '@material-ui/core'
+
+import Progress from 'core/components/progress/Progress'
+import Alert from 'core/components/Alert'
+import { compose } from 'app/utils/fp'
+import { loginUrl, forgotPasswordRequestUrl } from 'app/constants'
+
+const styles = theme => ({
+  root: {
+    padding: theme.spacing(8),
+    overflow: 'auto',
+  },
+  paper: {
+    padding: theme.spacing(4),
+  },
+  img: {
+    maxHeight: '70%',
+    maxWidth: '70%',
+    display: 'block',
+    margin: 'auto'
+  },
+  form: {
+    paddingTop: theme.spacing(3),
+  },
+  textField: {
+    minWidth: '100%',
+    marginTop: theme.spacing(1),
+  },
+  resetPwdButton: {
+    minWidth: '80%',
+    marginTop: theme.spacing(3),
+    display: 'block',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  paragraph: {
+    marginTop: theme.spacing(1),
+    textAlign: 'justify',
+  },
+})
+
+const ForgotPasswordPage = props => {
+  const { classes } = props
+  const { history } = useReactRouter()
+  const [emailId, setEmailId] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
+  const [isResetSuccessful, setIsResetSuccessful] = useState(false)
+
+  const handleEmailChange = () => event => {
+    setEmailId(event.target.value)
+  }
+
+  const handleFormSubmit = async (event) => {
+    event.preventDefault()
+
+    if (isResetSuccessful) {
+      return history.push(loginUrl)
+    }
+
+    setLoading(true)
+    const body = { username: emailId }
+    try {
+      const response = await axios.post(forgotPasswordRequestUrl, body)
+
+      if (response.status === 200) {
+        setLoading(false)
+        setIsResetSuccessful(true)
+      }
+    } catch (err) {
+      await setLoading(false)
+      await setIsResetSuccessful(false)
+      await setIsError(true)
+    }
+  }
+
+  return (
+    <Progress loading={loading} overlay renderContentOnMount message="Processing...">
+      <div className="forgot-password-page">
+        <Grid container justify="center" className={classes.root}>
+          <Grid item md={4} lg={3}>
+            <Paper className={classes.paper}>
+              <img src="/ui/images/logo-color.png" className={classes.img} />
+              <form className={classes.form} onSubmit={handleFormSubmit}>
+                <Typography variant="subtitle1" align="center">
+                    Password Reset
+                </Typography>
+                {!isResetSuccessful ? (<><TextField
+                  required
+                  id="email"
+                  label="Email"
+                  placeholder="Email"
+                  type="email"
+                  className={classes.textField}
+                  onChange={handleEmailChange()} />
+                  {isError && <Alert variant="error" message="Something went wrong" />}
+                  <Button type="submit" className={classes.resetPwdButton} variant="contained" color="primary" >
+                    RESET MY PASSWORD
+                  </Button></>)
+                  : (<><Typography className={classes.paragraph} component="p">
+              Your request was received successfully. You should receive an email shortly for <b>{emailId}</b> with instructions to reset your password.
+                  </Typography><Button type="submit" className={classes.resetPwdButton} variant="contained" color="primary" >
+              RETURN TO LOGIN SCREEN
+                  </Button></>)}
+              </form>
+            </Paper>
+          </Grid>
+        </Grid>
+      </div>
+    </Progress>
+  )
+}
+
+export default compose(withStyles(styles))(ForgotPasswordPage)
