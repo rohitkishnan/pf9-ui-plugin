@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { ValidatedFormContext } from 'core/components/validatedForm/ValidatedForm'
 import { requiredValidator } from 'core/utils/fieldValidators'
 import { pathOr, isNil } from 'ramda'
+import { memoizedDep } from 'utils/misc'
 
 export const ValidatedFormInputPropTypes = {
   required: PropTypes.bool,
@@ -26,6 +27,7 @@ const ValidatedFormInput = ({
     updateFieldValue,
     getFieldValue,
     defineField,
+    removeField,
     validateField,
     showErrorsOnBlur,
   } = useContext(ValidatedFormContext)
@@ -51,7 +53,10 @@ const ValidatedFormInput = ({
     if (currentInitialValue !== undefined) {
       setCurrentFieldValue(currentInitialValue)
     }
-  }, [validations, required])
+  }, [required, memoizedDep(validations)])
+
+  // Remove the field when component unmounts
+  useEffect(() => () => removeField(id), [])
 
   // Notify value changes to the form when the field is controlled
   useEffect(() => {
