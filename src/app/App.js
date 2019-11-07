@@ -15,6 +15,7 @@ import { pathJoin } from 'utils/misc'
 import moize from 'moize'
 import plugins from 'app/plugins'
 import pluginManager from 'core/utils/pluginManager'
+import ForgotPasswordPage from 'openstack/components/ForgotPasswordPage'
 
 plugins.forEach(plugin => plugin.registerPlugin(pluginManager))
 
@@ -48,6 +49,7 @@ const renderPluginRoutes = (id, plugin) => {
 
         {/* TODO implement generic login page? */}
         <Route path={pathJoin(plugin.basePath, 'login')} component={null} />
+        <Route path={pathJoin(plugin.basePath, 'forgot_password')} exact component={ForgotPasswordPage} />
         <Route path={pathJoin(plugin.basePath, 'logout')} exact component={LogoutPage} />
         {defaultRoute && <Redirect to={defaultRoute || '/ui/404'} />}
         {showFooter && renderFooter()}

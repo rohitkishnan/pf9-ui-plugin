@@ -1,13 +1,14 @@
 import React, { useEffect, useContext } from 'react'
 import ApiClient from 'api-client/ApiClient'
 import { withRouter } from 'react-router'
-import { dashboardUrl, loginUrl } from 'app/constants'
+import { dashboardUrl, loginUrl, forgotPasswordUrl } from 'app/constants'
 import { AppContext } from 'core/AppProvider'
 import { usePreferences } from 'core/providers/PreferencesProvider'
 import { getStorage, setStorage } from 'core/utils/pf9Storage'
 import LoginPage from 'openstack/components/LoginPage'
 import { loadUserTenants } from 'openstack/components/tenants/actions'
 import { head, path, pathOr, propEq } from 'ramda'
+import ForgotPasswordPage from 'openstack/components/ForgotPasswordPage'
 
 /**
  * Sets up the Openstack session.
@@ -19,6 +20,7 @@ const SessionManager = withRouter(props => {
   const [ , initUserPreferences ] = usePreferences()
   const { getContext, setContext, currentRegion } = useContext(AppContext)
   const { initialized, session, sessionLoaded } = getContext()
+  const { location } = props
 
   useEffect(() => {
     init()
@@ -83,6 +85,10 @@ const SessionManager = withRouter(props => {
 
   if (!initialized) {
     return <div>Loading app...</div>
+  }
+
+  if (location.pathname === forgotPasswordUrl) {
+    return <ForgotPasswordPage />
   }
 
   if (!session || !session.loginSuccessful) {
