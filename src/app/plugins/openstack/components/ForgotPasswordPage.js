@@ -74,9 +74,9 @@ const ForgotPasswordPage = props => {
         setIsResetSuccessful(true)
       }
     } catch (err) {
-      await setLoading(false)
-      await setIsResetSuccessful(false)
-      await setIsError(true)
+      setLoading(false)
+      setIsResetSuccessful(false)
+      setIsError(true)
     }
   }
 
