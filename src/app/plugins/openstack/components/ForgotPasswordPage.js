@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
+import React from 'react'
 import axios from 'axios'
 import useReactRouter from 'use-react-router'
 import { withStyles } from '@material-ui/styles'
 import {
   Button, Grid, Paper, TextField, Typography,
 } from '@material-ui/core'
-
+import useParams from 'core/hooks/useParams'
 import Progress from 'core/components/progress/Progress'
 import Alert from 'core/components/Alert'
 import { compose } from 'app/utils/fp'
-import { loginUrl, forgotPasswordRequestUrl } from 'app/constants'
+import { loginUrl, forgotPasswordApiUrl } from 'app/constants'
 
 const styles = theme => ({
   root: {
@@ -46,42 +46,65 @@ const styles = theme => ({
 })
 
 const ForgotPasswordPage = props => {
+  const { params, updateParams } = useParams({
+    loading: false,
+    isError: false,
+    emailId: '',
+    isResetSuccessful: false,
+    errorMessage: 'Reset password failed'
+  })
   const { classes } = props
   const { history } = useReactRouter()
-  const [emailId, setEmailId] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [isError, setIsError] = useState(false)
-  const [isResetSuccessful, setIsResetSuccessful] = useState(false)
 
   const handleEmailChange = () => event => {
-    setEmailId(event.target.value)
+    updateParams({
+      emailId: event.target.value
+    })
   }
 
   const handleFormSubmit = async (event) => {
     event.preventDefault()
 
-    if (isResetSuccessful) {
+    if (params.isResetSuccessful) {
       return history.push(loginUrl)
     }
 
-    setLoading(true)
-    const body = { username: emailId }
+    updateParams({
+      loading: true
+    })
+
+    const body = { username: params.emailId }
+
     try {
-      const response = await axios.post(forgotPasswordRequestUrl, body)
+      const response = await axios.post(forgotPasswordApiUrl, body)
 
       if (response.status === 200) {
-        setLoading(false)
-        setIsResetSuccessful(true)
+        updateParams({
+          loading: false,
+          isResetSuccessful: true
+        })
+      } else {
+        updateParams({
+          loading: false,
+          isError: true
+        })
       }
     } catch (err) {
-      setLoading(false)
-      setIsResetSuccessful(false)
-      setIsError(true)
+      updateParams({
+        loading: false,
+        isResetSuccessful: false,
+        isError: true
+      })
+    } finally {
+      updateParams({
+        loading: false,
+        isResetSuccessful: true
+      })
     }
   }
 
   return (
-    <Progress loading={loading} overlay renderContentOnMount message="Processing...">
+    <Progress loading={params.loading} overlay renderContentOnMount message="Processing...">
       <div className="forgot-password-page">
         <Grid container justify="center" className={classes.root}>
           <Grid item md={4} lg={3}>
@@ -91,7 +114,7 @@ const ForgotPasswordPage = props => {
                 <Typography variant="subtitle1" align="center">
                     Password Reset
                 </Typography>
-                {!isResetSuccessful ? (<><TextField
+                {!params.isResetSuccessful ? (<><TextField
                   required
                   id="email"
                   label="Email"
@@ -99,12 +122,12 @@ const ForgotPasswordPage = props => {
                   type="email"
                   className={classes.textField}
                   onChange={handleEmailChange()} />
-                  {isError && <Alert variant="error" message="Something went wrong" />}
+                  {params.isError && <Alert variant="error" message="Something went wrong" />}
                   <Button type="submit" className={classes.resetPwdButton} variant="contained" color="primary" >
                     RESET MY PASSWORD
                   </Button></>)
                   : (<><Typography className={classes.paragraph} component="p">
-              Your request was received successfully. You should receive an email shortly for <b>{emailId}</b> with instructions to reset your password.
+              Your request was received successfully. You should receive an email shortly for <b>{params.emailId}</b> with instructions to reset your password.
                   </Typography><Button type="submit" className={classes.resetPwdButton} variant="contained" color="primary" >
               RETURN TO LOGIN SCREEN
                   </Button></>)}

@@ -34,6 +34,10 @@ const SessionManager = withRouter(props => {
     const username = user && user.username
     let unscopedToken = tokens && tokens.unscopedToken
 
+    if (location.pathname === forgotPasswordUrl) {
+      history.push(forgotPasswordUrl)
+    }
+
     if (!username || !unscopedToken) {
       await setContext({ initialized: true })
       history.push(loginUrl)
@@ -83,12 +87,12 @@ const SessionManager = withRouter(props => {
     }
   }
 
-  if (!initialized) {
-    return <div>Loading app...</div>
-  }
-
   if (location.pathname === forgotPasswordUrl) {
     return <ForgotPasswordPage />
+  }
+
+  if (!initialized) {
+    return <div>Loading app...</div>
   }
 
   if (!session || !session.loginSuccessful) {
