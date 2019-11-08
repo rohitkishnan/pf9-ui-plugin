@@ -39,6 +39,11 @@ const SessionManager = withRouter(props => {
       history.push(resetPasswordUrl)
       return
     }
+    
+    if (location.pathname === forgotPasswordUrl) {
+      history.push(forgotPasswordUrl)
+      return
+    }
 
     if (!username || !unscopedToken) {
       await setContext({ initialized: true })
@@ -93,12 +98,12 @@ const SessionManager = withRouter(props => {
     return <ResetPasswordPage />
   }
 
-  if (!initialized) {
-    return <div>Loading app...</div>
-  }
-
   if (location.pathname === forgotPasswordUrl) {
     return <ForgotPasswordPage />
+  }
+
+  if (!initialized) {
+    return <div>Loading app...</div>
   }
 
   if (!session || !session.loginSuccessful) {
