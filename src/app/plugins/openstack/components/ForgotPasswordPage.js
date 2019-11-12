@@ -35,7 +35,8 @@ const styles = theme => ({
     marginTop: theme.spacing(3),
     display: 'block',
     marginLeft: 'auto',
-    marginRight: 'auto'
+    marginRight: 'auto',
+    textTransform: 'uppercase'
   },
   paragraph: {
     marginTop: theme.spacing(1),
@@ -84,11 +85,13 @@ const ForgotPasswordPage = props => {
         response.status === 200
           ? { isResetSuccessful: true }
           : { isError: true }
+
+      updateParams({ ...newState, loading: false })
     } catch (err) {
       newState = {
         isError: true
       }
-    } finally {
+
       updateParams({ ...newState, loading: false })
     }
   }
@@ -136,7 +139,7 @@ const ForgotPasswordPage = props => {
                         <Alert variant="error" message="Something went wrong" />
                       </div>
                     )}
-                    <SubmitButton label="RESET MY PASSWORD" />
+                    <SubmitButton label="Reset my password" />
                   </>
                 ) : (
                   <>
@@ -145,7 +148,7 @@ const ForgotPasswordPage = props => {
                       an email shortly for <b>{params.emailId}</b> with
                       instructions to reset your password.
                     </Typography>
-                    <SubmitButton label="RETURN TO LOGIN SCREEN" />
+                    <SubmitButton label="Return to login screen" />
                   </>
                 )}
               </form>
