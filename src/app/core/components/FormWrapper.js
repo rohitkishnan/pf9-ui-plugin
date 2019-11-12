@@ -27,7 +27,7 @@ const FormWrapper = ({
   backUrl = undefined,
   children,
   title,
-  className,
+  className = undefined,
   ...rest
 }) => {
   const classes = useStyles()
