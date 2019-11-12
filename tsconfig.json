@@ -16,6 +16,7 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "sourceMap": true,
+    "esModuleInterop": true,
     "lib": ["esnext", "dom"],
     "include": ["./src/**/*"],
     "paths": {

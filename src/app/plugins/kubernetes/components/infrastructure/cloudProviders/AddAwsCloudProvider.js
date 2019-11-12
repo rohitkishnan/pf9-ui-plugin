@@ -5,6 +5,7 @@ import SubmitButton from 'core/components/SubmitButton'
 import Alert from 'core/components/Alert'
 import { Typography } from '@material-ui/core'
 import ExternalLink from 'core/components/ExternalLink'
+import BulletList from 'core/components/BulletList'
 
 const helpText = <Typography variant="body1" component="div">
   <p>
@@ -23,14 +24,15 @@ const helpText = <Typography variant="body1" component="div">
         The following permissions are required on your AWS account in order to deploy
         fully automated Managed Kubernetes clusters:
       </p>
-      <ul>
-        <li>ELB Management</li>
-        <li>Route 53 DNS Configuration</li>
-        <li>Access to 2 or more Availability Zones within the region</li>
-        <li>EC2 Instance Management</li>
-        <li>EBS Volume Management</li>
-        <li>VPC Management</li>
-      </ul>
+      <BulletList items={[
+        'ELB Management',
+        'Route 53 DNS Configuration',
+        'Access to 2 or more Availability Zones within the region',
+        'EC2 Instance Management',
+        'EBS Volume Management',
+        'VPC Management',
+      ]}
+      />
     </div>
   </Alert>
 </Typography>
