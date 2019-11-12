@@ -1,15 +1,14 @@
 import React from 'react'
 import axios from 'axios'
 import useReactRouter from 'use-react-router'
-import { withStyles } from '@material-ui/styles'
+import { makeStyles } from '@material-ui/styles'
 import { Button, Grid, Paper, TextField, Typography } from '@material-ui/core'
 import useParams from 'core/hooks/useParams'
 import Progress from 'core/components/progress/Progress'
 import Alert from 'core/components/Alert'
-import { compose } from 'app/utils/fp'
 import { loginUrl, forgotPasswordApiUrl } from 'app/constants'
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(8),
     overflow: 'auto'
@@ -45,7 +44,7 @@ const styles = theme => ({
   errorContainer: {
     width: '150px'
   }
-})
+}))
 
 const ForgotPasswordPage = props => {
   const { params, updateParams } = useParams({
@@ -55,8 +54,8 @@ const ForgotPasswordPage = props => {
     isResetSuccessful: false,
     errorMessage: 'Reset password failed'
   })
-  const { classes } = props
   const { history } = useReactRouter()
+  const classes = useStyles()
 
   const handleEmailChange = () => event => {
     updateParams({
@@ -76,23 +75,15 @@ const ForgotPasswordPage = props => {
     })
 
     const body = { username: params.emailId }
-    let newState
 
     try {
       const response = await axios.post(forgotPasswordApiUrl, body)
 
-      newState =
-        response.status === 200
-          ? { isResetSuccessful: true }
-          : { isError: true }
-
-      updateParams({ ...newState, loading: false })
+      response.status === 200
+        ? updateParams({ isResetSuccessful: true, loading: false })
+        : updateParams({ isError: true, loading: false })
     } catch (err) {
-      newState = {
-        isError: true
-      }
-
-      updateParams({ ...newState, loading: false })
+      updateParams({ isError: true, loading: false })
     }
   }
 
@@ -160,4 +151,4 @@ const ForgotPasswordPage = props => {
   )
 }
 
-export default compose(withStyles(styles))(ForgotPasswordPage)
+export default ForgotPasswordPage
