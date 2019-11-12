@@ -38,7 +38,7 @@ const SessionManager = withRouter(props => {
     if (location.pathname === forgotPasswordUrl) {
       history.push(forgotPasswordUrl)
     }
-    
+
     if (location.pathname === resetPasswordUrl) {
       history.push(resetPasswordUrl)
       return
@@ -96,7 +96,7 @@ const SessionManager = withRouter(props => {
   if (location.pathname === forgotPasswordUrl) {
     return <ForgotPasswordPage />
   }
-  
+
   if (location.pathname === resetPasswordUrl) {
     return <ResetPasswordPage />
   }
