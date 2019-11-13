@@ -43,6 +43,7 @@ const useStyles = makeStyles(theme => ({
 
 const serviceReports = [
   {
+    key: 'pods-service',
     route: '/ui/kubernetes/pods',
     title: 'Pods',
     icon: FilterNone,
@@ -61,6 +62,7 @@ const serviceReports = [
       }),
   },
   {
+    key: 'deployments-service',
     route: '/ui/kubernetes/pods#deployments',
     title: 'Deployments',
     icon: '/ui/images/dynamic_feed.svg',
@@ -72,6 +74,7 @@ const serviceReports = [
     }),
   },
   {
+    key: 'services-service',
     route: '/ui/kubernetes/pods#services',
     title: 'Services',
     icon: SettingsApplications,
@@ -83,6 +86,7 @@ const serviceReports = [
       }),
   },
   {
+    key: 'clouds-service',
     route: '/ui/kubernetes/infrastructure#cloudProviders',
     title: 'Clouds',
     icon: Cloud,
@@ -96,6 +100,7 @@ const serviceReports = [
 ]
 const statusReports = [
   {
+    key: 'users-status',
     route: '/ui/kubernetes/user_management#users',
     title: 'Enrolled Users',
     icon: People,
@@ -107,6 +112,7 @@ const statusReports = [
     }),
   },
   {
+    key: 'tenants-status',
     route: '/ui/kubernetes/user_management#tenants',
     title: 'Active Tenants',
     icon: RecentActors,
@@ -118,6 +124,7 @@ const statusReports = [
     }),
   },
   {
+    key: 'nodes-status',
     route: '/ui/kubernetes/infrastructure#nodes',
     title: 'Nodes',
     icon: Storage,
@@ -129,6 +136,7 @@ const statusReports = [
       }),
   },
   {
+    key: 'clusters-status',
     route: '/ui/kubernetes/infrastructure#clusters',
     title: 'Clusters',
     icon: Layers,

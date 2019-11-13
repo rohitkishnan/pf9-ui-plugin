@@ -34,7 +34,7 @@ const nodeServices = ['Prometheus', 'Fluentd', 'Kubeadm']
 const AddOtherProvider = ({onComplete}) => {
   const classes = useStyles({})
   const handleClick = useCallback( () => {
-    onComplete({type: SupportedPlatforms.Other})
+    onComplete(SupportedPlatforms.Other)
   }, [onComplete])
   return (
     <div className={classes.root}>

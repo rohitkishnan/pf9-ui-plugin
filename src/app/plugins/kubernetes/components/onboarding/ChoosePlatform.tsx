@@ -1,7 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/styles'
 import CloudProviderCard from '../common/CloudProviderCard'
-// import FormWrapper from 'src/core/components/FormWrapper'
 import { Theme } from '@material-ui/core'
 import FormWrapper from 'core/components/FormWrapper'
 

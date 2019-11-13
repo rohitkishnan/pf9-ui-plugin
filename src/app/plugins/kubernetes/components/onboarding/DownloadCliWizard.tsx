@@ -1,9 +1,10 @@
 // Libs
-import React, { useMemo } from 'react'
+import React, { useMemo, /*useEffect, useState*/ } from 'react'
 import { makeStyles, Theme, Typography } from '@material-ui/core'
 
 // Hooks
 import useParams from 'core/hooks/useParams'
+import useInterval from 'core/hooks/useInterval'
 
 // Components
 import FormWrapper from 'core/components/FormWrapper'
@@ -11,6 +12,8 @@ import Wizard from 'core/components/wizard/Wizard'
 import WizardStep from 'core/components/wizard/WizardStep'
 import BulletList from 'core/components/BulletList'
 import Code from 'core/components/CodeBlock'
+import useDataLoader from 'core/hooks/useDataLoader'
+import { loadCombinedHosts } from '../infrastructure/common/actions'
 
 const initialContext = {
 
@@ -32,11 +35,9 @@ const useStyles = makeStyles<any, {spacing?: number}>((theme: Theme) => ({
   }
 }))
 
-const perminentKey = 'never_update'
-
 const DownloadCliWizard = () => {
   const classes = useStyles({})
-
+  const [hosts, loading, reloadHosts] = useDataLoader(loadCombinedHosts)
   const {params} = useParams()
 
   const handleSubmit = parameters => async data => {
@@ -45,6 +46,11 @@ const DownloadCliWizard = () => {
     // After the cli is finished running there will be a newly created node.
     // Update this to redirect to dashboard on completion
   }
+
+  const handlePollForCombinedHosts = useInterval( () => {
+    reloadHosts()
+  }, 2000)
+
 
   const wzStepOneListItems = useMemo(
     () => [
@@ -56,7 +62,7 @@ const DownloadCliWizard = () => {
         </Code>
       </div>,
     ],
-    [perminentKey],
+    [],
   )
 
   return (
@@ -67,7 +73,7 @@ const DownloadCliWizard = () => {
             <>
               <WizardStep stepId="install" label="Install Cli">
                 <>
-                  <WizardStepDetails title={`Install & Run the Installation Wizard`}>
+                  <WizardStepDetails title={`Install & Run the Installation Wizard`} spacing={1}>
                     <BulletList items={wzStepOneListItems} />
                     <Typography className={classes.indentText}>You’ll see messages in the Terminal explaining what you need to do to complete the installation process.</Typography>
                   </WizardStepDetails>
