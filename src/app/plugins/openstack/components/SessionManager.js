@@ -1,15 +1,15 @@
 import React, { useEffect, useContext } from 'react'
 import ApiClient from 'api-client/ApiClient'
 import { withRouter } from 'react-router'
-import { dashboardUrl, loginUrl, resetPasswordUrl, forgotPasswordUrl } from 'app/constants'
+import { dashboardUrl, loginUrl, forgotPasswordUrl, resetPasswordUrl } from 'app/constants'
 import { AppContext } from 'core/AppProvider'
 import { usePreferences } from 'core/providers/PreferencesProvider'
 import { getStorage, setStorage } from 'core/utils/pf9Storage'
 import LoginPage from 'openstack/components/LoginPage'
 import { loadUserTenants } from 'openstack/components/tenants/actions'
 import { head, path, pathOr, propEq } from 'ramda'
-import ResetPasswordPage from 'openstack/components/ResetPasswordPage'
 import ForgotPasswordPage from 'openstack/components/ForgotPasswordPage'
+import ResetPasswordPage from 'openstack/components/ResetPasswordPage'
 
 /**
  * Sets up the Openstack session.
@@ -35,13 +35,13 @@ const SessionManager = withRouter(props => {
     const username = user && user.username
     let unscopedToken = tokens && tokens.unscopedToken
 
-    if (location.pathname === resetPasswordUrl) {
-      history.push(resetPasswordUrl)
-      return
-    }
-    
     if (location.pathname === forgotPasswordUrl) {
       history.push(forgotPasswordUrl)
+      return
+    }
+
+    if (location.pathname === resetPasswordUrl) {
+      history.push(resetPasswordUrl)
       return
     }
 
@@ -94,12 +94,12 @@ const SessionManager = withRouter(props => {
     }
   }
 
-  if (location.pathname === resetPasswordUrl) {
-    return <ResetPasswordPage />
-  }
-
   if (location.pathname === forgotPasswordUrl) {
     return <ForgotPasswordPage />
+  }
+
+  if (location.pathname === resetPasswordUrl) {
+    return <ResetPasswordPage />
   }
 
   if (!initialized) {
