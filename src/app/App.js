@@ -17,7 +17,6 @@ import plugins from 'app/plugins'
 import pluginManager from 'core/utils/pluginManager'
 import ForgotPasswordPage from 'openstack/components/ForgotPasswordPage'
 import ResetPasswordPage from './plugins/openstack/components/ResetPasswordPage'
-import ForgotPasswordPage from 'openstack/components/ForgotPasswordPage'
 
 plugins.forEach(plugin => plugin.registerPlugin(pluginManager))
 
