@@ -21,6 +21,8 @@ import useReactRouter from 'use-react-router'
 import { clusterActions } from 'k8s/components/infrastructure/clusters/actions'
 import { pathJoin } from 'utils/misc'
 import { k8sPrefix } from 'app/constants'
+import ExternalLink from 'core/components/ExternalLink'
+import Code from 'core/components/CodeBlock'
 
 const listUrl = pathJoin(k8sPrefix, 'infrastructure')
 
@@ -333,7 +335,7 @@ const AddAzureClusterPage = () => {
                       <TextField
                         id="externalDnsName"
                         label="API FQDN"
-                        info="FQDN used to reference cluster API. To ensure the API can be accessed securely at the FQDN, the FQDN will be included in the API server certificate's Subject Alt Names. If deploying onto AWS, we will automatically create the DNS records for this FQDN into AWS Route 53."
+                        info="FQDN (Fully Qualified Domain Name) is used to reference cluster API. To ensure the API can be accessed securely at the FQDN, the FQDN will be included in the API server certificate's Subject Alt Names. If deploying onto a cloud provider, we will automatically create the DNS records for this FQDN using the cloud provider’s DNS service."
                         required
                       />
 
@@ -357,7 +359,7 @@ const AddAzureClusterPage = () => {
                       <TextField
                         id="httpProxy"
                         label="HTTP Proxy"
-                        info="Specify the HTTP proxy for this cluster.  Leave blank for none.  Uses format of <scheme>://<username>:<password>@<host>:<port> where <username>:<password>@ is optional."
+                        info={<div>(Optional) Specify the HTTP proxy for this cluster. Uses format of <Code><span>{`<scheme>://<username>:<password>@<host>:<port>`}</span></Code> where <Code><span>{`<username>:<password>@`}</span></Code> is optional.</div>}
                       />
                     </>
                   )}
@@ -373,7 +375,7 @@ const AddAzureClusterPage = () => {
                         id="privileged"
                         label="Privileged"
                         disabled={['calico', 'canal', 'weave'].includes(values.networkPlugin)}
-                        info="Allows this cluster to run privileged containers. Read this article for more information."
+                        info={<div>Allows this cluster to run privileged containers. Read <ExternalLink url="https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities">this article</ExternalLink> for more information.</div>}
                       />
 
                       {/* Advanced API Configuration */}
