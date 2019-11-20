@@ -15,6 +15,17 @@ class Appbert {
   getClusterTags = async () => {
     return this.client.basicGet(`${await this.baseUrl()}/clusters`)
   }
+
+  getPackages = async () => {
+    return this.client.basicGet(`${await this.baseUrl()}/packages`)
+  }
+
+  toggleMonitoring = async (clusterUuid, pkgId, on) => {
+    if (on) {
+      return this.client.basicPut(`${await this.baseUrl()}/clusters/${clusterUuid}/${pkgId}`)
+    }
+    return this.client.basicDelete(`${await this.baseUrl()}/clusters/${clusterUuid}/${pkgId}`)
+  }
 }
 
 export default Appbert
