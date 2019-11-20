@@ -5,7 +5,6 @@ import { mapAsync, someAsync } from 'utils/async'
 import { clustersCacheKey } from '../infrastructure/common/actions'
 import createContextLoader from 'core/helpers/createContextLoader'
 import { pathStr } from 'utils/fp'
-// import { parseClusterParams } from 'k8s/components/infrastructure/clusters/actions'
 import { allKey } from 'app/constants'
 
 const { qbert } = ApiClient.getInstance()
@@ -26,6 +25,11 @@ const rbacApiGroupsToRules = (apiGroups) => {
   })
   return rules
 }
+
+// Can be either 'User' or 'Group'
+const getSubjectsOfKind = (subjects, kind) => (
+  subjects.filter(subject => subject.kind === kind).map(user => user.name)
+)
 
 createContextLoader('coreApiResources', async ({ clusterId }) => {
   const response = await qbert.getCoreApiResourcesList(clusterId)
@@ -112,6 +116,18 @@ export const roleActions = createCRUDActions(rolesCacheKey, {
     }
     return qbert.createClusterRole(data.clusterId, data.namespace, body)
   },
+  updateFn: async data => {
+    const rules = rbacApiGroupsToRules(data.rbac)
+    const body = {
+      apiVersion: 'rbac.authorization.k8s.io/v1',
+      kind: 'Role',
+      metadata: {
+        name: data.name
+      },
+      rules,
+    }
+    return qbert.updateClusterRole(data.clusterId, data.namespace, data.name, body)
+  },
   deleteFn: async ({ id }, currentItems) => {
     const { qbert } = ApiClient.getInstance()
     const item = currentItems.find(propEq('id', id))
@@ -131,7 +147,7 @@ export const roleActions = createCRUDActions(rolesCacheKey, {
       clusterName: pipe(find(propEq('uuid', item.clusterId)), prop('name'))(clusters),
       created: pathStr('metadata.creationTimestamp', item),
       pickerLabel: `Role: ${item.metadata.name}`,
-      pickerValue: `Role:${item.metadata.name}`
+      pickerValue: `Role:${item.metadata.name}`,
     }))
   },
   uniqueIdentifier,
@@ -160,6 +176,18 @@ export const clusterRoleActions = createCRUDActions(clusterRolesCacheKey, {
       rules,
     }
     return qbert.createClusterClusterRole(data.clusterId, body)
+  },
+  updateFn: async data => {
+    const rules = rbacApiGroupsToRules(data.rbac)
+    const body = {
+      apiVersion: 'rbac.authorization.k8s.io/v1',
+      kind: 'ClusterRole',
+      metadata: {
+        name: data.name
+      },
+      rules,
+    }
+    return qbert.updateClusterClusterRole(data.clusterId, data.name, body)
   },
   deleteFn: async ({ id }, currentItems) => {
     const { qbert } = ApiClient.getInstance()
@@ -198,25 +226,24 @@ export const roleBindingActions = createCRUDActions(roleBindingsCacheKey, {
     return qbert.getClusterRoleBindings(clusterId)
   },
   createFn: async data => {
-    const users = data.users.map((user) => {
-      return {
+    const users = data.users.map((user) => (
+      {
         kind: 'User',
         name: user,
         apiGroup: 'rbac.authorization.k8s.io'
       }
-    })
+    ))
 
-    const groups = data.groups.map((group) => {
-      return {
+    const groups = data.groups.map((group) => (
+      {
         kind: 'Group',
         name: group,
         apiGroup: 'rbac.authorization.k8s.io'
       }
-    })
+    ))
 
     const subjects = [...users, ...groups]
 
-    // Todo - add groups
     const [roleType, ...rest] = data.role.split(':')
     const roleName = rest.join(':')
     const body = {
@@ -234,6 +261,35 @@ export const roleBindingActions = createCRUDActions(roleBindingsCacheKey, {
     }
 
     return qbert.createClusterRoleBinding(data.clusterId, data.namespace, body)
+  },
+  updateFn: async data => {
+    const users = data.users.map((user) => (
+      {
+        kind: 'User',
+        name: user,
+        apiGroup: 'rbac.authorization.k8s.io'
+      }
+    ))
+
+    const groups = data.groups.map((group) => (
+      {
+        kind: 'Group',
+        name: group,
+        apiGroup: 'rbac.authorization.k8s.io'
+      }
+    ))
+
+    const subjects = [...users, ...groups]
+
+    const body = {
+      kind: 'RoleBinding',
+      metadata: {
+        name: data.name,
+      },
+      subjects,
+      roleRef: data.roleRef
+    }
+    return qbert.updateClusterRoleBinding(data.clusterId, data.namespace, data.name, body)
   },
   deleteFn: async ({ id }, currentItems) => {
     const { qbert } = ApiClient.getInstance()
@@ -253,6 +309,8 @@ export const roleBindingActions = createCRUDActions(roleBindingsCacheKey, {
       namespace: pathStr('metadata.namespace', item),
       clusterName: pipe(find(propEq('uuid', item.clusterId)), prop('name'))(clusters),
       created: pathStr('metadata.creationTimestamp', item),
+      users: item.subjects ? getSubjectsOfKind(item.subjects, 'User') : [],
+      groups: item.subjects ? getSubjectsOfKind(item.subjects, 'Group') : [],
     }))
   },
   uniqueIdentifier,
@@ -271,21 +329,21 @@ export const clusterRoleBindingActions = createCRUDActions(clusterRoleBindingsCa
     return qbert.getClusterClusterRoleBindings(clusterId)
   },
   createFn: async data => {
-    const users = data.users.map((user) => {
-      return {
+    const users = data.users.map((user) => (
+      {
         kind: 'User',
         name: user,
         apiGroup: 'rbac.authorization.k8s.io'
       }
-    })
+    ))
 
-    const groups = data.groups.map((group) => {
-      return {
+    const groups = data.groups.map((group) => (
+      {
         kind: 'Group',
         name: group,
         apiGroup: 'rbac.authorization.k8s.io'
       }
-    })
+    ))
 
     const subjects = [...users, ...groups]
 
@@ -306,6 +364,35 @@ export const clusterRoleBindingActions = createCRUDActions(clusterRoleBindingsCa
 
     return qbert.createClusterClusterRoleBinding(data.clusterId, body)
   },
+  updateFn: async data => {
+    const users = data.users.map((user) => (
+      {
+        kind: 'User',
+        name: user,
+        apiGroup: 'rbac.authorization.k8s.io'
+      }
+    ))
+
+    const groups = data.groups.map((group) => (
+      {
+        kind: 'Group',
+        name: group,
+        apiGroup: 'rbac.authorization.k8s.io'
+      }
+    ))
+
+    const subjects = [...users, ...groups]
+
+    const body = {
+      kind: 'ClusterRoleBinding',
+      metadata: {
+        name: data.name,
+      },
+      subjects,
+      roleRef: data.roleRef
+    }
+    return qbert.updateClusterClusterRoleBinding(data.clusterId, data.name, body)
+  },
   deleteFn: async ({ id }, currentItems) => {
     const { qbert } = ApiClient.getInstance()
     const item = currentItems.find(propEq('id', id))
@@ -323,6 +410,8 @@ export const clusterRoleBindingActions = createCRUDActions(clusterRoleBindingsCa
       name: pathStr('metadata.name', item),
       clusterName: pipe(find(propEq('uuid', item.clusterId)), prop('name'))(clusters),
       created: pathStr('metadata.creationTimestamp', item),
+      users: item.subjects ? getSubjectsOfKind(item.subjects, 'User') : [],
+      groups: item.subjects ? getSubjectsOfKind(item.subjects, 'Group') : [],
     }))
   },
   uniqueIdentifier,

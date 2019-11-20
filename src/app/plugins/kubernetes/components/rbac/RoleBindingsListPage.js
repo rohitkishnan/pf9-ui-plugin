@@ -39,6 +39,10 @@ export const options = {
   ],
   cacheKey: roleBindingsCacheKey,
   deleteFn: roleBindingActions.delete,
+  editUrl: '/ui/kubernetes/rbac/rolebindings/edit',
+  customEditUrlFn: (item, itemId) => (
+    `/ui/kubernetes/rbac/rolebindings/edit/${itemId}/cluster/${item.clusterId}`
+  ),
   name: 'RoleBindings',
   title: 'RoleBindings',
   ListPage,

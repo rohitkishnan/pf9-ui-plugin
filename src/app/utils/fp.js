@@ -186,7 +186,7 @@ export const updateInArray = curry((predicateFn, updateFn, arr) =>
 // Like `updateInArray` but stops after finding the element to update
 // Also like ramda `adjust` but using a predicateFn
 export const adjustWith = curry((predicateFn, updateFn, arr) =>
-  adjust(findIndex(predicateFn, arr), updateFn, arr),
+  adjust(findIndex(predicateFn, arr), updateFn, arr)
 )
 
 // Like ramda `update` but using a predicateFn
