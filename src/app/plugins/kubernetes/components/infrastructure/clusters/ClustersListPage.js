@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import DownloadKubeConfigLink from './DownloadKubeConfigLink'
 import KubeCLI from './KubeCLI'
 import ExternalLink from 'core/components/ExternalLink'
@@ -20,6 +20,18 @@ import { both, prop } from 'ramda'
 import PrometheusAddonDialog from 'k8s/components/prometheus/PrometheusAddonDialog'
 import ClusterUpgradeDialog from 'k8s/components/infrastructure/clusters/ClusterUpgradeDialog'
 import ClusterSync from './ClusterSync'
+import { Typography } from '@material-ui/core'
+import { makeStyles } from '@material-ui/styles'
+
+const useStyles = makeStyles(theme => ({
+  link: {
+    cursor: 'pointer',
+    color: theme.palette.primary.main,
+    '&:hover': {
+      textDecoration: 'underline',
+    }
+  }
+}))
 
 const getClusterPopoverContent = (healthyMasterNodes, masterNodes) =>
   `${healthyMasterNodes.length} of ${masterNodes.length} master nodes healthy (3 required)`
@@ -108,6 +120,42 @@ const renderLinks = links => {
   )
 }
 
+const renderNodeLink = ({ uuid, name }) => (
+  <div key={uuid}>
+    <SimpleLink src={`/ui/kubernetes/infrastructure/nodes/${uuid}`}>
+      {name}
+    </SimpleLink>
+  </div>
+)
+
+const NodesCell = ({ nodes }) => {
+  const classes = useStyles()
+
+  if (!nodes || !nodes.length) {
+    return <div>0</div>
+  }
+  const [expanded, setExpanded] = useState(false)
+  return (
+    <div>
+      {expanded ? (
+        <div>
+          {nodes.map(renderNodeLink)}
+          <Typography onClick={() => setExpanded(!expanded)} className={classes.link} component="a">
+            (less details)
+          </Typography>
+        </div>
+      ) : (
+        <div>
+          {nodes.length}&nbsp;
+          <Typography onClick={() => setExpanded(!expanded)} className={classes.link} component="a">
+            (more details)
+          </Typography>
+        </div>
+      )}
+    </div>
+  )
+}
+
 const toMHz = value => value * 1024
 
 const renderStats = (_, { usage }) => {
@@ -158,6 +206,7 @@ export const options = {
     { id: 'servicesCidr', label: 'Services CIDR' },
     { id: 'endpoint', label: 'API endpoint' },
     { id: 'cloudProviderName', label: 'Cloud provider' },
+    { id: 'nodes', label: 'Nodes', render: nodes => <NodesCell nodes={nodes} /> },
     { id: 'allowWorkloadsOnMaster', label: 'Master Workloads' },
     { id: 'privileged', label: 'Privileged' },
     { id: 'hasVpn', label: 'VPN' },
