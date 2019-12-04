@@ -175,7 +175,7 @@ export const clusterActions = createCRUDActions(clustersCacheKey, {
       const calcNodesTotals = calcUsageTotals(combinedNodes)
       const dashboardLink = `${qbertEndpoint}/clusters/${cluster.uuid}/k8sapi/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:443/proxy/`
       const host = qbertEndpoint.match(/(.*?)\/qbert/)[1]
-      const grafanaLink = `${host}/k8s/v1/clusters/${cluster.uuid}/k8sapi/api/v1/namespaces/pf9-monitoring/services/http:grafana-ui:80/proxy/`
+      const grafanaLink = `${qbertEndpoint}/clusters/${cluster.uuid}/k8sapi/api/v1/namespaces/pf9-monitoring/services/http:grafana-ui:80/proxy/`
       const usage = {
         compute: calcNodesTotals('usage.compute.current', 'usage.compute.max'),
         memory: calcNodesTotals('usage.memory.current', 'usage.memory.max'),
