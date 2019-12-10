@@ -1,4 +1,5 @@
 import createContextLoader from 'core/helpers/createContextLoader'
+import createContextUpdater from 'core/helpers/createContextUpdater'
 import ApiClient from 'api-client/ApiClient'
 import { serviceCatalogContextKey } from 'openstack/components/api-access/actions'
 import { pathStrOrNull, pipeWhenTruthy } from 'utils/fp'
@@ -10,6 +11,7 @@ const { resmgr, qbert } = ApiClient.getInstance()
 
 export const nodesCacheKey = 'nodes'
 export const rawNodesCacheKey = 'rawNodes'
+export const combinedHostsCacheKey = 'combinedHosts'
 
 createContextLoader(rawNodesCacheKey, async () => {
   return qbert.getNodes()

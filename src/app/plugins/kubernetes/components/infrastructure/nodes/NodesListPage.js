@@ -4,7 +4,7 @@ import { maybeFnOrNull } from 'utils/fp'
 import ExternalLink from 'core/components/ExternalLink'
 import ProgressBar from 'core/components/progress/ProgressBar'
 import createCRUDComponents from 'core/helpers/createCRUDComponents'
-import { pathOr, pipe } from 'ramda'
+import { pathOr, pipe, prop } from 'ramda'
 import { castBoolToStr, castFuzzyBool, columnPathLookup } from 'utils/misc'
 import SimpleLink from 'core/components/SimpleLink'
 import { nodesCacheKey } from 'k8s/components/infrastructure/nodes/actions'
@@ -114,6 +114,11 @@ export const columns = [
   { id: 'isSpotInstance', label: 'Spot Instance?', display: false, render: getSpotInstance },
   { id: 'assignedRoles', label: 'Assigned Roles', render: renderRoles },
 ]
+
+const isAdmin = (selected, getContext) => {
+  const { role } = getContext(prop('userDetails'))
+  return role === 'admin'
+}
 
 export const options = {
   addText: 'Onboard a Node',
