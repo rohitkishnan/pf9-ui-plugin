@@ -9,6 +9,8 @@ import { pathOr, pipe } from 'ramda'
 import { castBoolToStr, castFuzzyBool, columnPathLookup } from 'utils/misc'
 import SimpleLink from 'core/components/SimpleLink'
 import { nodesCacheKey } from 'k8s/components/infrastructure/nodes/actions'
+import DeAuthIcon from '@material-ui/icons/DeleteForever'
+import NodeDeAuthDialog from './NodeDeAuthDialog'
 
 const renderStatus = (_, node) => (<HostStatus host={node.combined} />)
 const isMaster = pipe(castFuzzyBool, castBoolToStr())
@@ -73,7 +75,15 @@ export const options = {
   name: 'Nodes',
   title: 'Nodes',
   uniqueIdentifier: 'uuid',
-  showCheckboxes: false
+  multiSelection: false,
+  batchActions: [
+    {
+      cond: ([node]) => !node.clusterUuid,
+      icon: <DeAuthIcon />,
+      label: 'Deauthorize node',
+      dialog: NodeDeAuthDialog,
+    }
+  ],
 }
 
 const { ListPage, List } = createCRUDComponents(options)
