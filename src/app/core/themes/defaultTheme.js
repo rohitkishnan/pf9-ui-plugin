@@ -52,11 +52,11 @@ const theme = {
     },
     MuiOutlinedInput: {
       root: {
-        fontSize: '16px',
+        fontSize: '14px',
         minWidth: '120px',
       },
       input: {
-        padding: '12px 16px',
+        padding: '8px 16px',
       },
     },
     MuiMenuItem: {
