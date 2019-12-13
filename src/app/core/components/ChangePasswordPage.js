@@ -1,7 +1,15 @@
 import React, { useContext } from 'react'
 import useReactRouter from 'use-react-router'
 import { withStyles } from '@material-ui/styles'
-import { Button, Typography, List, Dialog, DialogTitle, DialogContent } from '@material-ui/core'
+import {
+  Button,
+  Typography,
+  List,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Grid,
+} from '@material-ui/core'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import CheckIcon from '@material-ui/icons/Check'
@@ -17,7 +25,7 @@ import Alert from 'core/components/Alert'
 import ValidatedForm from 'core/components/validatedForm/ValidatedForm'
 import { AppContext } from 'core/providers/AppProvider'
 import { loginUrl } from 'app/constants.js'
-
+import { useToast } from 'core/providers/ToastProvider'
 import {
   hasOneSpecialChar,
   hasOneNumber,
@@ -26,17 +34,12 @@ import {
   hasMinLength,
   requiredValidator,
   passwordValidator,
+  matchFieldValidator,
 } from 'core/utils/fieldValidators'
 
-const styles = (theme) => ({
-  formContainer: {
-    margin: '0 37px',
-  },
+const styles = () => ({
   alertContainer: {
     width: '300px',
-  },
-  marginLeft: {
-    marginLeft: '25px',
   },
 })
 
@@ -76,10 +79,15 @@ const ChangePasswordPage = (props) => {
   const { classes } = props
   const { history } = useReactRouter()
   const passwordValidators = [requiredValidator, passwordValidator]
+  const confirmPasswordValidator = [
+    passwordValidator,
+    matchFieldValidator('newPassword').withMessage('Passwords do not match'),
+  ]
   const {
     setContext,
     userDetails: { userId },
   } = useContext(AppContext)
+  const showToast = useToast()
   const { keystone } = ApiClient.getInstance()
 
   const handleCancel = () => setContext({ isChangePassword: false })
@@ -88,22 +96,6 @@ const ChangePasswordPage = (props) => {
     if (params.isChangePasswordSuccessful) {
       await setContext({ isChangePassword: false })
       history.push(loginUrl)
-    }
-
-    if (!isPasswordMatches()) {
-      updateParams({
-        isError: true,
-        errorMessage: 'Passwords do not match',
-      })
-      return
-    }
-
-    if (isNil(params.oldPassword)) {
-      updateParams({
-        isError: true,
-        errorMessage: 'Enter Old Password',
-      })
-      return
     }
 
     await updateParams({
@@ -116,16 +108,8 @@ const ChangePasswordPage = (props) => {
       await updateUserPromise.then((res) => (isNil(res) ? reject(isNil) : undefined))
       await updateParams({ isChangePasswordSuccessful: true, loading: false })
       await setContext({ isChangePassword: false })
-      history.push({
-        pathname: loginUrl,
-        toastData: {
-          showMessage: true,
-          isOpen: true,
-          id: uuid.v4(),
-          text: 'Successfully updated password. Please log in with new password.',
-          variant: 'success',
-        },
-      })
+      showToast('Successfully updated password. Please log in with new password.', 'success')
+      history.push(loginUrl)
     } catch (err) {
       updateParams({ isError: true, loading: false })
     }
@@ -134,9 +118,6 @@ const ChangePasswordPage = (props) => {
   const updateValue = (key) => (value) => {
     updateParams({ [key]: value })
   }
-
-  const isPasswordMatches = () =>
-    !!(params.newPassword !== '' && params.newPassword === params.confirmPassword)
 
   const CheckListItem = ({ children, checked }) => (
     <ListItem>
@@ -166,61 +147,63 @@ const ChangePasswordPage = (props) => {
       <DialogTitle>Change Password</DialogTitle>
       <DialogContent>
         <Progress loading={params.loading} overlay renderContentOnMount message="Processing...">
-          <div className={classes.formContainer}>
-            <ValidatedForm onSubmit={handleFormSubmit}>
-              {({ values }) => (
-                <>
-                  <TextField
-                    variant="standard"
-                    required
-                    id="oldPassword"
-                    className={classes.confirmPassword}
-                    label="Old Password"
-                    type="password"
-                    onChange={updateValue('oldPassword')}
-                  />
-                  <TextField
-                    variant="standard"
-                    required
-                    id="newPassword"
-                    className={classes.confirmPassword}
-                    label="New Password"
-                    type="password"
-                    validations={passwordValidators}
-                    onChange={updateValue('newPassword')}
-                  />
-                  <TextField
-                    variant="standard"
-                    required
-                    id="confirmPassword"
-                    className={classes.confirmPassword}
-                    label="Confirm Password"
-                    type="password"
-                    validations={passwordValidators}
-                    onChange={updateValue('confirmPassword')}
-                  />
-                  {renderPasswordValidationCheck(values)}
-                  {params.isError && (
-                    <div className={classes.alertContainer}>
-                      <Alert variant="error" message={params.errorMessage} />
-                    </div>
-                  )}
-                </>
-              )}
-            </ValidatedForm>
-            <Button variant="contained" color="secondary" onClick={handleCancel}>
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              className={classes.marginLeft}
-              onClick={handleFormSubmit}
-            >
-              Save
-            </Button>
-          </div>
+          <Grid container justify="center">
+            <Grid item>
+              <ValidatedForm onSubmit={handleFormSubmit}>
+                {({ values }) => (
+                  <>
+                    <TextField
+                      variant="standard"
+                      required
+                      id="oldPassword"
+                      className={classes.confirmPassword}
+                      label="Old Password"
+                      type="password"
+                      onChange={updateValue('oldPassword')}
+                    />
+                    <TextField
+                      variant="standard"
+                      required
+                      id="newPassword"
+                      className={classes.confirmPassword}
+                      label="New Password"
+                      type="password"
+                      validations={passwordValidators}
+                      onChange={updateValue('newPassword')}
+                    />
+                    <TextField
+                      variant="standard"
+                      required
+                      id="confirmPassword"
+                      className={classes.confirmPassword}
+                      label="Confirm Password"
+                      type="password"
+                      validations={confirmPasswordValidator}
+                      onChange={updateValue('confirmPassword')}
+                    />
+                    {renderPasswordValidationCheck(values)}
+                    {params.isError && (
+                      <div className={classes.alertContainer}>
+                        <Alert variant="error" message={params.errorMessage} />
+                      </div>
+                    )}
+                    <Grid container spacing={4}>
+                      <Grid item>
+                        <Button variant="contained" color="secondary" onClick={handleCancel}>
+                          Cancel
+                        </Button>
+                      </Grid>
+                      <Grid item>
+                        <Button type="submit" variant="contained" color="primary">
+                          Save
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </>
+                )}
+              </ValidatedForm>
+            </Grid>
+          </Grid>
         </Progress>
       </DialogContent>
     </Dialog>
