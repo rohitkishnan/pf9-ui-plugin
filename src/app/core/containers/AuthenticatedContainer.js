@@ -18,7 +18,7 @@ import LogoutPage from 'core/public/LogoutPage'
 import HelpPage from 'app/plugins/kubernetes/components/common/HelpPage'
 import { AppContext } from 'core/providers/AppProvider'
 import useReactRouter from 'use-react-router'
-import ChangePasswordPage from 'core/components/ChangePasswordPage'
+import ChangePasswordModal from 'core/components/ChangePasswordModal'
 
 const useStyles = makeStyles(theme => ({
   appFrame: {
@@ -159,7 +159,7 @@ const AuthenticatedContainer = () => {
           [classes.contentShift]: drawerOpen,
           [classes['contentShift-left']]: drawerOpen,
         })}>
-          {isChangePassword && <ChangePasswordPage />}
+          {isChangePassword && <ChangePasswordModal />}
           <div className={classes.drawerHeader} />
           <div className={classes.contentMain}>
             <Switch>
