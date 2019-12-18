@@ -60,3 +60,5 @@ export const defaultAxiosConfig = Object.freeze({
   },
   timeout: 120000,
 })
+
+export const sessionExpiryInHours = 24

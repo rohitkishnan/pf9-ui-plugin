@@ -11,7 +11,7 @@ import useReactRouter from 'use-react-router'
 import { makeStyles } from '@material-ui/styles'
 import { Route, Redirect, Switch } from 'react-router'
 import {
-  dashboardUrl, resetPasswordUrl, resetPasswordThroughEmailUrl, forgotPasswordUrl, loginUrl,
+  dashboardUrl, resetPasswordUrl, resetPasswordThroughEmailUrl, forgotPasswordUrl, loginUrl, sessionExpiryInHours
 } from 'app/constants'
 import ResetPasswordPage from 'core/public/ResetPasswordPage'
 import ForgotPasswordPage from 'core/public/ForgotPasswordPage'
@@ -84,7 +84,7 @@ const AppContainer = () => {
         history.push(loginUrl)
         return
       }
-      await setupSession({ username, unscopedToken })
+      await setupSession({ username, unscopedToken, expiresAt: moment().add(sessionExpiryInHours, 'hours').format() })
       history.push(dashboardUrl)
       return
     }
@@ -111,7 +111,7 @@ const AppContainer = () => {
   }
 
   // Handler that gets invoked on successful authentication
-  const setupSession = async ({ username, unscopedToken, expiresAt, issuedAt }) => {
+  const setupSession = async ({ username, unscopedToken, expiresAt, issuedAt = undefined }) => {
     await setContext({
       appLoaded: true,
       initialized: false,
