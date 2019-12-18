@@ -11,7 +11,7 @@ import useReactRouter from 'use-react-router'
 import { makeStyles } from '@material-ui/styles'
 import { Route, Redirect, Switch } from 'react-router'
 import {
-  dashboardUrl, resetPasswordUrl, resetPasswordThroughEmailUrl, forgotPasswordUrl, loginUrl, sessionExpiryInHours
+  dashboardUrl, resetPasswordUrl, resetPasswordThroughEmailUrl, forgotPasswordUrl, loginUrl
 } from 'app/constants'
 import ResetPasswordPage from 'core/public/ResetPasswordPage'
 import ForgotPasswordPage from 'core/public/ForgotPasswordPage'
@@ -79,12 +79,12 @@ const AppContainer = () => {
 
       // Start from scratch to make use of prebuilt functions
       // for standard login page
-      const { unscopedToken, username } = await keystone.getUnscopedTokenWithToken(scopedToken)
+      const { unscopedToken, username, expiresAt, issuedAt } = await keystone.getUnscopedTokenWithToken(scopedToken)
       if (!unscopedToken) {
         history.push(loginUrl)
         return
       }
-      await setupSession({ username, unscopedToken, expiresAt: moment().add(sessionExpiryInHours, 'hours').format() })
+      await setupSession({ username, unscopedToken, expiresAt, issuedAt })
       history.push(dashboardUrl)
       return
     }
@@ -111,7 +111,7 @@ const AppContainer = () => {
   }
 
   // Handler that gets invoked on successful authentication
-  const setupSession = async ({ username, unscopedToken, expiresAt, issuedAt = undefined }) => {
+  const setupSession = async ({ username, unscopedToken, expiresAt, issuedAt }) => {
     await setContext({
       appLoaded: true,
       initialized: false,
