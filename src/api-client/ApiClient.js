@@ -11,6 +11,7 @@ import Nova from './Nova'
 import Qbert from './Qbert'
 import ResMgr from './ResMgr'
 import Clemency from 'api-client/Clemency'
+import Cre from './Cre'
 
 import { normalizeResponse } from 'api-client/helpers'
 import { hasPathStr, pathStr } from 'utils/fp'
@@ -61,6 +62,7 @@ class ApiClient {
     this.resmgr = new ResMgr(this)
     this.qbert = new Qbert(this)
     this.clemency = new Clemency(this)
+    this.cre = new Cre(this)
 
     this.catalog = {}
     this.activeRegion = null
@@ -142,6 +144,14 @@ class ApiClient {
     const response = await this.axiosInstance.delete(url, this.getAuthHeaders())
     return normalizeResponse(response)
   }
+
+  // --> Added By Rohit
+  basicDeleteWithBody = async (url, body) => {
+    // The axios Instance delete does not support delete with body
+    const response = await this.axiosInstance.delete(url, { data: body }, this.getAuthHeaders())
+    return normalizeResponse(response)
+  }
+  // Added By Rohit <--
 }
 
 export default ApiClient
