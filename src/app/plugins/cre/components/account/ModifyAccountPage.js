@@ -3,7 +3,7 @@ import SubmitButton from 'core/components/SubmitButton'
 import TextField from 'core/components/validatedForm/TextField'
 import ValidatedForm from 'core/components/validatedForm/ValidatedForm'
 import createUpdateComponents from 'core/helpers/createUpdateComponents'
-import { creAccountsCacheKey } from './actions'
+import { awsAccountCacheKey } from './actions'
 
 class ModifyAccountForm extends React.PureComponent {
   state = this.props.initialValues
@@ -27,7 +27,7 @@ class ModifyAccountForm extends React.PureComponent {
 export const options = {
   FormComponent: ModifyAccountForm,
   uniqueIdentifier: 'account_id',
-  cacheKey: creAccountsCacheKey,
+  cacheKey: awsAccountCacheKey,
   listUrl: '/ui/cre/account',
   name: 'UpdateAccountDetails',
   title: 'Update Account Details'

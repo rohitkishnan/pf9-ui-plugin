@@ -12,19 +12,19 @@ class Cre extends ApiService {
   }
 
   addAccount = async (params) => {
-    return this.client.basicPost('http://127.0.0.1:5000/api/v1/account', params)
+    return this.client.basicPost('http://127.0.0.1:5000/api/v1/account/', params)
   }
 
   modifyAccount = async (params) => {
-    return this.client.basicPut('http://127.0.0.1:5000/api/v1/account', params)
+    return this.client.basicPut('http://127.0.0.1:5000/api/v1/account/', params)
   }
 
   removeAccount = async (params) => {
-    return this.client.basicDeleteWithBody('http://127.0.0.1:5000/api/v1/account', params)
+    return this.client.basicDeleteWithBody('http://127.0.0.1:5000/api/v1/account/', params)
   }
 
   listAccounts = async () => {
-    return this.client.basicGet('http://127.0.0.1:5000/api/v1/account')
+    return this.client.basicGet('http://127.0.0.1:5000/api/v1/account/')
   }
 }
 

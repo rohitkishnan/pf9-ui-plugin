@@ -3,7 +3,7 @@ import ValidatedForm from 'core/components/validatedForm/ValidatedForm'
 import TextField from 'core/components/validatedForm/TextField'
 import SubmitButton from 'core/components/SubmitButton'
 import createAddComponents from 'core/helpers/createAddComponents'
-import { creAccountsCacheKey } from './actions'
+import { awsAccountCacheKey } from './actions'
 
 export const AddAccountForm = ({ onComplete }) => {
   return (
@@ -17,7 +17,7 @@ export const AddAccountForm = ({ onComplete }) => {
 }
 
 export const options = {
-  cacheKey: creAccountsCacheKey,
+  cacheKey: awsAccountCacheKey,
   FormComponent: AddAccountForm,
   listUrl: '/ui/cre/account',
   name: 'AddAccount',

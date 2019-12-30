@@ -5,9 +5,9 @@ import createCRUDActions from 'core/helpers/createCRUDActions'
 
 const { cre } = ApiClient.getInstance()
 
-export const creAccountsCacheKey = 'creAccounts'
+export const awsAccountCacheKey = 'awsAccounts'
 
-const accountActions = createCRUDActions(creAccountsCacheKey, {
+const accountActions = createCRUDActions(awsAccountCacheKey, {
   listFn: async () => {
     return cre.listAccounts()
   },

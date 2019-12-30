@@ -1,6 +1,6 @@
 import React from 'react'
 import createCRUDComponents from 'core/helpers/createCRUDComponents'
-import accountActions, { creAccountsCacheKey } from './actions'
+import accountActions, { awsAccountCacheKey } from './actions'
 
 const AccountListPage = () => {
   const options = {
@@ -12,7 +12,7 @@ const AccountListPage = () => {
       { id: 'credentials.aws_access_key_id', label: 'Access Key ID' },
       { id: 'credentials.aws_secret_access_key', label: 'Secret Access Key' },
     ],
-    cacheKey: creAccountsCacheKey,
+    cacheKey: awsAccountCacheKey,
     loaderFn: accountActions.listFn,
     name: 'CreAccounts',
     title: 'Accounts',

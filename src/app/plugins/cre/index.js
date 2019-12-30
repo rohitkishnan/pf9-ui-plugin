@@ -6,6 +6,7 @@ import RiskProfilePage from './components/riskProfile/RiskProfilePage'
 import AddAccountPage from './components/account/AddAccountPage'
 import ModifyAccountPage from './components/account/ModifyAccountPage'
 import RecommendationIndexPage from './components/recommendation/RecommendationIndexPage'
+import ExecuteRecommendationIndexPage from './components/recommendation/ExecuteRecommendationIndexPage'
 
 class Cre extends React.PureComponent {
   render () {
@@ -52,20 +53,24 @@ Cre.registerPlugin = pluginManager => {
       component: ModifyAccountPage
     },
     {
-      name: 'Recommendation Index',
+      name: 'Recommendation',
       link: { path: '/recommendation', exact: true },
       component: RecommendationIndexPage
-    }
+    },
+    {
+      name: 'Recommendation',
+      link: { path: '/recommendation/execute/:id', exact: true },
+      component: ExecuteRecommendationIndexPage
+    },
   ])
 
   const devNavItems = [
-    { name: 'Dashboard', link: { path: '/dashboard' } },
-    { name: 'Account', link: { path: '/account' } },
-    { name: 'Inventory', link: { path: '/inventory' } },
-    { name: 'Recommendation', link: { path: '/recommendation' } },
-    { name: 'Risk Profile', link: { path: '/riskProfile' } }
+    { name: 'Dashboard', link: { path: '/dashboard' }, icon: 'tachometer' },
+    { name: 'Account', link: { path: '/account' },  icon: 'user', },
+    { name: 'Inventory', link: { path: '/inventory' }, icon: 'inventory' },
+    { name: 'Recommendation', link: { path: '/recommendation' }, icon: 'thumbs-up' },
+    { name: 'Risk Profile', link: { path: '/riskProfile' }, icon: 'exclamation-triangle' }
   ]
-
   const allNavItems = [...devNavItems]
   plugin.registerNavItems(allNavItems)
 }

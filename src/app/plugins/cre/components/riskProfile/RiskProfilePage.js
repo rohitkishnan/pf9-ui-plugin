@@ -11,20 +11,10 @@ const handleSubmit = (account) => {
 }
 
 const RiskProfilePage = () => {
-  return <FormWrapper
-    title='Add Custom Risk Profile'
-    backUrl={listUrl}
-  >
-    <ValidatedForm onSubmit={handleSubmit}>
-      <KeyValuesField
-        id="risk_levels"
-        label="Risk Levels"
-        info="Add keys in the format risk_level_1 and value as percentage of risk you would like to take for that level"
-      />
-      <SubmitButton>Add Risk Profile</SubmitButton>
-    </ValidatedForm>
-
-  </FormWrapper>
+  return <div>
+    <h1>RiskProfile</h1> 
+    <span>Coming soon</span>
+  </div>
 }
 
 export default RiskProfilePage
